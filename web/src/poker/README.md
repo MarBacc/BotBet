@@ -1,7 +1,10 @@
 # Poker (beta) — web side
 
 `poker-result.json` is produced by the poker engine (`feat/poker-engine`, `referee/src/poker/README.md`).
-Until that schema is published, the page builds against `sample.json` here. Shape (all amounts in
+The page reads the **engine schema** (`schemaVersion: 1`, `referee/src/poker/match.ts` `pokerResultJson`)
+directly: actions keyed by bot name, `referee.{address,result,signature}`, `txs.*`, `offline`. Running pot and
+per-hand chips are recomputed (verified equal to the engine's final `chips`). It also accepts the simpler
+page shape below, used by `sample.json` (all amounts in
 `*Usdc` fields are 6-decimal base-unit strings; chip counts are plain integers):
 
 ```jsonc
@@ -22,3 +25,8 @@ Until that schema is published, the page builds against `sample.json` here. Shap
 Cards are two-character strings: rank `23456789TJQKA` + suit `shdc`.
 `bots.json` (optional): `[{ "name", "game", "owner", "codeHash", "house": true|false }]`.
 Dev-only previews: `?poker=/path.json`, `?bots=/path.json`.
+
+## Requests to the poker engine
+- Add `stakeUsdc` / `potUsdc` (base-unit strings) and `explorerBaseUrl` to poker-result.json. Until then the
+  page omits USDC amounts and uses the default Arc explorer.
+- Optional: `verifyCommand` in bots.json so the "Registered bots" panel can show the exact CLI.

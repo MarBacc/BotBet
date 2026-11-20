@@ -7,6 +7,7 @@ import { BotsPanel } from './BotsPanel'
 import './poker.css'
 
 const PokerPresent = lazy(() => import('./PokerPresent'))
+const usdc = (v: string | null) => (v ? formatUsdc(v) : null)
 const short = (s: string, a = 8, b = 6) => (s && s.length > a + b + 1 ? `${s.slice(0, a)}…${s.slice(-b)}` : s || '—')
 
 export default function PokerView({ d, sample, referee }: { d: PokerResult; sample: boolean; referee: string }) {
@@ -52,20 +53,22 @@ export default function PokerView({ d, sample, referee }: { d: PokerResult; samp
       {sample && <div className="sample-ribbon">SAMPLE DATA</div>}
       <header>
         <h1>BotBet — Poker <small className="beta">beta</small></h1>
-        {sample ? <span className="tag">SAMPLE DATA</span> : <span className="tag live"><span aria-hidden="true">● </span>LIVE ON ARC</span>}
+        {sample ? <span className="tag">SAMPLE DATA</span>
+          : d.offline ? <span className="tag">OFFLINE RUN · not settled on-chain</span>
+          : <span className="tag live"><span aria-hidden="true">● </span>LIVE ON ARC</span>}
         <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
 
       <div className="banner">
         <span><span aria-hidden="true">🏆 </span>{winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
-        <span>Pot {formatUsdc(d.potUsdc)} paid to {short(winner.address, 6, 4)}</span>
+        <span>{d.offline ? 'Not settled (offline run)' : `Pot ${usdc(d.potUsdc) ?? ''} paid to ${short(winner.address, 6, 4)}`.replace('Pot  ', 'Pot ')}</span>
       </div>
 
       <div className="strip">
         <div className="step"><small>1</small><b>Stake</b>
           {d.bots.map(b => b.stakeTxHash
             ? <a key={b.id} className="l" href={tx(b.stakeTxHash)} target="_blank" rel="noreferrer">{b.name}: {short(b.stakeTxHash)}</a>
-            : <span key={b.id} className="l">{b.name}: {formatUsdc(d.stakeUsdc)}</span>)}
+            : <span key={b.id} className="l">{b.name}{d.stakeUsdc ? `: ${formatUsdc(d.stakeUsdc)}` : ''}</span>)}
           <span className="arr">→</span></div>
         <div className="step"><small>2</small><b>Play</b><span className="l">{d.hands.length} hands · {total} actions</span><span className="arr">→</span></div>
         <div className="step"><small>3</small><b>Referee signs</b><span className="l">EIP-712 · {short(d.signature, 10, 6)}</span><span className="arr">→</span></div>

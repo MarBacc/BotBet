@@ -47,7 +47,7 @@ export default function PokerPresent({ d, frames, sample, settleUrl, onExit }: {
       ) : (
         <div className="pr-result">
           <div className="pr-win"><span aria-hidden="true">🏆 </span>{winner.name} wins</div>
-          <div className="pr-pay">{formatUsdc(d.potUsdc)} paid to {winner.address.slice(0, 6)}…{winner.address.slice(-4)}</div>
+          <div className="pr-pay">{d.offline ? 'Offline run · not settled on-chain' : `${d.potUsdc ? `${formatUsdc(d.potUsdc)} ` : 'Pot '}paid to ${winner.address.slice(0, 6)}…${winner.address.slice(-4)}`}</div>
           <div className="pr-att">referee-attested · hand history hash {d.handHistoryHash.slice(0, 10)}…</div>
           {settleUrl && (
             <div className="pr-qr">
