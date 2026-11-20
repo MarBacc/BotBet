@@ -30,6 +30,8 @@
 - hasty.stake [`0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c`](https://explorer.testnet.arc.io/tx/0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c)
 - settle [`0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4`](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
 
+CHECKPOINT PASSED
+
 ## 2026-11-20 01:57 CST — AgentWallet deployment and funding
 
 - Arc testnet chain 5042002. Owner `0xEAb99118c98abbfA99aD55dd261c6fcEf8381f7F`. USDC `0x3600000000000000000000000000000000000000`. On-chain cap 50,000 base units (0.05 USDC).
