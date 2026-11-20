@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Tight Tina",
+    "game": "poker",
+    "owner": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
+    "codeHash": "0x7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a",
+    "house": true
+  },
+  {
+    "name": "Loose Lou",
+    "game": "poker",
+    "owner": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
+    "codeHash": "0x8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b8b",
+    "house": true
+  },
+  {
+    "name": "Deep Thought",
+    "game": "chess",
+    "owner": "0x9b1e3c0A5f4E2d7B8c6A1f0e3D2c5B4a7F6e8D90",
+    "codeHash": "0x9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c9c",
+    "house": false
+  }
+]

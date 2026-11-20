@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Deep Thought",
+    "game": "chess",
+    "strategySummary": "HOUSE BOT — Stockfish depth 12, configured in the existing read-only referee/src/bots.ts strategy file.",
+    "owner": "0x0FCf03188c595d55fF7E28C84e4FD5B5De04BF20",
+    "codeHash": "0x132eb8c826adaa1083b2bf877421ad6321772c5be23b1c5dcc056940eaa8d904",
+    "encryptedHash": "0xa6606e0530bad45d4f2a93d72897097e39ea579082b3c775190b6ee6a37a0ba9",
+    "signature": "0xebae4342c59fb444aaa289670e0246b6fc0bb5c5a92c5fc36976e37490987a4e464a790b2aab3735fdc566b3e59fec124ed7c802bf78055ea600957441ee096c1b",
+    "registeredAt": "2026-11-20T09:54:15.678Z"
+  },
+  {
+    "name": "Hasty Hal",
+    "game": "chess",
+    "strategySummary": "HOUSE BOT — Stockfish depth 4, configured in the existing read-only referee/src/bots.ts strategy file.",
+    "owner": "0xAA87254aA4Fb971b036D2C993d51440bbaBc4B2E",
+    "codeHash": "0x8bf7afa18e5282679a7930ca349dc08b1cf560fe09a8d54378ae8a11d8ba5fd9",
+    "encryptedHash": "0x6b4740dc44fbcb38c8a19b385074b2970cb3f18f6325fae752ddeef67e15a330",
+    "signature": "0x62b6c7f44e3c6aa6a335903d90a81b45680a091f0aa506e07a5f20f06d4568a04f409ac3d4f023d2dc2acdcd1021e3ccd4477087b987237af40c31aa6bf948291b",
+    "registeredAt": "2026-11-20T09:54:32.489Z"
+  },
+  {
+    "name": "Nit",
+    "game": "poker",
+    "strategySummary": "HOUSE BOT — Tight-aggressive: plays only premium hands (77+, AK, AQ, AJs, KQs), then bets hard with top pair or better and gives up otherwise.",
+    "owner": "0x3D81B915f1E8BE53B92e39bC5DB99df4f9064073",
+    "codeHash": "0x0ee199bc6e7bf645cec91c1103b62369dbd0eb75fc948fb4efe1598cdcd16c4d",
+    "encryptedHash": "0x5c97cd9af317b07ddc3b6b1f356a4509e94ccef0b0c088ab43853dea84fb7ada",
+    "signature": "0x4113f108fe0414e12c4338bc6c14d2a5ee06bed2afec06c201723125e079dd7070eb32fb55d2bc765bf76dd440d01b517100a7556aa4011e17925c32e0dc45f41c",
+    "registeredAt": "2026-11-20T09:59:02.567Z"
+  },
+  {
+    "name": "Maniac",
+    "game": "poker",
+    "strategySummary": "HOUSE BOT — Loose-aggressive: raises most hands preflop and bets or raises any pair, plus seeded random bluffs more than half the time.",
+    "owner": "0xf3cdAe27cE8bEd4a3fAc52c246fE84Df6f9Bc5C3",
+    "codeHash": "0x9665a7a2fd8aa670209bb10504f9995a700a5eb0ef6bb398ea9ae2ed7a817228",
+    "encryptedHash": "0x541f13fc78c7f4e5a11ad0e3bdba9848636908f0f9d9cc1a85e8e7d19eb15c9e",
+    "signature": "0x9a742ea9f19e3e4036645aa03d507e1350c85b268e7ce2f4b3b128c1ae8129a95c45e63d171141236548d76574f809e71f07f73b2d7b95b425b24ea3e9f14d291b",
+    "registeredAt": "2026-11-20T09:59:03.601Z"
+  },
+  {
+    "name": "Theory",
+    "game": "poker",
+    "strategySummary": "HOUSE BOT — By the book: a 169-hand heads-up preflop chart by position, then a 200-sample Monte Carlo equity estimate against pot odds after the flop.",
+    "owner": "0x93c9931C2dff26fC7Cd3060E7CAD07Ec81F550c6",
+    "codeHash": "0x5e57e01534240e37d5348f6678be5b813c1ec5d9cf35995a43fbf6c4e9c9bde0",
+    "encryptedHash": "0x1846f31bafcd37100f997f76b5ea21765960d7c76c019d063660a3728fe3f2ce",
+    "signature": "0x5591912f77f0f852d6d786a831ea938062f3dba9271cd829080026cf427715597900e0c23e79a5493840e5ce8f5e9ef6542c8a8d9f5ce7c800bea4d30b04b7251c",
+    "registeredAt": "2026-11-20T09:59:04.549Z"
+  }
+]
