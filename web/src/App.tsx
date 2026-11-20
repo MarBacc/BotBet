@@ -68,14 +68,14 @@ async function fetchJson(url: string): Promise<{ status: 'missing' } | { status:
 }
 
 export async function loadSample(): Promise<Result | null> {
-  const s = await fetchJson('/result.sample.json')
+  const s = await fetchJson(`${import.meta.env.BASE_URL}result.sample.json`)
   return s.status === 'ok' ? validate(s.json) : null
 }
 
 async function load(): Promise<Loaded> {
   // dev-only: ?data=/some/path.json previews another result file (poll-loop checks)
   const q = import.meta.env.DEV ? new URLSearchParams(location.search).get('data') : null
-  const live = await fetchJson(q || '/result.json')
+  const live = await fetchJson(q || `${import.meta.env.BASE_URL}result.json`)
   let warning: string | undefined
   if (live.status === 'ok') {
     const data = validate(live.json)

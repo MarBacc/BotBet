@@ -85,3 +85,22 @@ CHECKPOINT PASSED
 | AgentWallet | `0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262` | 0.180000 |
 
 Both bots are above 8 USDC, and the admin and referee are above 1 USDC. No faucet top-up is needed.
+
+## 2026-11-20 03:05:13 CST — On-chain cap refusal
+
+- Sent one 0.10 USDC payment attempt to the referee from the wallet owner with a 100,000 gas limit.
+- Verified Arc testnet receipt status 0 at block 73163897 and `CapExceeded(100000, 50000)` decoded by replaying the exact call at the preceding block. [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3)
+- The wallet balance stayed at 0.18 USDC. The owner paid 0.0005935 USDC in gas.
+
+## Poker settle
+
+- Started 2026-11-20 03:58:21 CST on Arc testnet (chain 5042002). Match ID `0xb10aaf497ca8cdd2811769735e414f5afccbe4180decf6295e250e8efa8c7581`.
+- 9 hands played. Theory won (Theory 200, Maniac 0) and received 4 USDC.
+- 21.5 seconds from command start through verified settlement and result write.
+
+- createMatch [`0x1414055df30877e47ba76af7100a61bcac7bcdc1c7374f8e805cf3ecd42407b0`](https://explorer.testnet.arc.io/tx/0x1414055df30877e47ba76af7100a61bcac7bcdc1c7374f8e805cf3ecd42407b0)
+- theory.approve [`0xb23e23566974c3c5eb39ee04e53cfdc7d70c6f96bca22994c6bfc0ddac943cae`](https://explorer.testnet.arc.io/tx/0xb23e23566974c3c5eb39ee04e53cfdc7d70c6f96bca22994c6bfc0ddac943cae)
+- theory.stake [`0x51cd9dc89d89776f0c451f5dbbd1b61232a0af2e729802e22bb15ee412a2ff6b`](https://explorer.testnet.arc.io/tx/0x51cd9dc89d89776f0c451f5dbbd1b61232a0af2e729802e22bb15ee412a2ff6b)
+- maniac.approve [`0x0325944bedd4607a66d21ec11ae5bd126705e77cb8c6817c9e3c7e363e2b006e`](https://explorer.testnet.arc.io/tx/0x0325944bedd4607a66d21ec11ae5bd126705e77cb8c6817c9e3c7e363e2b006e)
+- maniac.stake [`0x27d7376fe78291fe68ef41f80e1c52f5b25881429fbe9739d94ce34213803d36`](https://explorer.testnet.arc.io/tx/0x27d7376fe78291fe68ef41f80e1c52f5b25881429fbe9739d94ce34213803d36)
+- settle [`0xa79492719be7dd5e7fd182f1f45db9515ae324a9f1ebc2cc000e6b429b9f304d`](https://explorer.testnet.arc.io/tx/0xa79492719be7dd5e7fd182f1f45db9515ae324a9f1ebc2cc000e6b429b9f304d)
