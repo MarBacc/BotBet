@@ -1,6 +1,6 @@
 # BotBet QA report
 
-**UX GATE: PASS (provisional)**: temporary merge of solo `fe8184e` + feat/ux-poker `95b4ed7` + feat/ux-plain `8efa039` (→ `3d54909`, never pushed), fresh Windows clone, 05:02 CST. Final run is due when both PRs are open (~05:15).
+**UX GATE: PASS** (05:15 CST): temporary merge of solo `fe8184e` + feat/ux-poker `95b4ed7` (PR #37) + feat/ux-plain `8efa039` (PR #39) → `db6ee48` (never pushed), fresh Windows clone. Same SHAs as the 05:02 provisional run. **Both PRs are clear to merge.** Once they are in solo, the final gate re-runs on the actual solo ("FINAL GATE" line, pending).
 | UX check | Result |
 |---|---|
 | Full release gate G1–G10 (chess keyless path, npm test, registry, links, wording) | ✅ PASS 10/10 |
