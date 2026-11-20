@@ -1,5 +1,11 @@
 # PROGRESS — settle lane (feat/settle)
 
+**For demo-agent:** if you are on this Mac, Node is at `$HOME/.local/node/bin` (not on the default PATH):
+`export PATH="$HOME/.local/node/bin:$PATH"`. `npm run demo` (referee/src/presenter.ts) imports
+`referee/src/demo/positions.ts` and reads `DEMO_DEFAULT` as either a FEN string or `{ fen: string }`; it is
+validated (legal, not over, side-not-to-move not in check) and falls back to the built-in FEN otherwise.
+Check a candidate with `npm run rehearse:local -- --runs 1 --fen "<FEN>"` (local anvil, no keys).
+
 **For the integration lead:** G5 is runnable now: `cd contracts && forge build && cd ../referee && npm run rehearse:local`
 (macOS libusb: `export DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib`). Times below are commit times (CST).
 
@@ -11,6 +17,11 @@ MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified
 - Run 2 settle: https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4
   (match 0xcd1bd3b3…932bfd, Deep Thought wins in 55 plies)
 Not run from this laptop (no keys here by design).
+
+## 03:15 — DEMO_DEFAULT wired
+- solo now carries referee/src/demo/positions.ts; `npm run demo -- --dry-run` picks DEMO_DEFAULT
+  (`8/8/8/4k3/8/8/8/3QK3 w - - 0 1`, the position settled live on Arc). rehearse:local with it: 17 plies, settled.
+- tsc clean, npm test 18/18. Inbox S-N1..S-N4 all done.
 
 ## N1–N4 (presenter tooling): DONE
 - N1 `npm run demo [-- --dry-run]` (src/presenter.ts): settle --fen (DEMO_DEFAULT from src/demo/positions.ts if

@@ -5,7 +5,9 @@ export interface CapDemo {
   wallet: string
   capUsdc: string
   allowed: { amount: string; txHash: string | null }
-  refused: { amount: string; reason: string }
+  refused: { amount: string; reason: string; txHash?: string | null }
+  /** live-runs 19ffa31: hash of the reverted (status 0) over-cap attempt, when it was sent on-chain */
+  refusedTxHash?: string | null
 }
 
 const fmt = (v: string) => formatUsdc(v, { symbol: false })
@@ -59,6 +61,8 @@ export function useCapDemo(): [CapDemo | null, boolean, () => void] {
 }
 
 export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
+  const refusedTx = typeof c.refusedTxHash === 'string' && c.refusedTxHash ? c.refusedTxHash
+    : typeof c.refused.txHash === 'string' && c.refused.txHash ? c.refused.txHash : null
   const short = (h: string) => (typeof h === 'string' && h.length > 18 ? `${h.slice(0, 10)}…${h.slice(-6)}` : String(h ?? '—'))
   return (
     <div className="panel cap">
@@ -73,8 +77,11 @@ export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample:
           : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}
       </div>
       <div className="pay no">
-        <span>Refused by the contract (simulated): {capUsdc(c.refused.amount)}</span>
+        <span>{refusedTx ? 'Refused on-chain (tx reverted)' : 'Refused by the contract (simulated)'}: {capUsdc(c.refused.amount)}</span>
         <span className="mono" title={c.refused.reason}>— {decodeReason(c)}</span>
+        {refusedTx && (base
+          ? <a className="mono" href={`${base}/tx/${refusedTx}`} target="_blank" rel="noreferrer">reverted tx {short(refusedTx)}</a>
+          : <span className="mono">reverted tx {short(refusedTx)}</span>)}
       </div>
     </div>
   )
