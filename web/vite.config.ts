@@ -13,6 +13,7 @@ function tts(mode: string): Plugin {
   const key = env.ELEVENLABS_API_KEY
   const voice = env.ELEVENLABS_VOICE_ID
   const model = env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2'
+  const apiBase = (env.ELEVENLABS_BASE_URL || 'https://api.elevenlabs.io').replace(/\/+$/, '') // override only for local tests
   const cache = new Map<string, Buffer>() // text -> mp3, so repeat plays cost no credits
   const sendMp3 = (res: ServerResponse, buf: Buffer) => {
     res.statusCode = 200
@@ -38,7 +39,7 @@ function tts(mode: string): Plugin {
     const hit = cache.get(text)
     if (hit) return sendMp3(res, hit)
     try {
-      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}`, {
+      const r = await fetch(`${apiBase}/v1/text-to-speech/${encodeURIComponent(voice)}`, {
         method: 'POST',
         headers: { 'xi-api-key': key, 'content-type': 'application/json', accept: 'audio/mpeg' },
         body: JSON.stringify({ text, model_id: model }),

@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import qrcode from 'qrcode-generator'
 import { formatUsdc } from 'botbet-shared'
 import { Board } from './Board'
+import { loadCapDemo } from './CapCard'
+import { buildScript } from './commentary/script'
+import { useCommentary } from './commentary/useCommentary'
+import { CaptionBar } from './commentary/CaptionBar'
 
 const STEP_MS = 300 // brisk for a demo: ~17 s for a 55-ply game
 
@@ -34,6 +38,22 @@ export default function Present(p: PresentProps) {
   const total = p.sans.length
   const [ply, setPly] = useState(0)
   const done = ply >= total
+  // live commentator: captions always; ElevenLabs audio when /api/tts has a key (holds the replay while speaking)
+  const [hasCap, setHasCap] = useState<boolean | null>(null)
+  useEffect(() => { loadCapDemo().then(c => setHasCap(!!c), () => setHasCap(false)) }, [])
+  const lines = useMemo(() => (hasCap === null ? [] : buildScript({ fens: p.fens, sans: p.sans, winnerName: p.winnerName, loserName: p.loserName, potUsdc: p.potUsdc, hasCapDemo: hasCap })),
+    [hasCap, p.fens, p.sans, p.winnerName, p.loserName, p.potUsdc])
+  const voice = useCommentary(lines)
+  const { reach } = voice
+  // the final move is spoken over the final board; the result screen (with the payout lines) follows it
+  const [ended, setEnded] = useState(false)
+  useEffect(() => { if (ply < total) reach(ply); else reach(ply, ['final']) }, [ply, total, reach])
+  const { isIdle, audible } = voice
+  useEffect(() => {
+    if (!done || ended || (audible && (voice.busy || !isIdle()))) return
+    setEnded(true)
+    reach(total, ['end'])
+  }, [done, voice.busy, ended, reach, total, audible, isIdle])
 
   useEffect(() => {
     document.documentElement.requestFullscreen?.().catch(() => { /* not allowed: overlay still fills the window */ })
@@ -41,27 +61,27 @@ export default function Present(p: PresentProps) {
   }, [])
 
   useEffect(() => {
-    if (done) return
+    if (done || voice.busy || hasCap === null) return
     const t = setTimeout(() => setPly(n => n + 1), ply === 0 ? 800 : STEP_MS)
     return () => clearTimeout(t)
-  }, [ply, done])
+  }, [ply, done, voice.busy, hasCap])
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') { e.stopImmediatePropagation(); p.onExit() }
       if (e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); setPly(total) }
-      if (e.key === 'r' || e.key === 'R') setPly(0)
+      if (e.key === 'r' || e.key === 'R') { voice.reset(); setEnded(false); setPly(0) }
     }
     window.addEventListener('keydown', k, true)
     return () => window.removeEventListener('keydown', k, true)
-  }, [p, total])
+  }, [p, total, voice.reset])
 
   const k = ply - 1 + (p.startBlack ? 1 : 0)
   const move = ply > 0 ? `${p.startNo + Math.floor(k / 2)}${k % 2 ? '…' : '.'} ${p.sans[ply - 1]}` : 'Starting position'
   return (
     <div className="present" role="dialog" aria-modal="true" aria-label="Presentation mode">
       {p.sample && <div className="sample-ribbon">SAMPLE DATA</div>}
-      {!done ? (
+      {!ended ? (
         <div className="pr-replay">
           <Board fen={p.fens[ply]} hl={p.lastMoves[ply]} label={`Replay, ${move}`} className="pr-board" />
           <div className="pr-side">
@@ -87,7 +107,8 @@ export default function Present(p: PresentProps) {
           )}
         </div>
       )}
-      <div className="pr-help">P / Esc exit · Space skip to result · R replay</div>
+      <CaptionBar c={voice} />
+      <div className="pr-help">P / Esc exit · Space skip to result · R replay{voice.enabled ? ' · M sound' : ''}</div>
     </div>
   )
 }
