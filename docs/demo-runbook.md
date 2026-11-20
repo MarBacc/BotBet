@@ -7,7 +7,7 @@
 - Start `npm run dev` in `web/`; open the page and confirm the current result and AgentWallet cap card load. Use only the integrated web build that includes Present mode and the cap card.
 - Open the Arc testnet explorer and the recorded backup video in separate tabs. Put the successful settle transaction page in a ready tab.
 - Enlarge the terminal font, turn on Do Not Disturb, and close unrelated windows.
-- Check that the short FEN run has been rehearsed on the demo laptop. Its proposed FEN is `7k/8/5KQ1/8/8/8/8/8 w - - 0 1` (queen mate on g7). The local checker has not yet been run in this environment; if it is still unverified, use the recorded successful run and call it the recorded run.
+- The offline checker confirms `7k/8/5KQ1/8/8/8/8/8 w - - 0 1` (queen mate on g7) ends in one ply, identically in three runs. The short-FEN on-chain settle has not been recorded here; rehearse it on the demo laptop or use the successful standard-game recording and identify it accurately.
 
 ## 0:00–0:20 — The problem
 
@@ -39,7 +39,7 @@ Open the settle transaction in the Arc explorer and point to `Settled` and the 4
 
 ## 2:10–2:30 — AgentWallet safety
 
-Show the cap card: the deployed AgentWallet has a 0.05 USDC per-payment cap. Its allowed 0.02 USDC payment is the mined transaction; the 0.10 USDC attempt is simulated against the contract and returns `CapExceeded`. The refused request is not broadcast, so it spends no gas and moves no funds. If no current cap-demo record is loaded, show the recorded card or skip this segment; do not imply a live wallet payment just happened.
+If a current cap-demo record is available, show the card: the deployed AgentWallet has a 0.05 USDC per-payment cap. The allowed 0.02 USDC payment is mined; the 0.10 USDC attempt is simulated against the contract and returns `CapExceeded`. The refused request is not broadcast, so it spends no gas and moves no funds. No cap-demo record or payment hash is in the live-run notes; if no current record is loaded, skip this segment or show clearly marked sample data without calling it live evidence.
 
 **Say:** “A small payment fits under the wallet's cap. A larger one hits the contract's `CapExceeded` check. We simulate the refusal so we can show the real contract error without sending a reverting transaction.”
 
