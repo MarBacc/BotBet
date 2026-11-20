@@ -35,6 +35,7 @@ for (const position of DEMO_POSITIONS) {
   const deterministic = outcomes.length === RUNS && outcomes.every(
     (outcome) => JSON.stringify(outcome.uci) === JSON.stringify(first!.uci),
   );
+  console.log(`${position.id} | identical moves in ${RUNS} runs: ${deterministic ? "yes" : "no"}`);
   if (
     deterministic &&
     first!.result === "white wins" &&
@@ -48,6 +49,7 @@ if (passing.length === 0) {
   console.error("No candidate passed: needs deterministic depth-12 white checkmate in 30 plies or fewer.");
   process.exitCode = 1;
 } else {
-  passing.sort((a, b) => a.plies - b.plies || a.id.localeCompare(b.id));
+  // Stable sort retains candidate order when two reliable positions have the same ply count.
+  passing.sort((a, b) => a.plies - b.plies);
   console.log(`DEMO_DEFAULT candidate: ${passing[0]!.id} (${passing[0]!.plies} plies; identical UCI moves in ${RUNS} runs)`);
 }

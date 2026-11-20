@@ -72,12 +72,12 @@ cd shared && npm install && npm run build
 cd ../referee && npm install
 npm run play-game      # offline/keyless game; sends nothing on-chain
 npm run settle         # broadcasts real Arc testnet transactions
-npm run settle -- --fen "<validated demo FEN>"  # short demo, once validated by the checker
+npm run settle -- --fen "7k/8/5KQ1/8/8/8/8/8 w - - 0 1"  # verified offline; still sends real testnet transactions
 
 cd ../web && npm install && npm run dev
 ```
 
-`npm run settle` needs funded deployer, referee, and bot wallets. It creates a fresh match and sends transactions; review its dry-run and wallet configuration before running it.
+`npm run settle` needs funded deployer, referee, and bot wallets. It creates a fresh match and sends transactions; review its dry-run and wallet configuration before running it. The short FEN is verified for an offline mate in one; its on-chain settlement has not yet been recorded.
 
 ## Roadmap
 
