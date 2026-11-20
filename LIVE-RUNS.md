@@ -67,3 +67,21 @@ CHECKPOINT PASSED
 - hasty.approve [`0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11`](https://explorer.testnet.arc.io/tx/0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11)
 - hasty.stake [`0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b`](https://explorer.testnet.arc.io/tx/0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b)
 - settle [`0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3`](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3)
+
+## Presenter checklist (this laptop)
+
+- `npm run check-setup` reported **READY FOR THE LIVE DEMO**. Shared build, referee dependencies, deployment metadata, key presence, and Arc testnet chain 5042002 passed.
+- The stage dry run, `npm run settle -- --fen "8/8/8/4k3/8/8/8/3QK3 w - - 0 1" --dry-run`, passed in **1.42 seconds** wall clock.
+- `npm run demo -- --dry-run` passed in **2.87 seconds** wall clock. It uses the built-in position and also simulates the cap demo.
+- For the rehearsed 17-ply stage match, run `npm run settle -- --fen "8/8/8/4k3/8/8/8/3QK3 w - - 0 1"` from `referee/` after a fresh dry run and human approval. The stake is 2 USDC per bot. The loser spends its stake plus gas.
+- Web dependencies installed and `npm run build` passed. Vite preview at [127.0.0.1:4173](http://127.0.0.1:4173/) served byte-for-byte the latest rehearsal result and rendered its settlement link in Chrome. Rebuild the web app after a new `result.json` is written so preview serves the new file.
+
+| Wallet | Arc testnet address | USDC at block 73163506 |
+| --- | --- | ---: |
+| Admin | `0xEAb99118c98abbfA99aD55dd261c6fcEf8381f7F` | 19.743653 |
+| Referee | `0xE632a919CEE69FC9482a6A719D47878EEDA28345` | 20.014220 |
+| Deep Thought | `0xBAe2658a561A7A37e7CF4fDF336772dD23460E24` | 25.990920 |
+| Hasty Hal | `0x016E0a0c6a153edFDd05947667Be12Be001Eb661` | 13.990629 |
+| AgentWallet | `0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262` | 0.180000 |
+
+Both bots are above 8 USDC, and the admin and referee are above 1 USDC. No faucet top-up is needed.
