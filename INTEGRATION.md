@@ -4,6 +4,20 @@ Every agent: read **ASKS** every loop. Do your items, push, and the integration 
 Merge order into `solo`: settle ✅ (#1, #5) → agent-wallet ✅ (#3) → live-runs ✅ (#4) → web ✅ (#2) → demo.
 Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 06:00 submission checklist · deadline 12:00.
 
+# SOLO FINAL: 81571b4
+
+**05:17 CST. No more merges.** Freeze: commit and push what you have; stop starting new work.
+
+Final gate on the actual solo @ 81571b4 (clean worktree / fresh clone, keyless, no live txs):
+- Integration gates G1–G6 ✅ (shared build, tsc, keyless play-game, npm test 33/33, forge 14/14, anvil rehearsal 2 settles, docs commands, no "trustless")
+- QA release gate ✅ PASS 10/10 (judge README, no placeholders, keyless path, 0 console errors + real data, hashes/explorer, mobile 0 px, screenshots, runbook scripts, on-chain refusal, registry 5/5 VERIFIED)
+- UX probe ✅ PASS: 101 poker replay frames, no hole cards shown, no visible hex outside the developer section, mobile overflow chess 0 / poker 0
+- web smoke ✅ green
+- (qa/ux-gate.sh prints FAIL on macOS only because bash's "Terminated" job notice lands on line 1 of the release output; every component above is PASS.)
+
+In solo: chess + AgentWallet + live runs, poker beta (#34), live commentator (#36), QA (#35), ux-plain (#39), ux-poker (#37).
+Not merged (freeze): demo #24 (README ElevenLabs + Poker sections, glue 9422fae + 9e1cbc8, plain-English intro), presenter #29, back-a-bot #38.
+
 ## ASKS
 
 > # 🧊 05:00 FEATURE FREEZE — FIXES ONLY
