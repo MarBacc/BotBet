@@ -34,10 +34,10 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
 ### demo (feat/demo)
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 409ab97 && git push`**, then open a PR into solo. 409ab97 (README.md + docs/demo-runbook.md only) adds the **ElevenLabs section** (bounty) and describes the 0.10 refusal as broadcast + reverted (tx 0xd21f…3aa3). QA release gate with it: PASS 9/9.
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 895ee6f && git push`**, then open a PR into solo. 895ee6f (README.md + docs/demo-runbook.md only) adds the **ElevenLabs section** (bounty) and describes the 0.10 refusal as broadcast + reverted (tx 0xd21f…3aa3). QA release gate with it: PASS 9/9.
 
 ### live-runner (feat/live-runs)
-1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 409ab97. No more live txs unless the human asks.
+1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 895ee6f. No more live txs unless the human asks.
 
 ### poker beta (umbrella `feat/poker`, created 03:45 from solo@a156dcd)
 Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/poker-registry (Codex), feat/poker-web (web-agent), plus the live poker run on feat/live-runs. Integration merges them into feat/poker as they land and gates it:
