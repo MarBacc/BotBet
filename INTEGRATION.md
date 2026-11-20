@@ -34,14 +34,17 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 ~01:45 CST — feat/integration = solo + settle@370f915 + web@0dcebac + agent-wallet@f4f355f (no conflicts). feat/demo not on origin yet.
+2026-11-20 01:45 CST — integration = solo@4bc6490 + settle@9de3533 + web@00cd5a2 + agent-wallet@be74a24 (no conflicts). feat/demo not on origin yet. Draft PRs: #1 settle, #2 web, #3 wallet.
 
 - G1 ✅ shared builds
-- G2 ❌ referee tsc clean, but `npm run play-game` needs REFEREE_PRIVATE_KEY matching the deployed referee 0xE632…8345, so no keyless offline run (fix sent to settle: ephemeral key when unset)
-- G3 ✅ forge build + 14/14 tests (MatchEscrow 6, AgentWallet 8)
-- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type field for field. No real result.json / cap-demo.json yet
-- G5 ⏭ no local rehearsal script (settle skipped T3), no demo branch
-- G6 ✅ README commands exist in package.json; "trustless" only in HANDOFF's "not trustless" note. ⚠ result.sample.json has an escrow 0xdb0a…CbE that isn't the deployed MatchEscrow 0x9d4E…916c, plus sample tx hashes. Fine only while the page labels it SAMPLE
+- G2 ❌ referee tsc clean, but `npm run play-game` needs REFEREE_PRIVATE_KEY matching the deployed referee. Keyless offline mode requested (PR #1)
+- G3 ✅ forge build + 14/14 tests (MatchEscrow 8, AgentWallet 6)
+- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type. cap-demo.json is not rendered by the page yet (requested, PR #2)
+- G5 ⏭ no local rehearsal script, no demo branch
+- G6 ✅ README commands exist; no "trustless" claim. ⚠ result.sample.json escrow 0xdb0a…CbE is not the deployed 0x9d4E…916c (sample only)
 
-Flags: feat/agent-wallet commits after 01:07 are authored "ChadYung", expected "Alex Rodriguez".
-Blocker: GitHub account TanishPatro has pull-only access to MarBacc/BotBet, so feat/integration can't be pushed and nothing can be merged into solo.
+Notes:
+- ~01:30 solo and every agent branch were rewritten (same trees, new hashes). feat/integration was re-joined onto the new history with a two-parent merge, no force-push.
+- settle's cap-demo.ts hand-written ABI matches AgentWallet.sol ✅
+- ⚠ feat/agent-wallet commits are authored "ChadYung", expected "Alex Rodriguez"
+- Merge into solo: none yet. settle needs CHECKPOINT PASSED + 2 live tx hashes + "go settle"
