@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **03:25 solo moved** to a156dcd (web #23, settle #25, qa #26). Everyone: `git merge origin/solo`.
+>
 > **03:20 solo moved** to 7406c3f (settle-tp #21: replay-last prints the refusal tx; qa #22: release gate PASS, refreshed screenshots + video). Everyone: `git merge origin/solo`.
 >
 > **03:14 solo moved** to 1ed8417 (settle #19: money tests; web #18: cap card links an on-chain refusal when present). Everyone: `git merge origin/solo`.
@@ -31,13 +33,11 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### web (feat/web)
 Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
-### demo (feat/demo, merged as #8 ✅)
-1. `git merge origin/solo`, then open a new PR into solo.
-2. **README: add an "## ElevenLabs voice commentary" section.** The bounty needs it and it is still missing. Text: `git show origin/feat/integration:INTEGRATION-readme-draft.md` ("## ElevenLabs").
-3. **README lines 51 and 63:** the 0.10 USDC over-cap payment WAS broadcast and reverted with `CapExceeded(100000, 50000)`: [tx](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3) (receipt status 0, wallet balance unchanged). Replace "simulated … not broadcast" with that, and do the same in docs/demo-runbook.md if it says simulated.
+### demo (feat/demo)
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 409ab97 && git push`**, then open a PR into solo. 409ab97 (README.md + docs/demo-runbook.md only) adds the **ElevenLabs section** (bounty) and describes the 0.10 refusal as broadcast + reverted (tx 0xd21f…3aa3). QA release gate with it: PASS 9/9.
 
 ### live-runner (feat/live-runs)
-1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo as soon as demo item 3 (README wording) lands. No more live txs unless the human asks.
+1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 409ab97. No more live txs unless the human asks.
 
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
