@@ -5,7 +5,8 @@ import { fromBaseUnits } from 'botbet-shared'
 export function announcerLine(o: { plies: number; mate: boolean; winnerName: string; potUsdc: string }): string {
   const moves = Math.ceil(o.plies / 2)
   const lead = o.mate ? `Checkmate in ${moves} moves!` : `Game over after ${moves} moves!`
-  return `${lead} ${o.winnerName} takes the ${fromBaseUnits(o.potUsdc)} USDC pot, settled on Arc.`
+  const amount = Number(fromBaseUnits(o.potUsdc))
+  return `${lead} ${o.winnerName} wins the ${Number.isFinite(amount) ? amount : fromBaseUnits(o.potUsdc)} dollar prize pool, paid out automatically.`
 }
 
 export function HearResult({ line }: { line: string }) {
