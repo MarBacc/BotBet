@@ -7,6 +7,17 @@
   signature round-trips, deployed-referee check SKIPPED (offline key).
 - Next: S2 live-run readiness.
 
+## 02:10 — S2 live-run readiness: DONE
+- `scripts/check-setup.mjs` runs before play-game/settle/cap-demo: Node ≥ 20.12, shared built, deps
+  installed, each with the exact fix command (verified by hiding shared/dist).
+- settle names every missing/malformed key at once and where it looked for .env (verified, no keys here).
+- Preflight now also checks each key → its expected public address (admin, referee, deep, hasty).
+- result.json gains `referee` (web request on INTEGRATION.md / web/REQUESTS.md); interfaces.md updated.
+- referee/README.md: LIVE-RUNNER commands in order + failure guide.
+- Not mine anymore: web/public/result.json, cap-demo.json (LIVE-RUNNER). result.sample.json escrow is
+  0xdb0a… (integration ⚠), left alone: not in my file list now.
+- `gh` is not installed here: PR #1 comments unreadable.
+
 ## T1 — keys check
 **Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
 

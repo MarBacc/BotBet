@@ -120,6 +120,7 @@ placeholders). The referee overwrites `result.json` on every `npm run settle`.
   "chainId": 5042002,
   "escrow": "0x…",                                // MatchEscrow address = EIP-712 verifyingContract
   "usdc": "0x3600000000000000000000000000000000000000",
+  "referee": "0x…",                               // the EIP-712 signer = MatchEscrow.referee() (added; additive, still v1)
   "explorerBaseUrl": "https://explorer.testnet.arc.io",   // no trailing slash
   "matchId": "0x…",                               // bytes32, 0x + 64 hex
   "stakeUsdc": "2000000",                         // per bot, 6-decimal base units, string

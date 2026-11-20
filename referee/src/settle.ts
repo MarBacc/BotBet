@@ -16,10 +16,10 @@ import { resolve } from "node:path";
 import type { Abi, Hex } from "viem";
 import { toBaseUnits } from "botbet-shared";
 import { BOTS } from "./bots.js";
-import { ARC_TESTNET_CHAIN_ID, REPO_ROOT, loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
+import { ARC_TESTNET_CHAIN_ID, REPO_ROOT, assertPrivateKeys, loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
 import { SettleError } from "./errors.js";
 import { StepFailure, runSettle } from "./settle-core.js";
-import { DEFAULT_RPC_URL, EXPLORER_BASE_URL } from "./settle-constants.js";
+import { DEFAULT_RPC_URL, EXPECTED_ADDRESSES, EXPLORER_BASE_URL } from "./settle-constants.js";
 
 const DEFAULT_STAKE = "2";
 
@@ -53,6 +53,7 @@ async function main(): Promise<void> {
     args = parseArgs(process.argv.slice(2));
     loadEnv();
     const deployments = readArcDeployments();
+    assertPrivateKeys(["DEPLOYER_PRIVATE_KEY", "REFEREE_PRIVATE_KEY", ...BOTS.map((bot) => bot.envKey)]);
     refereeAccount(deployments); // startup assertion: the key must derive to the deployed referee
 
     log(`BotBet — settle on Arc testnet${args.dryRun ? " (DRY RUN: nothing will be sent)" : " (real transactions)"}`);
@@ -69,6 +70,7 @@ async function main(): Promise<void> {
       refereeKey: requirePrivateKey("REFEREE_PRIVATE_KEY"),
       botKeys: Object.fromEntries(BOTS.map((bot) => [bot.id, requirePrivateKey(bot.envKey)])) as Record<string, Hex>,
       stake: toBaseUnits(process.env.STAKE_USDC?.trim() || DEFAULT_STAKE),
+      expectedAddresses: EXPECTED_ADDRESSES,
       startFen: args.fen,
       dryRun: args.dryRun,
       log,

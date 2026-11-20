@@ -63,6 +63,8 @@ export interface SettleConfig {
   /** Keyed by BotConfig.id. */
   botKeys: Record<string, Hex>;
   stake: bigint;
+  /** Optional address each key must derive to, keyed "admin", "referee" or a bot id. A mismatch fails preflight. */
+  expectedAddresses?: Partial<Record<string, Address>>;
   startFen?: string;
   dryRun?: boolean;
   /** Human progress output. The CLI sends it to stderr under --json so stdout stays clean. */
@@ -190,6 +192,13 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
       `${domainName}/${domainVersion} chain ${domainChainId} contract ${domainContract}`,
     ],
     ["0 < stake ≤ MAX_STAKE", cfg.stake > 0n && cfg.stake <= maxStake, `${usdc6(cfg.stake)} (max ${formatUsdc(maxStake, { decimals: 0 })})`],
+    ...Object.entries({ admin: admin.address, referee: referee.address, ...Object.fromEntries(bots.map(({ bot, account }) => [bot.id, account.address])) })
+      .filter(([id]) => cfg.expectedAddresses?.[id])
+      .map(([id, actual]): [string, boolean, string] => [
+        `${id} key → expected address`,
+        isAddressEqual(actual as Address, cfg.expectedAddresses![id]!),
+        `${actual}${isAddressEqual(actual as Address, cfg.expectedAddresses![id]!) ? "" : ` (expected ${cfg.expectedAddresses![id]})`}`,
+      ]),
     ["bots distinct", !isAddressEqual(bots[0]!.account.address, bots[1]!.account.address), `${bots[0]!.account.address} / ${bots[1]!.account.address}`],
   ];
   for (const [name, passed, detail] of checks) log(`  ${passed ? "✅" : "❌"} ${name.padEnd(25)} ${detail}`);
@@ -400,6 +409,7 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
     chainId: cfg.chainId,
     escrow: cfg.escrow,
     usdc: cfg.usdc,
+    referee: onChainReferee,
     explorerBaseUrl: cfg.explorerBaseUrl,
     matchId,
     stakeUsdc: cfg.stake.toString(),
