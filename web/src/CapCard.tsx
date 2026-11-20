@@ -77,7 +77,7 @@ export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample:
           : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}
       </div>
       <div className="pay no">
-        <span>{refusedTx ? 'Refused on-chain' : 'Refused by the contract (simulated)'}: {capUsdc(c.refused.amount)}</span>
+        <span>{refusedTx ? 'Refused on-chain (tx reverted)' : 'Refused by the contract (simulated)'}: {capUsdc(c.refused.amount)}</span>
         <span className="mono" title={c.refused.reason}>— {decodeReason(c)}</span>
         {refusedTx && (base
           ? <a className="mono" href={`${base}/tx/${refusedTx}`} target="_blank" rel="noreferrer">reverted tx {short(refusedTx)}</a>

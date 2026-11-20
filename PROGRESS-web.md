@@ -80,3 +80,6 @@
 - 03:08 DONE: merged solo; cap card links the on-chain refusal (refusedTxHash 0xd21f…3aa3, status 0) as "Refused on-chain" + reverted tx link; falls back to "(simulated)" without it. Verified with live-runs 19ffa31 and old 1a2adc3 data.
 - NEXT: stand by, fixes only.
 - BLOCKERS: none.
+- 03:12 DONE: board ask 2 — label is now "Refused on-chain (tx reverted)" + explorer link when refusedTxHash present, else "(simulated)"; merged solo (demo #8); build + smoke green; PR #18 updated.
+- NEXT: stand by, fixes only.
+- BLOCKERS: none.
