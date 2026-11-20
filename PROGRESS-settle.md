@@ -12,6 +12,17 @@ MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified
   (match 0xcd1bd3b3…932bfd, Deep Thought wins in 55 plies)
 Not run from this laptop (no keys here by design).
 
+## N1–N4 (presenter tooling): DONE
+- N1 `npm run demo [-- --dry-run]` (src/presenter.ts): settle --fen (DEMO_DEFAULT from src/demo/positions.ts if
+  present and playable, else built-in `rnb2rk1/ppp2ppp/8/8/2B5/2N2Q2/PPP2PPP/R4RK1 w - - 0 11`, mate in 5 plies),
+  cap-demo if AGENT_WALLET_ADDRESS set, prints page URL; on settle failure points at replay-last.
+- N2 `npm run replay-last` (src/replay-last.ts): re-prints the last live run from result.json + cap-demo.json,
+  no chain. Verified on LIVE-RUNNER's files (settle 0xf177…f6f4, cap tx 0xfa0a…239a).
+- N3 `npm test`: 17 node:test tests pass (money.ts edge cases, EIP-712 round-trip/tamper/typehash, FEN).
+- N4 `npm run check-setup`: one-screen REQUIRED / LIVE / FALLBACK / OPTIONAL + verdict; scripts use `--quiet`.
+- Fix (ef43fc7): an illegal FEN (side not to move in check) hung Stockfish; `--fen` is now validated in
+  preflight, before createMatch, because a mid-run failure after staking strands the stakes.
+
 ## ~01:50 — RESTART: resynced to rewritten origin/feat/settle (9de3533); S1 done
 - No keys on this laptop by design; LIVE-RUNNER (feat/live-runs) runs live with real keys and owns
   web/public/result.json + cap-demo.json.

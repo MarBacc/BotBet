@@ -18,6 +18,8 @@ export const seconds = (ms: number) => `${(ms / 1000).toFixed(1)}s`;
 /** Split on spaces to fit `max` columns; a single long token (a URL, a hash) is kept whole. */
 function wrap(line: string, max: number): string[] {
   if (line.length <= max) return [line];
+  // A line carrying a URL or a hash reads better whole (and stays clickable in the terminal).
+  if (line.split(" ").some((word) => word.length > max / 2)) return [line];
   const indent = line.match(/^(\S+\s+)/)?.[1]?.replace(/\S/g, " ") ?? "  ";
   const out: string[] = [];
   let current = "";
