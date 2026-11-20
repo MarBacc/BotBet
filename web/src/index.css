@@ -57,3 +57,4 @@ button.dev{font-size:.75rem;padding:4px 10px;opacity:.6}
 .sample-ribbon{position:fixed;top:28px;right:-58px;transform:rotate(45deg);background:var(--gold);color:#000;font-weight:900;letter-spacing:.12em;padding:8px 70px;z-index:50;box-shadow:0 4px 12px #0008;pointer-events:none}
 .keys{color:var(--mut);font-size:.85rem}
 @media(max-width:1400px){:root{font-size:17px}.grid{grid-template-columns:minmax(0,520px) minmax(0,1fr)}.banner{font-size:1.6rem}h1{font-size:2rem}}
+.why{margin:0 0 10px;color:var(--fg);font-size:1rem}

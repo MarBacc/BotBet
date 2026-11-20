@@ -23,3 +23,6 @@
 - 01:42 DONE: W3 projector mode — SAMPLE DATA ribbon, LIVE ON ARC + settle time, Space/←/→ shortcuts, 1280x720 sizing (no overflow).
 - NEXT: W4 cap card wording + ?sampleCap=1.
 - BLOCKERS: none.
+- 01:42 DONE: W4 cap card per interfaces.md §6 (human amounts), "Allowed ✓ / Refused on-chain" wording, cap-in-contract line, ?sampleCap=1 dev preview; hidden on 404.
+- NEXT: W5 TTS in-memory cache.
+- BLOCKERS: none.

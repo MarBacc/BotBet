@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { formatUsdc } from 'botbet-shared'
+import { formatUsdc, toBaseUnits } from 'botbet-shared'
 
 export interface CapDemo {
   wallet: string
@@ -10,12 +10,22 @@ export interface CapDemo {
 
 const fmt = (v: string) => formatUsdc(v, { symbol: false })
 
+/** cap-demo.json amounts are human strings ("0.02", interfaces.md §6); tolerate base units too. */
+export function capUsdc(v: string): string {
+  try {
+    const t = String(v ?? '').trim()
+    return formatUsdc(t.includes('.') ? toBaseUnits(t) : t)
+  } catch {
+    return `${v} USDC`
+  }
+}
+
 /** Turn a raw revert like "CapExceeded(100000, 50000)" into "CapExceeded: 0.10 > cap 0.05". */
 export function decodeReason(c: CapDemo): string {
   const m = /CapExceeded\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/.exec(c.refused.reason ?? '')
   if (m) return `CapExceeded: ${fmt(m[1])} > cap ${fmt(m[2])}`
   if (c.refused.reason) return c.refused.reason
-  return `CapExceeded: ${fmt(c.refused.amount)} > cap ${fmt(c.capUsdc)}`
+  return `CapExceeded: ${c.refused.amount} > cap ${c.capUsdc}`
 }
 
 export async function loadCapDemo(): Promise<CapDemo | null> {
@@ -32,7 +42,12 @@ export async function loadCapDemo(): Promise<CapDemo | null> {
 export function useCapDemo(): [CapDemo | null, boolean, () => void] {
   const [live, setLive] = useState<CapDemo | null>(null)
   const [preview, setPreview] = useState<CapDemo | null>(null)
-  useEffect(() => { loadCapDemo().then(setLive) }, [])
+  useEffect(() => {
+    loadCapDemo().then(setLive)
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('sampleCap') === '1') {
+      import('./dev/cap-demo.sample.json').then(m => setPreview(m.default as CapDemo))
+    }
+  }, [])
   const toggle = () => {
     if (!import.meta.env.DEV) return
     if (preview) { setPreview(null); return }
@@ -42,18 +57,20 @@ export function useCapDemo(): [CapDemo | null, boolean, () => void] {
 }
 
 export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
+  const short = (h: string) => `${h.slice(0, 10)}…${h.slice(-6)}`
   return (
     <div className="panel cap">
       <h2>Agent wallet safety {sample && <span className="tag sm">sample</span>}</h2>
-      <div className="kv"><span>Wallet</span><a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a></div>
-      <div className="kv"><span>Spending cap</span><b>{formatUsdc(c.capUsdc)}</b></div>
+      <p className="why">The spending cap lives in the contract, so even a buggy agent can't overspend.</p>
+      <div className="kv"><span>Wallet</span>{base ? <a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a> : <span className="mono">{c.wallet}</span>}</div>
+      <div className="kv"><span>Cap</span><b>{capUsdc(c.capUsdc)}</b></div>
       <div className="pay ok">
-        <span>✔ Allowed · {formatUsdc(c.allowed.amount)}</span>
-        <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {c.allowed.txHash.slice(0, 10)}…{c.allowed.txHash.slice(-6)}</a>
+        <span>Allowed: {capUsdc(c.allowed.amount)} ✓</span>
+        {base ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a> : <span className="mono">tx {short(c.allowed.txHash)}</span>}
       </div>
       <div className="pay no">
-        <span>✖ Refused · {formatUsdc(c.refused.amount)}</span>
-        <span className="mono">{decodeReason(c)}</span>
+        <span>Refused on-chain: {capUsdc(c.refused.amount)}</span>
+        <span className="mono" title={c.refused.reason}>— {decodeReason(c)}</span>
       </div>
     </div>
   )
