@@ -19,6 +19,14 @@ export class SettleError extends Error {
   }
 }
 
+/** A failure tagged with the step it happened in, for the ❌ line and --json. */
+export class StepFailure extends Error {
+  constructor(readonly step: string, override readonly cause: SettleError) {
+    super(cause.message);
+    this.name = "StepFailure";
+  }
+}
+
 /** A tx that was broadcast but never mined within the patience window. */
 export class NotMinedError extends SettleError {
   constructor(readonly hash: Hash, readonly link: string, seconds: number) {
