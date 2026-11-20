@@ -2,9 +2,11 @@
 
 **Two AI chess agents stake USDC on Arc, play their own game, and pay the winner through a referee-attested result.**
 
-Demo video: [video link]
+![The BotBet result page: board replay, pot, payouts and the referee-attested badge](docs/screenshots/main.png)
 
 BotBet makes an agent-to-agent deal visible from stake to payout. Deep Thought (Stockfish depth 12) plays White against Hasty Hal (depth 4). Each bot stakes 2 USDC in MatchEscrow. After a decisive game, the referee signs the result with EIP-712 and the escrow pays the 4 USDC pot to the winner. The web page replays the game, links to the Arc transaction, and includes presentation and voice-commentary features.
+
+![Winner banner: Deep Thought wins and the 4 USDC pot is paid on Arc](docs/screenshots/winner.png)
 
 ## How it works
 
@@ -46,7 +48,7 @@ sequenceDiagram
 - Two recorded successful full-game settles paid 4 USDC to Deep Thought in 55 plies:
   - [Run 1 settle transaction](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4)
   - [Run 2 settle transaction](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
-- Demo video: [video link]
+- AgentWallet allowed 0.02 USDC payment: [transaction](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC over-cap payment was refused by the contract in simulation (`CapExceeded(100000, 50000)`), so it was never broadcast.
 
 Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interface at `0x3600000000000000000000000000000000000000` for stake and payout amounts.
 
@@ -58,26 +60,27 @@ Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interfac
 - AgentWallet enforces its 0.05 USDC per-payment limit in the contract. The over-cap demo request returns `CapExceeded` in simulation and is not broadcast.
 - **Trust limitation:** MatchEscrow verifies the referee's attestation; it does not independently verify the chess moves or PGN. The referee could attest to an incorrect result. On-chain move verification is on the roadmap.
 
+## ElevenLabs voice commentary
+
+The page's **Hear the result** button narrates the outcome with the **ElevenLabs Text to Speech API**. It builds one announcer line from `result.json` (for example "Checkmate in 28 moves! Deep Thought takes the 4 USDC pot, settled on Arc.") and sends it to a server-side `/api/tts` route in `web/vite.config.ts`, which calls ElevenLabs and returns the MP3. The API key stays on the server and never reaches the browser. Set `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` in `.env` and run the page with `npm run dev` or `npm run preview`. Without them, the button hides itself.
+
 ## Run it yourself
 
-Prerequisites: Node.js 20 or newer, npm, and Foundry for contract development. Use testnet burner keys only for a real settle run.
+**Judges (no keys, nothing sent on-chain).** Node.js 20.12+ and npm. Foundry is *not* needed.
 
 ```bash
-git clone https://github.com/MarBacc/BotBet.git
-cd BotBet
-cp .env.example .env   # add the required testnet keys locally; never commit .env
-export PATH="$HOME/.foundry/bin:$PATH"
-
+git clone https://github.com/MarBacc/BotBet.git && cd BotBet
 cd shared && npm install && npm run build
 cd ../referee && npm install
-npm run play-game      # offline/keyless game; sends nothing on-chain
-npm run settle         # broadcasts real Arc testnet transactions
-npm run settle -- --fen "7k/8/5KQ1/8/8/8/8/8 w - - 0 1"  # verified offline; still sends real testnet transactions
-
-cd ../web && npm install && npm run dev
+npm run play-game      # plays a full Stockfish game offline and signs the result
+npm run check-setup    # shows what a live run would need
+npm run replay-last    # replays the recorded live Arc run, with explorer links
+cd ../web && npm install && npm run build && npm run preview   # open the printed URL
 ```
 
-`npm run settle` needs funded deployer, referee, and bot wallets. It creates a fresh match and sends transactions; review its dry-run and wallet configuration before running it. The short FEN is verified for an offline mate in one; its on-chain settlement has not yet been recorded.
+**Live settle on Arc testnet (needs funded burner keys).** `cp .env.example .env`, add four testnet keys,
+then in `referee/` run `npm run settle -- --dry-run` and, after checking it, `npm run settle`.
+Foundry (`forge`) is only needed to rebuild or redeploy `contracts/`.
 
 ## Roadmap
 
@@ -85,6 +88,5 @@ Next steps from [`docs/roadmap.md`](docs/roadmap.md): spectator betting pools, p
 
 ## Team and credits
 
-- Team: [team member names]
-- Project credits: [credits and roles]
-- Demo video: [video link]
+- Team and roles: listed on the Devpost submission.
+- Built with Arc testnet, Circle USDC, Stockfish, chess.js, viem, Foundry, React + Vite and ElevenLabs.
