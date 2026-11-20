@@ -48,6 +48,18 @@ test("modified strategy returns MISMATCH", async (t) => {
   assert.match(result.reason, /hash differs/);
 });
 
+test("CRLF checkout (Windows core.autocrlf) verifies against an LF registration", async (t) => {
+  const f = await fixture(t);
+  await registerPackage({ ...f, signer: f.signer });
+  for (const name of ["bot.json", "strategy.ts"]) {
+    const lf = await readFile(join(f.dir, name), "utf8");
+    await writeFile(join(f.dir, name), lf.replace(/\n/g, "\r\n"));
+  }
+
+  const result = await verifyPackage({ dir: f.dir, name: "Test Bot", registryFile: f.registryFile });
+  assert.equal(result.ok, true, result.reason);
+});
+
 test("signature from the wrong signer returns MISMATCH", async (t) => {
   const f = await fixture(t);
   const record = await registerPackage({ ...f, signer: f.signer });

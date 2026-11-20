@@ -96,6 +96,16 @@ export async function readBotManifest(dir: string): Promise<BotManifest> {
   };
 }
 
+/**
+ * Read a package file for hashing. Text files (no NUL byte) are normalized CRLF -> LF so a Windows
+ * checkout (git core.autocrlf=true) hashes the same as the LF checkout the bot was registered from.
+ */
+async function readForHash(path: string): Promise<Buffer> {
+  const bytes = await readFile(path);
+  if (bytes.includes(0) || !bytes.includes(0x0d)) return bytes;
+  return Buffer.from(bytes.toString("latin1").replace(/\r\n/g, "\n"), "latin1");
+}
+
 export async function canonicalPackageBytes(dir: string, allowRepoEntry = false): Promise<Buffer> {
   const packageDir = await realpath(resolve(dir));
   const manifest = await readBotManifest(packageDir);
@@ -114,7 +124,7 @@ export async function canonicalPackageBytes(dir: string, allowRepoEntry = false)
       }
       if (!entry.isFile()) throw new Error(`Package contains a non-regular file: ${relative(packageDir, absolute)}`);
       const name = toPosix(relative(packageDir, absolute));
-      files.set(name, await readFile(absolute));
+      files.set(name, await readForHash(absolute));
     }
   }
 
@@ -135,7 +145,7 @@ export async function canonicalPackageBytes(dir: string, allowRepoEntry = false)
     if (!isInside(sourceRoot, entryRealPath)) throw new Error("External entries are limited to existing files inside referee/src.");
     const entryAlias = `@entry/${toPosix(relative(sourceRoot, entryRealPath))}`;
     if (files.has(entryAlias)) throw new Error("External entry alias collides with a package file.");
-    files.set(entryAlias, await readFile(entryRealPath));
+    files.set(entryAlias, await readForHash(entryRealPath));
   }
 
   const ordered = [...files.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
