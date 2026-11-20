@@ -53,3 +53,12 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   present mode (P key) renders, 0 console/page errors, 0 failed requests.
   Screenshots poker.png + poker-present.png taken locally (scratchpad), not committed: they belong on feat/qa.
 - Board nit (keyless play-poker writes web/public/poker-result.json): owner poker-engine, touched 03:45 → left to them.
+
+## 04:05 Review: PR #29 [presenter] (feat/presenter → solo), referee/scripts/demo.mjs — ❌ on Windows
+- Reproduced keyless on Windows (Node 20.20.2): preflight → fallback `spawn("npm", …)` cannot start npm.cmd
+  without a shell → skips replay-last, prints "Open the backup video", exit 1. Same for the live
+  `npm run settle` step on a Windows laptop with keys. Also `process.kill(-pid)` / `detached` are POSIX-only.
+- Fix (tested, not pushed: presenter owns the branch, PR opened <15 min ago): run
+  `process.execPath --import tsx src/settle.ts|src/replay-last.ts` instead of npm; `detached: !isWin`;
+  on win32 kill with `taskkill /pid <pid> /T /F`. With it: fallback replay works, exit 0, Git Bash + PowerShell.
+- Note: new `npm run demo` no longer runs src/presenter.ts (cap demo + summary box): intentional?
