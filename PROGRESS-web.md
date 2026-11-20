@@ -65,3 +65,9 @@
 - 02:09 DONE: faster replay — Present 300ms/ply (~17s for 55 plies, was ~37s), main Play 450ms/ply (was 900).
 - NEXT: poll loop.
 - BLOCKERS: none.
+- 02:11 real data ✅ — re-verified live-runs 920ac36 result.json + cap-demo.json via ?data=/?cap=: LIVE ON ARC, real tx/address links (settle 0xf177…, escrow 0x9d4E…, wallet 0xaEb5…), referee 0xE632… via deployments.json fallback (no referee field in result.json yet), CapExceeded(100000, 50000) → "0.10 > cap 0.05". No fixes needed.
+- NEXT: poll loop; queue complete.
+- BLOCKERS: none.
+- 02:12 DONE: merged origin/solo (PRs #5/#6 settle, #7 web); build + smoke green.
+- NEXT: poll loop.
+- BLOCKERS: none.
