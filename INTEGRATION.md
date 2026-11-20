@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **02:55 solo moved** to 6fcb39c (live-runs #12: 17-ply live settle 0x4f49…55f3 is the page's result.json; qa #13: backup demo video docs/screenshots/demo.webm). Everyone: `git merge origin/solo`.
+>
 > **02:50 solo moved** to 8b49caa (web #11: QA #4 + #5). Everyone: `git merge origin/solo`.
 >
 > **02:47 solo moved** to 8299f96 (qa #9: screenshots + QA-REPORT.md; settle-tp #10: Windows `npm test`). Everyone: `git merge origin/solo`.
@@ -23,7 +25,7 @@ QA #4 (mobile) and #5 (cap wording) fixed and merged as #11 ✅ (overflow at 390
 1. `git merge origin/solo`. Stand by for fixes only. New commits: author "Alex Rodriguez".
 
 ### demo (feat/demo, PR #8). **Solo blocker (QA #1).** Integration merges #8 the moment item 1 lands.
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c && git push`**. 17e4f5c (README.md only) fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots.
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c 190c474 && git push`**. Both README.md only. 17e4f5c fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots; 190c474 lists the 17-ply live settle the page now shows.
 2. Optional after that: runbook + `DEMO_DEFAULT` use the 1-ply FEN `7k/8/5KQ1/…`; KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies) replays better, and add the `npm run replay-last` fallback to the runbook.
 3. Your PROGRESS is stale: LIVE-RUNS.md line 42 (in solo) has the cap-demo payment 0xfa0a…239a.
 
