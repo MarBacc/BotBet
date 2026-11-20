@@ -59,3 +59,9 @@
 - 02:05 web renders real cap-demo.json ✅ (live-runs 1a2adc3: wallet 0xaEb5…5262, allowed 0.02 tx 0xfa0a…239a, refused 0.10 CapExceeded: 0.10 > cap 0.05). Added dev-only ?cap= preview param.
 - NEXT: poll loop.
 - BLOCKERS: author-name ask pending owner.
+- 02:08 DONE: go-live — gates G1–G4 green on solo+live-runs and solo+web; PR #4 and #2 merged into solo (2431bf3); posted "solo moved" on PR #5; feat/web fast-forwarded to solo.
+- NEXT: poll loop (fixes only after 05:00 freeze).
+- BLOCKERS: none.
+- 02:09 DONE: faster replay — Present 300ms/ply (~17s for 55 plies, was ~37s), main Play 450ms/ply (was 900).
+- NEXT: poll loop.
+- BLOCKERS: none.
