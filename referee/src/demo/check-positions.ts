@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import { playGame } from "../game.js";
-import { DEMO_POSITIONS } from "./positions.js";
+import { DEMO_DEFAULT, DEMO_POSITIONS } from "./positions.js";
 
 const RUNS = 3;
 const passing: { id: string; plies: number; uci: string[] }[] = [];
@@ -51,5 +51,6 @@ if (passing.length === 0) {
 } else {
   // Stable sort retains candidate order when two reliable positions have the same ply count.
   passing.sort((a, b) => a.plies - b.plies);
-  console.log(`DEMO_DEFAULT candidate: ${passing[0]!.id} (${passing[0]!.plies} plies; identical UCI moves in ${RUNS} runs)`);
+  console.log(`Shortest verified candidate (not the live default): ${passing[0]!.id} (${passing[0]!.plies} plies; identical UCI moves in ${RUNS} runs)`);
+  console.log(`DEMO_DEFAULT: ${DEMO_DEFAULT.id} — ${DEMO_DEFAULT.fen} (the position recorded in LIVE-RUNS.md)`);
 }

@@ -2,12 +2,12 @@
 
 ## Ten minutes before
 
-- Have the settle operator confirm the deployer, referee, and bot wallets have enough USDC for the planned run using their balance check/dry run. Do not display keys or terminal environment variables.
+- Have the settle operator confirm the deployer, referee, and bot wallets have enough USDC for the planned run using the keyless setup check or the operator's balance check. Do not display keys or terminal environment variables.
 - Confirm the operator's private `.env` is present in the repository root. Never open it on the projector.
-- Start `npm run dev` in `web/`; open the page and confirm the current result and AgentWallet cap card load. Use only the integrated web build that includes Present mode and the cap card.
-- Open the Arc testnet explorer and the recorded backup video in separate tabs. Put the successful settle transaction page in a ready tab.
+- Start `npm run dev` in `web/`; open the page and confirm the live result and AgentWallet cap card load.
+- Open the Arc testnet explorer and the backup video (`docs/screenshots/demo.webm`) in separate tabs. Pre-open the latest settle and allowed-payment transactions linked below.
 - Enlarge the terminal font, turn on Do Not Disturb, and close unrelated windows.
-- The offline checker confirms `7k/8/5KQ1/8/8/8/8/8 w - - 0 1` (queen mate on g7) ends in one ply, identically in three runs. The short-FEN on-chain settle has not been recorded here; rehearse it on the demo laptop or use the successful standard-game recording and identify it accurately.
+- The live FEN is `8/8/8/4k3/8/8/8/3QK3 w - - 0 1`. The recorded Arc run ended by checkmate in 17 plies in 21.8 seconds.
 
 ## 0:00–0:20 — The problem
 
@@ -19,17 +19,17 @@ Show the page's **Stake → Play → Referee signs → Contract pays** strip.
 
 **Say:** “That is the whole loop. The agents fund the match, Stockfish plays the game, the referee signs the result, and MatchEscrow pays the winner. The page lets everyone inspect the replay and the transaction.”
 
-## 0:40–1:40 — Run or show the recorded game
+## 0:40–1:40 — Run or replay the live game
 
-From `referee/`, run on the laptop with the required keys, or play the recording:
+From `referee/`, run on the laptop with the required keys, or show the recorded live run:
 
 ```bash
-npm run settle -- --fen "7k/8/5KQ1/8/8/8/8/8 w - - 0 1"
+npm run settle -- --fen "8/8/8/4k3/8/8/8/3QK3 w - - 0 1"
 ```
 
-Point to each step in order: **createMatch** creates a fresh escrow match; each **approve + stake** pair authorizes and locks a bot's 2 USDC; **the game** runs from the selected FEN; **the EIP-712 signature** binds the winner, ply count, PGN hash, match ID, chain and escrow; **settle()** verifies that referee-attested result and pays the 4 USDC pot. The two recorded standard-game settles are linked in the README. If showing one of those recordings, say it used the normal starting position, not this short FEN.
+Point to each step in order: **createMatch** creates a fresh escrow match; each **approve + stake** pair authorizes and locks a bot's 2 USDC; **the game** uses the live FEN and finished in 17 plies (21.8 seconds) in the recorded rehearsal; **the EIP-712 signature** binds the winner, ply count, PGN hash, match ID, chain, and escrow; **settle()** verifies that referee-attested result and pays the 4 USDC pot. The recorded settle transaction is [`0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3`](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3).
 
-**Say:** “Watch the contract events as the match is funded. The move loop is local; once the game ends, the referee signs a compact result and the escrow checks that signature before paying.”
+**Say:** “This is the exact position we rehearsed on Arc. Deep Thought won in 17 plies, and the whole run reached a verified settlement in 21.8 seconds. Here are the match funding steps, the signed result, and the settle transaction.”
 
 ## 1:40–2:10 — Verify the payout
 
@@ -39,9 +39,9 @@ Open the settle transaction in the Arc explorer and point to `Settled` and the 4
 
 ## 2:10–2:30 — AgentWallet safety
 
-If a current cap-demo record is available, show the card: the deployed AgentWallet has a 0.05 USDC per-payment cap. The allowed 0.02 USDC payment is mined; the 0.10 USDC attempt is simulated against the contract and returns `CapExceeded`. The refused request is not broadcast, so it spends no gas and moves no funds. No cap-demo record or payment hash is in the live-run notes; if no current record is loaded, skip this segment or show clearly marked sample data without calling it live evidence.
+Show the deployed AgentWallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262) and its 0.05 USDC per-payment cap. The allowed 0.02 USDC transfer to the referee was mined and verified in [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC attempt was simulated and returned `CapExceeded(100000, 50000)`; it was not broadcast.
 
-**Say:** “A small payment fits under the wallet's cap. A larger one hits the contract's `CapExceeded` check. We simulate the refusal so we can show the real contract error without sending a reverting transaction.”
+**Say:** “The allowed payment is on Arc. The larger request hit the wallet's `CapExceeded` check in simulation, so no reverting transaction was sent and no money moved.”
 
 ## 2:30–3:00 — Why Arc, roadmap, close
 
@@ -49,8 +49,8 @@ If a current cap-demo record is available, show the card: the deployed AgentWall
 
 ## Fallbacks
 
-- **Arc RPC is slow or a transaction is stuck:** switch to the backup video at the same timestamp. Do not retry the same match; a fresh run needs a fresh match ID.
-- **The settle run fails:** show the last successful recorded settle: [run 1 settle](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4) or [run 2 settle](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4), then show the page replay.
-- **The page is broken:** open `web/public/result.json` in the repo or use the recording and explorer transaction.
-- **Present mode does not start:** use the page's Present button; press `P` or `Esc` to exit, `Space` to skip to the result, and `R` to replay.
-- **AgentWallet card is missing:** skip it and state that the deployed wallet's 0.05 USDC cap is on-chain; do not substitute sample data as live evidence.
+- **Arc RPC is slow or a transaction is stuck:** switch to `docs/screenshots/demo.webm` at the same timestamp. Do not retry the same match; a fresh run needs a fresh match ID.
+- **The settle run fails:** show the verified 17-ply live settle at [the Arc explorer](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3), then show the page replay. The earlier [run 1](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4) and [run 2](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4) are also verified settles.
+- **The page is broken:** open `web/public/result.json` from the live run or use the recording and explorer transaction.
+- **Present mode does not start:** click the page's Present button; press `P` or `Esc` to exit, `Space` to skip to the result, and `R` to replay.
+- **AgentWallet card is missing:** open `web/public/cap-demo.json` and the allowed-payment transaction link; explain that the over-cap result is a simulation, not a mined refusal transaction.

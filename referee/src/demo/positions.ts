@@ -5,39 +5,39 @@ export interface DemoPosition {
   note: string;
 }
 
-/** Small, decisive queen-and-king mating puzzles for a short live demo. */
+/** The first position is the exact FEN used for the recorded live Arc settlement. */
 export const DEMO_POSITIONS: DemoPosition[] = [
   {
-    id: "queen-net-g7",
-    fen: "7k/8/5KQ1/8/8/8/8/8 w - - 0 1",
+    id: "arc-live-17-ply",
+    fen: "8/8/8/4k3/8/8/8/3QK3 w - - 0 1",
     sideToMove: "w",
-    note: "White has a forced queen mate on g7, protected by the king.",
+    note: "Live Arc rehearsal: Deep Thought won by checkmate in 17 plies; settle 0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3.",
   },
   {
-    id: "queen-net-b7",
-    fen: "k7/8/1QK5/8/8/8/8/8 w - - 0 1",
+    id: "arc-live-file-mirror",
+    fen: "8/8/8/3k4/8/8/8/3KQ3 w - - 0 1",
     sideToMove: "w",
-    note: "White has a forced queen mate on b7, protected by the king.",
+    note: "File-reflected candidate based on the live Arc position; not the live FEN.",
   },
   {
-    id: "queen-net-g2",
-    fen: "8/8/8/8/8/5KQ1/8/7k w - - 0 1",
+    id: "arc-live-rank-mirror",
+    fen: "3QK3/8/8/8/4k3/8/8/8 w - - 0 1",
     sideToMove: "w",
-    note: "White has a forced queen mate on g2, protected by the king.",
+    note: "Rank-reflected candidate based on the live Arc position; not the live FEN.",
   },
   {
-    id: "queen-net-b2",
-    fen: "8/8/1QK5/8/8/8/8/k7 w - - 0 1",
+    id: "arc-live-double-mirror",
+    fen: "3KQ3/8/8/8/3k4/8/8/8 w - - 0 1",
     sideToMove: "w",
-    note: "White has a forced queen mate on b2, protected by the king.",
+    note: "Rank-and-file-reflected candidate based on the live Arc position; not the live FEN.",
   },
   {
-    id: "queen-net-e7",
-    fen: "4k3/8/3QK3/8/8/8/8/8 w - - 0 1",
+    id: "queen-c1-candidate",
+    fen: "8/8/8/4k3/8/8/8/2Q1K3 w - - 0 1",
     sideToMove: "w",
-    note: "White has a forced queen mate on e7, protected by the king.",
+    note: "Alternate queen placement for checker coverage; not the live FEN.",
   },
 ];
 
-// Shortest candidate, confirmed as the same depth-12 checkmate in three consecutive runs.
+/** Default to the exact position played and settled live on Arc. */
 export const DEMO_DEFAULT = DEMO_POSITIONS[0]!;
