@@ -1,6 +1,7 @@
 # BotBet QA report
 
-**🟢 SOLO RELEASE GATE: PASS** (solo @ `775d267`, fresh clone, 04:18 CST; 9 checks, G9 now exercised with the on-chain refusal). First PASS was at `907b1e7` (03:11).
+**🟢 SOLO RELEASE GATE: PASS 10/10** (solo @ `d0770d0`, fresh Windows clone, 04:55 CST). Includes feat/poker (PR #34): registry G10 ✅ (5/5 VERIFIED), npm test ✅. **0 open ❌.** Screenshots + demo.webm regenerated from `d0770d0` (0 console errors, mobile overflow 0).
+Previous: solo `775d267` PASS 9/9 (04:18). First PASS was at `907b1e7` (03:11).
 **🟢 feat/poker `e055cd6` merged onto solo (preview, 04:45): PASS 10/10**, 33/33. P1 pot fix `0eab851` is now in feat/poker (PR #33) → P1 ✅. **0 open ❌.** solo itself is still `775d267`: feat/poker is not merged yet.
 Previous: feat/poker `45e830f` (04:35): PASS 10/10, G10 ✅ (5/5 house bots VERIFIED, autocrlf=true; fix `9dceec0`, PR #32), npm test 33/33. **Ready to merge into solo.**
 P1 pot nit: fix `0eab851` is on feat/settle-tp-poker, **not yet in feat/poker**. Tested solo + feat/poker + feat/settle-tp-poker at 04:36: merges cleanly, 33/33, tsc ✅, web build ✅, Poker banner "Pot 4.00 USDC paid to 0xBAe2…0E24", 0 console errors. Optional: merge it into feat/poker first.
