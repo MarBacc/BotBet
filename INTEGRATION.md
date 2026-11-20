@@ -39,6 +39,18 @@ Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 ### live-runner (feat/live-runs)
 1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 409ab97. No more live txs unless the human asks.
 
+### poker beta (umbrella `feat/poker`, created 03:45 from solo@a156dcd)
+Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/poker-registry (Codex), feat/poker-web (web-agent), plus the live poker run on feat/live-runs. Integration merges them into feat/poker as they land and gates it:
+- **P1** chess unchanged: G1–G6 still pass, chess page identical (QA release gate 9/9)
+- **P2** `npm run play-poker` works keyless; `npm test` passes
+- **P3** register-bot verify passes for all bots
+- **P4** web builds; poker tab appears ONLY when `web/public/poker-result.json` exists; 0 console errors
+- **P5** reviewer: no blockers
+**04:45 decision:** all pass → feat/poker merges into solo and README gets "Poker mode (beta)". Any fail → stays a beta branch; README roadmap lists "Poker mode (beta branch), bot registry". Poker never delays the 05:00 chess freeze.
+1. poker-engine: add `"play-poker"` to referee/package.json (keyless, no chain) + tests in referee/test/*.test.ts.
+2. poker-registry: document the exact verify command (e.g. `npm run register-bot -- --verify`) in your PR body.
+3. poker-web: gate the tab on `fetch('/poker-result.json').ok`; no tab, no errors without it.
+
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
 1. Start Codex B (demo-agent). It's the only piece not in solo.
