@@ -1,7 +1,7 @@
 # BotBet QA report
 
-**🟢 SOLO RELEASE GATE: PASS** (solo @ `7406c3f`, fresh clone, 03:20 CST; 9 checks). First PASS was at `907b1e7` (03:11).
-Branch heads: feat/demo `e7dbce3` (in solo), feat/web `0085987` (preview merge: PASS), feat/settle-tp `ff5a9e6` (in solo), **feat/live-runs `19ffa31` (preview merge: FAIL G9, see #7, merge only together with a docs update)**.
+**🟢 SOLO RELEASE GATE: PASS** (solo @ `a156dcd`, fresh clone, 03:28 CST; 9 checks). First PASS was at `907b1e7` (03:11).
+Branch heads: feat/demo `f7aa2e4` (preview merge: PASS; PROGRESS only, #7 docs not yet changed), feat/web `b75a3ae` (in solo), feat/settle-tp `ff5a9e6` (in solo), **feat/live-runs `19ffa31` (preview merge: FAIL G9, see #7, merge only together with a docs update)**.
 
 ## Release gate (solo)
 
