@@ -36,3 +36,9 @@
 - Wallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262).
 - Deployment [`0xb046d2e222859c5d3d912cb6d89fe548b1616a6d9728e95a942a026c0d432e88`](https://explorer.testnet.arc.io/tx/0xb046d2e222859c5d3d912cb6d89fe548b1616a6d9728e95a942a026c0d432e88).
 - Funding of 0.20 USDC verified by the Transfer event and wallet balance [`0x31f1e3f9b68216234609ae5d12b8ed4159494187a1a8beb7c45d809cba090093`](https://explorer.testnet.arc.io/tx/0x31f1e3f9b68216234609ae5d12b8ed4159494187a1a8beb7c45d809cba090093).
+
+## 2026-11-20 02:00:41 CST — Cap demo
+
+- Allowed payment of 0.02 USDC to referee `0xE632a919CEE69FC9482a6A719D47878EEDA28345`. Verified the wallet’s Paid event. [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a)
+- A simulated 0.10 USDC payment reverted with `CapExceeded(100000, 50000)`.
+- Final wallet balance 0.18 USDC. Verified `web/public/cap-demo.json`.
