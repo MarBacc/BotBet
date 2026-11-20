@@ -36,6 +36,15 @@ Not run from this laptop (no keys here by design).
   result.json keys = sample's + `referee`; keccak(pgn) = pgnHash. `--fen` run settles too (1 ply mate).
 - Needs `cd contracts && forge build` first (read-only use).
 
+## 02:45 — S4 + S5: DONE
+- S4: `--fen` verified end to end in the rehearsal path; total + game time now printed. feat/demo not on
+  origin yet (no positions.ts / REQUESTS.md to act on).
+- S5: summary boxes (settle: winner, payout, balances, settle link, total time; dry run; failure box) and
+  numbered ✅/❌ steps in cap-demo. cap-demo split into cap-demo-core.ts (`runCapDemo`) + CLI; `--dry-run`
+  simulates the 0.02 payment and prints what it would send.
+- Rehearsal now also deploys the REAL AgentWallet bytecode, checks AGENT_WALLET_ABI == forge artifact,
+  funds 0.20 mock USDC, runs cap-demo dry + live: allowed 0.02 paid, 0.10 → CapExceeded(100000, 50000).
+
 ## T1 — keys check
 **Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
 

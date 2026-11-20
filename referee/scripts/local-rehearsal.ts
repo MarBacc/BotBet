@@ -23,10 +23,12 @@ import { formatUsdc, toBaseUnits } from "botbet-shared";
 import { ARC_TESTNET_CHAIN_ID } from "../src/env.js";
 import { SettleError } from "../src/errors.js";
 import { StepFailure, runSettle } from "../src/settle-core.js";
+import { AGENT_WALLET_ABI, runCapDemo } from "../src/cap-demo-core.js";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const OUT = resolve(REPO_ROOT, "contracts", "out");
 const RESULT_PATH = "/tmp/rehearsal-result.json";
+const CAP_DEMO_PATH = "/tmp/rehearsal-cap-demo.json";
 
 /** anvil's default accounts 0–3. Public test keys, published in the Foundry docs. */
 const ANVIL_KEYS: readonly Hex[] = [
@@ -151,9 +153,40 @@ async function main(): Promise<void> {
       console.log(`  run ${run} settled in ${((Date.now() - started) / 1000).toFixed(1)}s: ${summary.txs!.settle!.hash}`);
     }
 
+    // AgentWallet cap demo against the real AgentWallet bytecode, if it has been built.
+    let capLine = "cap demo skipped (no contracts/out/AgentWallet.sol; run forge build)";
+    if (existsSync(resolve(OUT, "AgentWallet.sol", "AgentWallet.json"))) {
+      console.log("\n══════════ cap demo (AgentWallet) ══════════");
+      const built = artifact("AgentWallet.sol", "AgentWallet").abi;
+      const names = (abi: readonly { type: string; name?: string }[]) =>
+        abi.filter((x) => x.type !== "constructor").map((x) => `${x.type}:${x.name}`).sort().join(",");
+      if (names(built as never) !== names(AGENT_WALLET_ABI)) {
+        throw new Error(`AGENT_WALLET_ABI drifted from the forge artifact:\n  ours  ${names(AGENT_WALLET_ABI)}\n  forge ${names(built as never)}`);
+      }
+      console.log("  ✅ AGENT_WALLET_ABI matches contracts/out/AgentWallet.sol");
+      const capWallet = await deploy("AgentWallet.sol", "AgentWallet", [usdc.address, admin!.address, toBaseUnits("0.05")]);
+      const fund = await adminWallet.writeContract({ address: usdc.address, abi: usdc.abi, functionName: "mint", args: [capWallet.address, toBaseUnits("0.20")] });
+      await client.waitForTransactionReceipt({ hash: fund });
+      console.log(`  AgentWallet ${capWallet.address} (owner admin, cap 0.05, funded 0.20 mock USDC)`);
+      const capCfg = {
+        rpcUrl: args.rpc,
+        chainId: ARC_TESTNET_CHAIN_ID,
+        wallet: capWallet.address,
+        usdc: usdc.address,
+        recipient: referee!.address,
+        ownerKey: ANVIL_KEYS[0]!,
+        explorerBaseUrl: "local-anvil",
+        outPath: CAP_DEMO_PATH,
+      };
+      await runCapDemo({ ...capCfg, dryRun: true });
+      const cap = await runCapDemo(capCfg);
+      capLine = `cap demo: allowed ${cap.allowed.amount} (tx ${cap.allowed.txHash}), refused ${cap.refused.amount} ${cap.refused.reason} → ${CAP_DEMO_PATH}`;
+    }
+
     console.log(`\n✅ REHEARSAL PASSED: ${args.runs} settles on local anvil in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
     settleTxs.forEach((h, i) => console.log(`   run ${i + 1} settle tx ${h}`));
     console.log(`   last result: ${RESULT_PATH}`);
+    console.log(`   ${capLine}`);
   } finally {
     if (anvil) {
       anvil.kill();
