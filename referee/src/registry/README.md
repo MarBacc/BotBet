@@ -43,4 +43,4 @@ The AES-256-GCM envelope contains a version marker, random 12-byte nonce, 16-byt
 
 ## House registrations
 
-Deep Thought and Hasty Hal are house bots. Their package manifests point to the existing, read-only `referee/src/bots.ts`; summaries distinguish depth 12 from depth 4. The package hash includes that source and each manifest. Poker registrations (Nit, Maniac, Theory) are deferred until `origin/feat/poker-engine` is available; no poker-engine branch or source was present when this design was written.
+Deep Thought and Hasty Hal are house bots. Their package manifests point to the existing, read-only `referee/src/bots.ts`; summaries distinguish depth 12 from depth 4. The package hash includes that source and each manifest. Nit, Maniac, and Theory are also registered as house bots using their read-only strategy files from the poker branch. Their manifests and signed records are included alongside the chess house registrations; the poker engine source itself was not modified.

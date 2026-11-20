@@ -1,0 +1,6 @@
+{
+  "name": "Theory",
+  "game": "poker",
+  "strategySummary": "HOUSE BOT — By the book: a 169-hand heads-up preflop chart by position, then a 200-sample Monte Carlo equity estimate against pot odds after the flop.",
+  "entry": "../../../../poker/bots/theory.ts"
+}
