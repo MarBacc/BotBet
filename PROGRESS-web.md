@@ -50,3 +50,6 @@
 - 02:00 DONE: demo b) load time — measured via CDP: preview app-ready 105ms (FCP 36ms, 95KB), dev ~140ms. Present (QR) and About are lazy chunks.
 - NEXT: c) accessibility.
 - BLOCKERS: author-name ask pending owner.
+- 02:00 DONE: demo c) accessibility — contrast audit (all text ≥4.5:1; fixed dev button 2.6→ok), focus-visible rings, aria-labels on icon buttons/slider/moves/QR/board, decorative emoji hidden, meta description.
+- NEXT: d) final build + smoke.
+- BLOCKERS: author-name ask pending owner.

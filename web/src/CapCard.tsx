@@ -65,7 +65,7 @@ export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample:
       <div className="kv"><span>Wallet</span>{base ? <a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a> : <span className="mono">{c.wallet}</span>}</div>
       <div className="kv"><span>Cap</span><b>{capUsdc(c.capUsdc)}</b></div>
       <div className="pay ok">
-        <span>Allowed: {capUsdc(c.allowed.amount)} ✓</span>
+        <span>Allowed: {capUsdc(c.allowed.amount)} <span aria-hidden="true">✓</span></span>
         {c.allowed.txHash && base
           ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a>
           : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}

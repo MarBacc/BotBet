@@ -186,13 +186,13 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
         <h1>BotBet — Arena</h1>
         {sample
           ? <span className="tag" title="result.json not found; showing result.sample.json">SAMPLE DATA</span>
-          : <span className="tag live">● LIVE ON ARC{d.finishedAt ? ` · settled ${new Date(d.finishedAt * 1000).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}` : ''}</span>}
+          : <span className="tag live"><span aria-hidden="true">● </span>LIVE ON ARC{d.finishedAt ? ` · settled ${new Date(d.finishedAt * 1000).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}` : ''}</span>}
         {import.meta.env.DEV && <button className="dev" onClick={toggleCap}>dev: cap card</button>}
         <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
 
       <div className="banner">
-        <span>🏆 {winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
+        <span><span aria-hidden="true">🏆 </span>{winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
         <span>Pot {formatUsdc(d.potUsdc)} paid to {short(winner.address, 6, 4)}</span>
       </div>
       <HearResult line={announcerLine({ plies: d.plies, mate, winnerName: winner.name, potUsdc: d.potUsdc })} />
@@ -211,21 +211,21 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
         <div>
           <Board fen={fens[ply]} hl={hl} label={`Chess board after ply ${ply} of ${total}${ply ? `, last move ${sans[ply - 1]}` : ''}`} />
           <div className="ctl">
-            <button onClick={() => { setPlaying(false); setPly(0) }} disabled={ply === 0}>⏮</button>
-            <button onClick={() => setPly(p => Math.max(0, p - 1))} disabled={ply === 0}>◀</button>
-            <button onClick={() => { if (ply >= total) setPly(0); setPlaying(p => !p) }}>{playing ? '⏸ Pause' : '▶ Play'}</button>
-            <button onClick={() => setPly(p => Math.min(total, p + 1))} disabled={ply === total}>▶</button>
-            <button onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>⏭</button>
+            <button aria-label="First move" onClick={() => { setPlaying(false); setPly(0) }} disabled={ply === 0}>⏮</button>
+            <button aria-label="Previous move" onClick={() => setPly(p => Math.max(0, p - 1))} disabled={ply === 0}>◀</button>
+            <button onClick={() => { if (ply >= total) setPly(0); setPlaying(p => !p) }}>{playing ? <><span aria-hidden="true">⏸ </span>Pause</> : <><span aria-hidden="true">▶ </span>Play</>}</button>
+            <button aria-label="Next move" onClick={() => setPly(p => Math.min(total, p + 1))} disabled={ply === total}>▶</button>
+            <button aria-label="Last move" onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>⏭</button>
             <span className="ply">ply {ply}/{total}</span>
-            <button onClick={() => { setPlaying(false); setPresent(true) }}>⛶ Present</button>
+            <button onClick={() => { setPlaying(false); setPresent(true) }}><span aria-hidden="true">⛶ </span>Present</button>
             <span className="keys">Space play/pause · ←/→ step · P present</span>
           </div>
-          <div className="ctl"><input type="range" min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
+          <div className="ctl"><input type="range" aria-label="Replay position" aria-valuetext={`ply ${ply} of ${total}`} min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
         </div>
 
         <div className="panel">
           <h2>Moves</h2>
-          <div className="moves">
+          <div className="moves" role="group" aria-label="Move list">
             {rows.map(i => (
               <Row key={i} i={i} sans={sans} ply={ply} go={setPly} />
             ))}
@@ -234,7 +234,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
 
         <div className="side">
           <div className="badge">
-            <h3>✔ referee-attested</h3>
+            <h3><span aria-hidden="true">✔ </span>referee-attested</h3>
             <div className="kv"><span>referee</span><a className="mono" href={addr(referee)} target="_blank" rel="noreferrer">{referee}</a></div>
             <div className="kv"><span>matchId</span><span className="mono">{short(d.result.matchId, 10, 8)}</span></div>
             <div className="kv"><span>moveCount</span><span className="mono">{d.result.moveCount}</span></div>
@@ -246,7 +246,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
             <h2>Bots</h2>
             {d.bots.map(b => (
               <div className="bot" key={b.id}>
-                <span className={`nm${b.id === d.winnerId ? ' w' : ''}`}>{b.name} {b.id === d.winnerId && '🏆'}</span>
+                <span className={`nm${b.id === d.winnerId ? ' w' : ''}`}>{b.name} {b.id === d.winnerId && <span role="img" aria-label="winner">🏆</span>}</span>
                 <span>{b.color} · depth {b.depth} · stake {formatUsdc(d.stakeUsdc)}</span>
                 <a className="mono" href={addr(b.address)} target="_blank" rel="noreferrer">{b.address}</a>
                 <span className="mono">
@@ -292,8 +292,8 @@ function Row({ i, sans, ply, go }: { i: number; sans: string[]; ply: number; go:
   return (
     <>
       <span className="n">{i / 2 + 1}.</span>
-      <button className={ply === i + 1 ? 'cur' : ''} onClick={() => go(i + 1)}>{sans[i]}</button>
-      {sans[i + 1] ? <button className={ply === i + 2 ? 'cur' : ''} onClick={() => go(i + 2)}>{sans[i + 1]}</button> : <span />}
+      <button aria-label={`Move ${i / 2 + 1}, white ${sans[i]}`} aria-current={ply === i + 1 ? 'step' : undefined} className={ply === i + 1 ? 'cur' : ''} onClick={() => go(i + 1)}>{sans[i]}</button>
+      {sans[i + 1] ? <button aria-label={`Move ${i / 2 + 1}, black ${sans[i + 1]}`} aria-current={ply === i + 2 ? 'step' : undefined} className={ply === i + 2 ? 'cur' : ''} onClick={() => go(i + 2)}>{sans[i + 1]}</button> : <span />}
     </>
   )
 }

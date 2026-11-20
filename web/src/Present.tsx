@@ -70,7 +70,7 @@ export default function Present(p: PresentProps) {
         </div>
       ) : (
         <div className="pr-result">
-          <div className="pr-win">🏆 {p.winnerName} wins</div>
+          <div className="pr-win"><span aria-hidden="true">🏆 </span>{p.winnerName} wins</div>
           <div className="pr-pay">{formatUsdc(p.potUsdc)} paid to {p.winnerAddress.slice(0, 6)}…{p.winnerAddress.slice(-4)}</div>
           <div className="pr-att">referee-attested · settled on Arc</div>
           {p.settleUrl && (
