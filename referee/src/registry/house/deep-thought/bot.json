@@ -1,0 +1,6 @@
+{
+  "name": "Deep Thought",
+  "game": "chess",
+  "strategySummary": "HOUSE BOT — Stockfish depth 12, configured in the existing read-only referee/src/bots.ts strategy file.",
+  "entry": "../../../bots.ts"
+}

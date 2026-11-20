@@ -5,8 +5,11 @@ import deployments from '../../shared/deployments.json'
 import { CapCard, useCapDemo } from './CapCard'
 import { HearResult, announcerLine } from './Announcer'
 import { Board } from './Board'
+import { loadPoker, type PokerResult } from './poker/data'
+import { ModeTabs, type Mode } from './poker/Tabs'
 
 const Present = lazy(() => import('./Present'))
+const PokerView = lazy(() => import('./poker/PokerView'))
 const About = lazy(() => import('./About').then(m => ({ default: m.About })))
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
@@ -99,13 +102,30 @@ export default function App() {
   const [state, setState] = useState<Loaded | null>(null)
   const [sample, setSample] = useState<Result | null>(null)
   const [error, setError] = useState('')
+  // Poker (beta): the tab appears only if poker-result.json exists; chess stays the default.
+  const [poker, setPoker] = useState<{ data: PokerResult; sample: boolean } | null>(null)
+  const [mode, setMode] = useState<Mode>(() => (import.meta.env.DEV && new URLSearchParams(location.search).get('mode') === 'poker' ? 'poker' : 'chess'))
   useEffect(() => {
     load().then(setState, (e: Error) => setError(e.message))
     loadSample().then(setSample)
+    loadPoker().then(setPoker, () => setPoker(null))
   }, [])
   if (error) return <div className="page center err">{error}</div>
   if (!state) return <div className="page center" aria-busy="true"><div className="spin" /><span>Loading match result…</span></div>
+  const tabs = poker && <ModeTabs mode={mode} onChange={setMode} />
+  if (poker && mode === 'poker') return (
+    <>
+      {tabs}
+      <Boundary fallback={() => <div className="page center err">The poker result could not be displayed.</div>}>
+        <Suspense fallback={<div className="page center" aria-busy="true"><div className="spin" /></div>}>
+          <PokerView d={poker.data} sample={poker.sample} referee={deployments.referee} />
+        </Suspense>
+      </Boundary>
+    </>
+  )
   return (
+    <>
+    {tabs}
     <Boundary fallback={() => (sample && !state.sample
       ? <Boundary fallback={() => <div className="page center err">Something went wrong showing this match.</div>}>
           <Page data={sample} sample warning="The latest result could not be displayed, so the sample match is shown instead." />
@@ -113,6 +133,7 @@ export default function App() {
       : <div className="page center err">Something went wrong showing this match.</div>)}>
       <Page data={state.data} sample={state.sample} warning={state.warning} />
     </Boundary>
+    </>
   )
 }
 
