@@ -29,3 +29,16 @@
 - hasty.approve [`0x2746ab2da6e0b0e6e522638be1d6cf1542937ac373f570398c923685b48cf97b`](https://explorer.testnet.arc.io/tx/0x2746ab2da6e0b0e6e522638be1d6cf1542937ac373f570398c923685b48cf97b)
 - hasty.stake [`0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c`](https://explorer.testnet.arc.io/tx/0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c)
 - settle [`0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4`](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
+
+## 2026-11-20 01:57 CST — AgentWallet deployment and funding
+
+- Arc testnet chain 5042002. Owner `0xEAb99118c98abbfA99aD55dd261c6fcEf8381f7F`. USDC `0x3600000000000000000000000000000000000000`. On-chain cap 50,000 base units (0.05 USDC).
+- Wallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262).
+- Deployment [`0xb046d2e222859c5d3d912cb6d89fe548b1616a6d9728e95a942a026c0d432e88`](https://explorer.testnet.arc.io/tx/0xb046d2e222859c5d3d912cb6d89fe548b1616a6d9728e95a942a026c0d432e88).
+- Funding of 0.20 USDC verified by the Transfer event and wallet balance [`0x31f1e3f9b68216234609ae5d12b8ed4159494187a1a8beb7c45d809cba090093`](https://explorer.testnet.arc.io/tx/0x31f1e3f9b68216234609ae5d12b8ed4159494187a1a8beb7c45d809cba090093).
+
+## 2026-11-20 02:00:41 CST — Cap demo
+
+- Allowed payment of 0.02 USDC to referee `0xE632a919CEE69FC9482a6A719D47878EEDA28345`. Verified the wallet’s Paid event. [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a)
+- A simulated 0.10 USDC payment reverted with `CapExceeded(100000, 50000)`.
+- Final wallet balance 0.18 USDC. Verified `web/public/cap-demo.json`.
