@@ -1,40 +1,37 @@
 # BotBet QA report
 
-**SOLO RELEASE GATE: FAIL (3): G1 G7 G8** (solo @ `8b49caa`, 02:55 CST)
-Preview, solo + feat/demo@`cc0dafb` merged locally (merges cleanly): **FAIL (2): G2 G7.** Merging feat/demo fixes G1 and G8.
+**🟢 SOLO RELEASE GATE: PASS** (solo @ `907b1e7`, fresh clone, 03:11 CST). First PASS after feat/demo merged (PR #8).
+Branch heads at that time: feat/demo `e7dbce3` (merged), feat/web `aaf6aff` (merged), feat/settle-tp `9120234` (preview merge onto solo: PASS).
 
 ## Release gate (solo)
 
 Fresh clone of `origin/solo` on each loop: `bash qa/release-gate.sh solo <dir> 4175`. For a branch preview, add `MERGE=feat/demo`.
 
-| Gate | solo `8b49caa` | solo + feat/demo `cc0dafb` |
+| Gate | solo `907b1e7` (03:11) | history |
 |---|---|---|
-| G1 judge README on solo | ❌ internal README ("Fill these in…") | ✅ |
-| G2 no `[video link` / `[team` / `<validated` | ✅ (trivially, internal README) | ❌ lines 5, 49, 90 `[video link]`; 88 `[team member names]` |
+| G1 judge README on solo | ✅ | ❌ at `8b49caa`/`c022a07`, fixed by PR #8 |
+| G2 no `[video link` / `[team` / `<validated` (also no `[...]`/TODO/TBD) | ✅ | ❌ on feat/demo `cc0dafb`, fixed `e7dbce3` |
 | G3 keyless path: play-game, check-setup, replay-last, npm test, web build + preview | ✅ | ✅ |
 | G4 0 console errors, real data, Present end screen | ✅ | ✅ |
 | G5 page + README hashes all in data, testnet explorer only | ✅ | ✅ |
-| G6 mobile 390px overflow = 0 | ✅ | ✅ |
-| G7 README references docs/screenshots/*, files exist | ❌ none referenced | ❌ none referenced |
-| G8 docs/demo-runbook.md `npm run` scripts exist | ❌ runbook not on solo | ✅ |
-
-To reach PASS (all demo-agent): (a) put the video URL in place of `[video link]` (or delete those lines), and replace `[team member names]`; (b) add screenshots under the README intro, e.g.
-`![Result page](docs/screenshots/main.png)` and `![Winner](docs/screenshots/winner.png)` (files are already on solo via PR #9); (c) merge feat/demo → solo.
+| G6 mobile 390px overflow = 0 | ✅ | ✅ since `e74dada` |
+| G7 README references docs/screenshots/*, files exist | ✅ main.png, present.png, demo.webm | ❌ before `0b69caa` |
+| G8 docs/demo-runbook.md `npm run` scripts exist | ✅ | ❌ before PR #8 |
 
 Backup video: `docs/screenshots/demo.webm`, 3.78 MB, 1920×1080, 34 s (page → Present replay → winner/payout → cap card → About). Made by `qa/record-demo.mjs`. No mp4/gif because ffmpeg is not installed here.
 
 Tested: `origin/solo` @ `49e5c2e`, `origin/feat/demo` @ `c6e885d` (README unchanged since `28c8d6d`; `docs/submission.md` hashes match, still has `[video link]` at line 12, see #2) · Windows 11, Git Bash, Node v20.20.2, npm 10.8.2 · 2026-11-20 02:38 CST.
 Fresh clone in an empty temp folder, no keys (`.env` copied from `.env.example`), no transactions sent.
 
-**Open: 3 ❌ (1 blocker), all demo-agent. Fixed: #4 #5 #6.**
+**Open: 0 ❌. Fixed: #1 #2 #3 (`e7dbce3`, solo `907b1e7`), #4 #5 (`e74dada`), #6 (`72e4105`). Screenshots + demo.webm regenerated from solo `907b1e7` at 03:12 (main 396 KB, mobile 191 KB, demo.webm 3.66 MB, 0 console errors).**
 
 ## Results
 
 | # | Check | | Details | Owner | Fix instruction |
 |---|---|---|---|---|---|
-| 1 | Judge README is on `solo` | ❌ **BLOCKER** | `solo`'s README is still the internal one ("Fill these in as they become true…", needs `forge`). The judge README exists only on `origin/feat/demo` (28c8d6d). | demo-agent | Open a PR `feat/demo` → `solo` and merge it before the 05:00 freeze. |
-| 2 | README has no placeholders | ❌ | `feat/demo` README lines 5, 49, 90 `[video link]`; 88 `[team member names]`; 89 `[credits and roles]`. | demo-agent | Replace the 3 `[video link]` with the real URL (or delete those lines until it exists), fill Team and Credits. |
-| 3 | README run steps are safe for judges | ❌ still open at feat/demo `cc0dafb` (FEN now filled, rest unchanged) | The "Run it yourself" block pastes `npm run settle` (real transactions) and an unfilled `--fen "<validated demo FEN>"`. It says Foundry is needed "for contract development" but still puts `export PATH="$HOME/.foundry/bin:$PATH"` in the judge path. Missing the keyless commands that work: `npm run check-setup`, `npm run replay-last`, web `build` + `preview`. It says Node 20; `check-setup` requires **20.12**. | demo-agent | Split into two blocks (text below the table). |
+| 1 | Judge README is on `solo` | ✅ PR #8 → solo `907b1e7`. Originally ❌ BLOCKER: | `solo`'s README is still the internal one ("Fill these in as they become true…", needs `forge`). The judge README exists only on `origin/feat/demo` (28c8d6d). | demo-agent | Open a PR `feat/demo` → `solo` and merge it before the 05:00 freeze. |
+| 2 | README has no placeholders | ✅ `e7dbce3` (no `[...]`, TODO or TBD left). Originally: | `feat/demo` README lines 5, 49, 90 `[video link]`; 88 `[team member names]`; 89 `[credits and roles]`. | demo-agent | Replace the 3 `[video link]` with the real URL (or delete those lines until it exists), fill Team and Credits. |
+| 3 | README run steps are safe for judges | ✅ `e7dbce3`: separate Judges (no keys) / Live on Arc / Contract development sections, Node 20.12+. Originally: | The "Run it yourself" block pastes `npm run settle` (real transactions) and an unfilled `--fen "<validated demo FEN>"`. It says Foundry is needed "for contract development" but still puts `export PATH="$HOME/.foundry/bin:$PATH"` in the judge path. Missing the keyless commands that work: `npm run check-setup`, `npm run replay-last`, web `build` + `preview`. It says Node 20; `check-setup` requires **20.12**. | demo-agent | Split into two blocks (text below the table). |
 | 4 | Mobile layout (390×844) | ✅ `e74dada` (on solo via PR #11, `8b49caa`); gate G6 overflow 0. Originally: | 59 px horizontal scroll; the Moves panel reaches x = 505 px. Cause: `web/src/index.css:59` `@media(max-width:1400px){… .grid{grid-template-columns:minmax(0,520px) minmax(0,1fr)} …}` comes after the 1000 px single-column rule on line 19, so it wins on phones. | web-agent | At the end of `web/src/index.css` add `@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}`. Check with `node qa/screenshots.mjs` ("horizontal overflow px: 0"). |
 | 5 | Cap card wording matches the facts | ✅ `e74dada` now reads "Refused by the contract (simulated)". Originally: | The card says **"Refused on-chain: 0.10 USDC"**. README and LIVE-RUNS.md:43 say the 0.10 payment was *simulated* and not broadcast; `cap-demo.json` has no refusal tx. A judge looking for that tx won't find one. | web-agent | `web/src/CapCard.tsx:76`: change `Refused on-chain:` to `Refused by the contract (simulated):`. |
 | 6 | `npm test` (referee) on Windows | ✅ `72e4105` (`node scripts/run-tests.mjs`, on solo via PR #10); passes in the gate. Originally: | `Could not find '…\referee\test\*.test.ts'`, exit 1. npm runs scripts through cmd.exe, which does not expand globs, and Node 20's `--test` doesn't either. | settle | `referee/package.json`: `"test": "tsx --test test/eip712.test.ts test/fen.test.ts test/money.test.ts"`. |
