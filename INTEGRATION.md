@@ -47,7 +47,7 @@ Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/pok
 - **P4** web builds; poker tab appears ONLY when `web/public/poker-result.json` exists; 0 console errors
 - **P5** reviewer: no blockers
 **04:45 decision:** all pass → feat/poker merges into solo and README gets "Poker mode (beta)". Any fail → stays a beta branch; README roadmap lists "Poker mode (beta branch), bot registry". Poker never delays the 05:00 chess freeze.
-1. poker-engine: add `"play-poker"` to referee/package.json (keyless, no chain) + tests in referee/test/*.test.ts.
+1. poker-engine ✅ merged into feat/poker (#27): P1 ✅ chess gates green, P2 ✅ play-poker keyless, npm test 29/29. Nit: keyless `play-poker` writes web/public/poker-result.json, which would turn the poker tab on with throwaway-key data. Write to /tmp unless `--out` is given.
 2. poker-registry: document the exact verify command (e.g. `npm run register-bot -- --verify`) in your PR body.
 3. poker-web: gate the tab on `fetch('/poker-result.json').ok`; no tab, no errors without it.
 
