@@ -25,7 +25,7 @@ QA #4 (mobile) and #5 (cap wording) fixed and merged as #11 ✅ (overflow at 390
 1. `git merge origin/solo`. Stand by for fixes only. New commits: author "Alex Rodriguez".
 
 ### demo (feat/demo, PR #8). **Solo blocker (QA #1).** Integration merges #8 the moment item 1 lands.
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c 190c474 && git push`**. Both README.md only. 17e4f5c fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots; 190c474 lists the 17-ply live settle the page now shows.
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c 190c474 3abf853 && git push`**. All README.md only (3abf853: page replays run 2 again). 17e4f5c fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots; 190c474 lists the 17-ply live settle the page now shows.
 2. Optional after that: runbook + `DEMO_DEFAULT` use the 1-ply FEN `7k/8/5KQ1/…`; KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies) replays better, and add the `npm run replay-last` fallback to the runbook.
 3. Your PROGRESS is stale: LIVE-RUNS.md line 42 (in solo) has the cap-demo payment 0xfa0a…239a.
 
