@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "game": "holdem-headsup",
+  "chainId": 5042002,
+  "explorerBaseUrl": "https://explorer.testnet.arc.io",
+  "matchId": "0x5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e",
+  "stakeUsdc": "2000000",
+  "potUsdc": "4000000",
+  "bots": [
+    {
+      "id": "tight",
+      "name": "Tight Tina",
+      "strategy": "Tight-aggressive: raises premium hands, folds the rest",
+      "address": "0x1111111111111111111111111111111111111111",
+      "startChips": 200,
+      "stakeTxHash": "0xa1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+    },
+    {
+      "id": "loose",
+      "name": "Loose Lou",
+      "strategy": "Loose-passive: calls almost anything, rarely raises",
+      "address": "0x2222222222222222222222222222222222222222",
+      "startChips": 200,
+      "stakeTxHash": "0xb2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+    }
+  ],
+  "hands": [
+    {
+      "n": 1,
+      "holeCards": {
+        "tight": [
+          "As",
+          "Kd"
+        ],
+        "loose": [
+          "9c",
+          "7c"
+        ]
+      },
+      "board": [
+        "Ah",
+        "7d",
+        "2s",
+        "Jc",
+        "4h"
+      ],
+      "actions": [
+        {
+          "street": "preflop",
+          "botId": "loose",
+          "action": "call",
+          "amount": 1,
+          "pot": 4
+        },
+        {
+          "street": "preflop",
+          "botId": "tight",
+          "action": "raise",
+          "amount": 6,
+          "pot": 10
+        },
+        {
+          "street": "preflop",
+          "botId": "loose",
+          "action": "call",
+          "amount": 6,
+          "pot": 16
+        },
+        {
+          "street": "flop",
+          "botId": "tight",
+          "action": "bet",
+          "amount": 10,
+          "pot": 26
+        },
+        {
+          "street": "flop",
+          "botId": "loose",
+          "action": "call",
+          "amount": 10,
+          "pot": 36
+        },
+        {
+          "street": "turn",
+          "botId": "tight",
+          "action": "bet",
+          "amount": 20,
+          "pot": 56
+        },
+        {
+          "street": "turn",
+          "botId": "loose",
+          "action": "fold",
+          "amount": 0,
+          "pot": 56
+        }
+      ],
+      "winnerId": "tight",
+      "chipsAfter": {
+        "tight": 228,
+        "loose": 172
+      }
+    },
+    {
+      "n": 2,
+      "holeCards": {
+        "tight": [
+          "Qs",
+          "Qh"
+        ],
+        "loose": [
+          "Kh",
+          "5d"
+        ]
+      },
+      "board": [
+        "Qd",
+        "8c",
+        "3h",
+        "Ks",
+        "2d"
+      ],
+      "actions": [
+        {
+          "street": "preflop",
+          "botId": "tight",
+          "action": "raise",
+          "amount": 6,
+          "pot": 8
+        },
+        {
+          "street": "preflop",
+          "botId": "loose",
+          "action": "call",
+          "amount": 4,
+          "pot": 12
+        },
+        {
+          "street": "flop",
+          "botId": "loose",
+          "action": "check",
+          "amount": 0,
+          "pot": 12
+        },
+        {
+          "street": "flop",
+          "botId": "tight",
+          "action": "bet",
+          "amount": 8,
+          "pot": 20
+        },
+        {
+          "street": "flop",
+          "botId": "loose",
+          "action": "call",
+          "amount": 8,
+          "pot": 28
+        },
+        {
+          "street": "turn",
+          "botId": "loose",
+          "action": "check",
+          "amount": 0,
+          "pot": 28
+        },
+        {
+          "street": "turn",
+          "botId": "tight",
+          "action": "bet",
+          "amount": 20,
+          "pot": 48
+        },
+        {
+          "street": "turn",
+          "botId": "loose",
+          "action": "call",
+          "amount": 20,
+          "pot": 68
+        },
+        {
+          "street": "river",
+          "botId": "loose",
+          "action": "check",
+          "amount": 0,
+          "pot": 68
+        },
+        {
+          "street": "river",
+          "botId": "tight",
+          "action": "all-in",
+          "amount": 194,
+          "pot": 262
+        },
+        {
+          "street": "river",
+          "botId": "loose",
+          "action": "call",
+          "amount": 138,
+          "pot": 400
+        },
+        {
+          "street": "showdown",
+          "botId": "tight",
+          "action": "shows three queens",
+          "amount": 0,
+          "pot": 400
+        }
+      ],
+      "winnerId": "tight",
+      "chipsAfter": {
+        "tight": 400,
+        "loose": 0
+      }
+    }
+  ],
+  "winner": "0x1111111111111111111111111111111111111111",
+  "winnerId": "tight",
+  "handHistoryHash": "0xc3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+  "signature": "0xd4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4",
+  "referee": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
+  "createMatchTxHash": "0xe5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5",
+  "settleTxHash": "0xf6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6f6",
+  "finishedAt": 1795165200
+}
