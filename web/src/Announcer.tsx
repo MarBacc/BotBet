@@ -48,8 +48,8 @@ export function HearResult({ line }: { line: string }) {
 
   return (
     <div className="hear">
-      <button onClick={speak} disabled={busy}>{busy ? '…' : '🔊 Hear the result'}</button>
-      {caption && <span className="caption">“{caption}”</span>}
+      <button onClick={speak} disabled={busy}>{busy ? 'Loading audio…' : <><span aria-hidden="true">🔊 </span>Hear the result</>}</button>
+      {caption && <span className="caption" aria-live="polite">“{caption}”</span>}
     </div>
   )
 }

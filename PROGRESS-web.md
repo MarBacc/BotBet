@@ -44,3 +44,15 @@
 - 01:58 web renders real result.json ✅ (live-runs f90cda8: escrow 0x9d4E…916c, settle 0xf177…f6f4, 55 plies, referee via deployments.json fallback). No fixes needed.
 - NEXT: demo polish a) Present mode.
 - BLOCKERS: cap-demo.json not on live-runs yet; author-name ask (#4) pending owner decision.
+- 01:59 DONE: demo a) Present mode (P / ⛶ button / ?present=1): fullscreen, autoplay 650ms/ply, then winner + payout + settle-tx QR (qrcode-generator, lazy chunk). Screenshot-verified at 1920x1080.
+- NEXT: b) load time.
+- BLOCKERS: author-name ask pending owner.
+- 02:00 DONE: demo b) load time — measured via CDP: preview app-ready 105ms (FCP 36ms, 95KB), dev ~140ms. Present (QR) and About are lazy chunks.
+- NEXT: c) accessibility.
+- BLOCKERS: author-name ask pending owner.
+- 02:00 DONE: demo c) accessibility — contrast audit (all text ≥4.5:1; fixed dev button 2.6→ok), focus-visible rings, aria-labels on icon buttons/slider/moves/QR/board, decorative emoji hidden, meta description.
+- NEXT: d) final build + smoke.
+- BLOCKERS: author-name ask pending owner.
+- 02:00 DONE: demo d) final check — npm run build ✅, npm run test:smoke 9/9 ✅.
+- NEXT: poll loop (cap-demo.json from live-runs, board asks).
+- BLOCKERS: author-name ask pending owner.
