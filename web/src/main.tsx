@@ -8,3 +8,5 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 )
+
+void import('./backing/mount').then(({ mountBacking }) => mountBacking())
