@@ -59,14 +59,9 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 02:10 CST — solo@c2ddf51 = settle (#1, #5) + agent-wallet #3 + live-runs #4 + web #2. integration = solo.
+2026-11-20 02:14 CST — solo@49e5c2e (settle #1 #5 #6, wallet #3, live-runs #4, web #2 #7). integration = solo + settle@0c70445 + web@efc5a41 (sync/PROGRESS only).
 
-- G1 ✅ shared builds
-- G2 ✅ tsc clean; keyless play-game green; `npm test` 17/17
-- G3 ✅ 14/14 forge tests
-- G4 ✅ web build + smoke test green with the real result.json and cap-demo.json
-- G5 ✅ `npm run rehearse:local`: 2 settles + cap demo on anvil
-- G6 ⏭ waiting on demo branch. No "trustless" claim in repo
+G1 ✅ shared · G2 ✅ tsc + keyless play-game + npm test 17/17 · G3 ✅ 14/14 · G4 ✅ build + smoke with real result.json & cap-demo.json · G5 ✅ rehearse:local 2 settles · G6 ✅ docs/drafts commands exist, no trustless
 
 Verified on Arc RPC: settle 0x41ba…02b4 and 0xf177…f6f4; AgentWallet 0xaEb5…5262 has code; allowed payment 0xfa0a…239a status 1.
-live-runs was merged on the human's "go live" with CHECKPOINT PASSED waived (two verified live settles, literal line missing).
+Open: demo branch missing (drafts INTEGRATION-runbook-draft.md / INTEGRATION-readme-draft.md ready to adopt).
