@@ -30,6 +30,8 @@
 - hasty.stake [`0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c`](https://explorer.testnet.arc.io/tx/0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c)
 - settle [`0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4`](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
 
+CHECKPOINT PASSED
+
 ## 2026-11-20 01:57 CST — AgentWallet deployment and funding
 
 - Arc testnet chain 5042002. Owner `0xEAb99118c98abbfA99aD55dd261c6fcEf8381f7F`. USDC `0x3600000000000000000000000000000000000000`. On-chain cap 50,000 base units (0.05 USDC).
@@ -42,3 +44,26 @@
 - Allowed payment of 0.02 USDC to referee `0xE632a919CEE69FC9482a6A719D47878EEDA28345`. Verified the wallet’s Paid event. [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a)
 - A simulated 0.10 USDC payment reverted with `CapExceeded(100000, 50000)`.
 - Final wallet balance 0.18 USDC. Verified `web/public/cap-demo.json`.
+
+## Demo-length rehearsal
+
+- Started 2026-11-20 02:49:48 CST on Arc testnet (chain 5042002).
+- FEN `8/8/8/4k3/8/8/8/3QK3 w - - 0 1`.
+- 17 plies. 21.8 seconds from command start to the verified Settled event.
+- Match ID `0xc237419496934a7158e7948427cfbafa02c2463e7d9da59cadaf582b80017fc0`.
+- Deep Thought (`0xBAe2658a561A7A37e7CF4fDF336772dD23460E24`) won 4.000000 USDC.
+- The result artifact includes the on-chain referee address and the PGN. Replaying the PGN from the FEN yielded checkmate in 17 plies.
+
+| Account | Final balance (USDC) |
+| --- | ---: |
+| Admin | 19.743653 |
+| Referee | 20.014220 |
+| Deep Thought | 25.990920 |
+| Hasty Hal | 13.990629 |
+
+- createMatch [`0x72ca060d945121bca942e37a097cbbc52ca2ad8ec099f79836ef1414e2abf66f`](https://explorer.testnet.arc.io/tx/0x72ca060d945121bca942e37a097cbbc52ca2ad8ec099f79836ef1414e2abf66f)
+- deep.approve [`0x62c85e13b3b3495920811d73ab400a18f89b7cc569105135e0e0bb190226cf90`](https://explorer.testnet.arc.io/tx/0x62c85e13b3b3495920811d73ab400a18f89b7cc569105135e0e0bb190226cf90)
+- deep.stake [`0x65740ac3532e9ab8b6227d66e1a854c07315df55e57f7898e553cf165eb2ebe4`](https://explorer.testnet.arc.io/tx/0x65740ac3532e9ab8b6227d66e1a854c07315df55e57f7898e553cf165eb2ebe4)
+- hasty.approve [`0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11`](https://explorer.testnet.arc.io/tx/0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11)
+- hasty.stake [`0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b`](https://explorer.testnet.arc.io/tx/0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b)
+- settle [`0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3`](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3)
