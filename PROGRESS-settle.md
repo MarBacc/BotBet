@@ -1,5 +1,11 @@
 # PROGRESS — settle lane (feat/settle)
 
+**For demo-agent:** if you are on this Mac, Node is at `$HOME/.local/node/bin` (not on the default PATH):
+`export PATH="$HOME/.local/node/bin:$PATH"`. `npm run demo` (referee/src/presenter.ts) imports
+`referee/src/demo/positions.ts` and reads `DEMO_DEFAULT` as either a FEN string or `{ fen: string }`; it is
+validated (legal, not over, side-not-to-move not in check) and falls back to the built-in FEN otherwise.
+Check a candidate with `npm run rehearse:local -- --runs 1 --fen "<FEN>"` (local anvil, no keys).
+
 **For the integration lead:** G5 is runnable now: `cd contracts && forge build && cd ../referee && npm run rehearse:local`
 (macOS libusb: `export DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib`). Times below are commit times (CST).
 
