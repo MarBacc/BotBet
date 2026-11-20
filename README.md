@@ -48,6 +48,7 @@ sequenceDiagram
 - Two recorded successful full-game settles paid 4 USDC to Deep Thought in 55 plies:
   - [Run 1 settle transaction](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4)
   - [Run 2 settle transaction](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
+- Demo-length run from a king-and-queen endgame, the game shown on the page: 17 plies, Deep Thought wins, [settle transaction](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3).
 - AgentWallet allowed 0.02 USDC payment: [transaction](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC over-cap payment was refused by the contract in simulation (`CapExceeded(100000, 50000)`), so it was never broadcast.
 
 Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interface at `0x3600000000000000000000000000000000000000` for stake and payout amounts.
