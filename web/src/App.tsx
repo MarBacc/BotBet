@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Chess } from 'chess.js'
 import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
+import { CapCard, useCapDemo } from './CapCard'
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -44,6 +45,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
   const tx = (h: string) => `${base}/tx/${h}`
   const addr = (a: string) => `${base}/address/${a}`
   const referee = d.referee ?? deployments.referee
+  const [cap, capSample, toggleCap] = useCapDemo()
 
   const { fens, sans, lastMoves } = useMemo(() => {
     const g = new Chess()
@@ -90,6 +92,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
       <header>
         <h1>BotBet — Arena</h1>
         {sample && <span className="tag" title="result.json not found; showing result.sample.json">Sample data · not a live result</span>}
+        {import.meta.env.DEV && <button className="dev" onClick={toggleCap}>dev: cap card</button>}
         <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
 
@@ -180,6 +183,8 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
             })}
             <div className="kv"><span>Payout</span><span className="pos">{formatUsdc(d.potUsdc)} → {winner.name}</span></div>
           </div>
+
+          {cap && <CapCard c={cap} base={base} sample={capSample} />}
 
           <div className="panel">
             <h2>On-chain</h2>

@@ -11,3 +11,6 @@
 - 2026-11-20T07:15:59Z DONE: projector polish — loading spinner, prominent sample-data label, page title, square board rows; verified 1920x1080 headless screenshot.
 - NEXT: agent wallet safety card.
 - BLOCKERS: push denied (read-only access).
+- 2026-11-20T07:16:37Z DONE: agent wallet safety card (reads /cap-demo.json if present, else hidden); dev-only preview toggle using src/dev/cap-demo.sample.json; verified render.
+- NEXT: ElevenLabs /api/tts + "Hear the result".
+- BLOCKERS: push denied (read-only access).

@@ -45,3 +45,8 @@ input[type=range]{flex:1 1 200px;accent-color:var(--acc)}
 .spin{width:64px;height:64px;border-radius:50%;border:6px solid var(--line);border-top-color:var(--acc);animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 html{background:var(--bg)}
+.pay{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;border-radius:12px;padding:12px 16px;margin-top:10px;font-weight:700;font-size:1.15rem}
+.pay.ok{background:#052e16;border:2px solid var(--acc);color:var(--acc)}.pay.no{background:#3b0a0a;border:2px solid var(--red);color:var(--red)}
+.pay.no .mono{color:var(--red);font-size:1rem}
+.tag.sm{font-size:.7rem;padding:2px 8px;vertical-align:middle}
+button.dev{font-size:.75rem;padding:4px 10px;opacity:.6}
