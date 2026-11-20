@@ -1,0 +1,12 @@
+{
+  "wallet": "0x9b1e3c0A5f4E2d7B8c6A1f0e3D2c5B4a7F6e8D90",
+  "capUsdc": "0.05",
+  "allowed": {
+    "amount": "0.02",
+    "txHash": "0x3f0c9a1b7e5d2c48a6f1b3e9d0c7a5f2e8b4d1c6a9f3e7b2d5c8a1f4e6b9d3c0"
+  },
+  "refused": {
+    "amount": "0.10",
+    "reason": "CapExceeded(100000, 50000)"
+  }
+}

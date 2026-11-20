@@ -2,3 +2,39 @@
 - 2026-11-20T06:25:31Z DONE: single result page (board replay, move list, bots, pot, payouts, attestation badge, flow strip, explorer links, sample fallback). Build green.
 - NEXT: visual check against a real result.json from settle.
 - BLOCKERS: none. (Board is hand-rendered with unicode glyphs + chess.js; not browser-screenshot verified.)
+- 2026-11-20T07:14:32Z DONE: synced solo + feat/settle (interfaces.md conflict -> took incoming). shared + web build green.
+- NEXT: QA result page.
+- BLOCKERS: TanishPatro has read-only access to MarBacc/BotBet; push needs collaborator access.
+- 2026-11-20T07:15:23Z DONE: QA pass — PGN replay (55 plies, mate), USDC formatting, explorer links, sample fallback OK; added referee address to attestation badge.
+- NEXT: projector polish.
+- BLOCKERS: push denied (read-only access); commits held locally.
+- 2026-11-20T07:15:59Z DONE: projector polish — loading spinner, prominent sample-data label, page title, square board rows; verified 1920x1080 headless screenshot.
+- NEXT: agent wallet safety card.
+- BLOCKERS: push denied (read-only access).
+- 2026-11-20T07:16:37Z DONE: agent wallet safety card (reads /cap-demo.json if present, else hidden); dev-only preview toggle using src/dev/cap-demo.sample.json; verified render.
+- NEXT: ElevenLabs /api/tts + "Hear the result".
+- BLOCKERS: push denied (read-only access).
+- 2026-11-20T07:17:58Z DONE: /api/tts (ElevenLabs, server-side env only; GET enabled, POST audio/mpeg; 300-char cap) + "Hear the result" announcer line; hidden when no key; caption fallback. Tested no-key and bad-key paths.
+- NEXT: final build + push.
+- BLOCKERS: push denied (read-only access).
+- 01:41 DONE: W1 resync onto rewritten history (merged origin/solo; interfaces.md took theirs; feat/settle not merged, read-only via git show); replayed prior [web] commits; build green.
+- NEXT: W2 QA re-check, W3 projector mode.
+- BLOCKERS: none (push access granted).
+- 01:42 DONE: W3 projector mode — SAMPLE DATA ribbon, LIVE ON ARC + settle time, Space/←/→ shortcuts, 1280x720 sizing (no overflow).
+- NEXT: W4 cap card wording + ?sampleCap=1.
+- BLOCKERS: none.
+- 01:42 DONE: W4 cap card per interfaces.md §6 (human amounts), "Allowed ✓ / Refused on-chain" wording, cap-in-contract line, ?sampleCap=1 dev preview; hidden on 404.
+- NEXT: W5 TTS in-memory cache.
+- BLOCKERS: none.
+- 01:43 DONE: W5 TTS — server + client in-memory audio cache, line "X takes the N USDC pot, settled on Arc."; key/voice MISSING locally so button stays hidden.
+- NEXT: W6 About section.
+- BLOCKERS: ELEVENLABS_API_KEY / VOICE_ID not set (owner must add to .env to demo voice).
+- 01:43 DONE: W6 About section (3-line pitch, MatchEscrow from deployments.json with explorer link, repo link, roadmap).
+- NEXT: W7 resilience + test:smoke.
+- BLOCKERS: ELEVENLABS key/voice missing.
+- 01:44 DONE: W7 resilience — validate()+defaults, error boundary falls back to sample with friendly warning, default explorer base, money guards, dev ?data= preview; npm run test:smoke (9 checks) green.
+- NEXT: poll loop (solo, settle result.json/cap-demo.json, PR comments).
+- BLOCKERS: ELEVENLABS key/voice missing.
+- 01:45 DONE: PR#2 lead request — cap panel already shipped (W4); added allowed.txHash:null handling; stub-tested (not committed). Did not cherry-pick 2e88fba (would duplicate the panel).
+- NEXT: poll loop.
+- BLOCKERS: ELEVENLABS key/voice missing; waiting for real result.json / cap-demo.json from settle.
