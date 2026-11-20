@@ -42,6 +42,36 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 1. Start Codex B (demo-agent). It's the only piece not in solo.
 2. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
 
+## FINAL CHECK (03:12 CST, clean worktree of origin/solo @ 907b1e7)
+
+**Result: READY TO RECORD BACKUP VIDEO.** No live transactions were sent during this check.
+
+| Check | Result |
+|---|---|
+| G1–G6 integration gates | ✅ all six (npm test 17/17, forge 14/14, anvil rehearsal 2 settles) |
+| QA release gate (fresh clone, keyless, browser) | ✅ PASS 8/8 |
+| `npm run check-setup` (no keys) | ✅ "REPLAY ONLY … npm run replay-last" |
+| `npm run replay-last` | ✅ run 2 with real explorer links + cap demo |
+| `npm run settle -- --dry-run` / `npm run demo -- --dry-run` (no keys) | ✅ stop safely at setup, point to replay-last |
+| Page (`vite preview`, Chromium) | ✅ real result.json (Deep Thought wins, 4.00 USDC to 0xBAe2…0E24), no SAMPLE ribbon, cap card present, 0 console errors, 0 px overflow at 390 px |
+
+### Presenter: have these open
+1. **Terminal A**, `referee/`, font enlarged: `npm run check-setup`, must say READY. Then `npm run settle -- --fen "8/8/8/4k3/8/8/8/3QK3 w - - 0 1"` (17 plies, ~22 s). Fallback: `npm run replay-last`.
+2. **Terminal B**, `web/`: `npm run dev` (needed for the voice button; `.env` must have ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID).
+3. **Browser tab: the page** `http://localhost:5173`. Press **P** for present mode (Space = skip to result, R = replay, Esc = exit).
+4. **Explorer tabs (pre-opened):**
+   - MatchEscrow https://explorer.testnet.arc.io/address/0x9d4EEE03C431c524822c6A1486bE6142d2a4916c
+   - Settle (17-ply stage position) https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3
+   - Settle run 2 (page replay) https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4
+   - AgentWallet https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262
+   - Allowed 0.02 payment https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a
+5. **Backup video** `docs/screenshots/demo.webm` in a tab, in case everything fails.
+6. Wording: "referee-attested", never "trustless".
+
+### Still open (not blocking the recording)
+- README has **no ElevenLabs section**, which the bounty needs (ASKS → demo 2).
+- On-chain cap refusal 0xd21f…3aa3 is held on feat/live-runs. Until web + demo update, solo says the 0.10 refusal was *simulated*, which is accurate for solo's cap-demo.json. If you record now, say "refused by the contract".
+
 ## Role
 
 
