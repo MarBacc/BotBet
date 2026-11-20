@@ -14,7 +14,7 @@ export default function PokerView({ d, sample, referee }: { d: PokerResult; samp
   const total = frames.length - 1
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState(false)
-  const [present, setPresent] = useState(false)
+  const [present, setPresent] = useState(() => typeof location !== 'undefined' && new URLSearchParams(location.search).get('present') === '1')
   const base = d.explorerBaseUrl
   const tx = (h?: string) => (h ? `${base}/tx/${h}` : undefined)
   const winner = d.bots.find(b => b.id === d.winnerId) ?? d.bots[0]
