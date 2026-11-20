@@ -168,14 +168,22 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   const [wb, bb] = d.bots
   const delta = (id: string) => (isInt(d.balances.after[id]) && isInt(d.balances.before[id]) ? BigInt(d.balances.after[id]) - BigInt(d.balances.before[id]) : null)
 
-  const rows: number[] = []
-  for (let i = 0; i < total; i += 2) rows.push(i)
+  // Move numbers follow the start FEN (demo games start mid-game, possibly with Black to move).
+  const [, side0 = 'w', , , , full0 = '1'] = fens[0].split(' ')
+  const start = { no: Number(full0) || 1, black: side0 === 'b' }
+  const rows: { n: number; w: number | null; b: number | null }[] = []
+  for (let k = 0; k < total; k++) {
+    const black = (k + (start.black ? 1 : 0)) % 2 === 1
+    const n = start.no + Math.floor((k + (start.black ? 1 : 0)) / 2)
+    if (!black || !rows.length || rows[rows.length - 1].b !== null) rows.push({ n, w: black ? null : k, b: null })
+    if (black) rows[rows.length - 1].b = k
+  }
 
   return (
     <div className="page">
       {present && (
         <Suspense fallback={<div className="present center"><div className="spin" /></div>}>
-          <Present fens={fens} lastMoves={lastMoves} sans={sans} winnerName={winner.name} loserName={loser?.name ?? ''}
+          <Present startNo={start.no} startBlack={start.black} fens={fens} lastMoves={lastMoves} sans={sans} winnerName={winner.name} loserName={loser?.name ?? ''}
             winnerAddress={winner.address} potUsdc={d.potUsdc} settleUrl={tx(d.settleTxHash)} sample={sample}
             onExit={() => setPresent(false)} />
         </Suspense>
@@ -226,8 +234,8 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
         <div className="panel">
           <h2>Moves</h2>
           <div className="moves" role="group" aria-label="Move list">
-            {rows.map(i => (
-              <Row key={i} i={i} sans={sans} ply={ply} go={setPly} />
+            {rows.map(r => (
+              <Row key={r.n} row={r} sans={sans} ply={ply} go={setPly} />
             ))}
           </div>
         </div>
@@ -288,12 +296,15 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   )
 }
 
-function Row({ i, sans, ply, go }: { i: number; sans: string[]; ply: number; go: (n: number) => void }) {
+function Row({ row, sans, ply, go }: { row: { n: number; w: number | null; b: number | null }; sans: string[]; ply: number; go: (n: number) => void }) {
+  const cell = (k: number | null, color: string) => k === null
+    ? <span className="ell">…</span>
+    : <button aria-label={`Move ${row.n}, ${color} ${sans[k]}`} aria-current={ply === k + 1 ? 'step' : undefined} className={ply === k + 1 ? 'cur' : ''} onClick={() => go(k + 1)}>{sans[k]}</button>
   return (
     <>
-      <span className="n">{i / 2 + 1}.</span>
-      <button aria-label={`Move ${i / 2 + 1}, white ${sans[i]}`} aria-current={ply === i + 1 ? 'step' : undefined} className={ply === i + 1 ? 'cur' : ''} onClick={() => go(i + 1)}>{sans[i]}</button>
-      {sans[i + 1] ? <button aria-label={`Move ${i / 2 + 1}, black ${sans[i + 1]}`} aria-current={ply === i + 2 ? 'step' : undefined} className={ply === i + 2 ? 'cur' : ''} onClick={() => go(i + 2)}>{sans[i + 1]}</button> : <span />}
+      <span className="n">{row.n}.</span>
+      {cell(row.w, 'white')}
+      {row.b === null ? <span /> : cell(row.b, 'black')}
     </>
   )
 }
