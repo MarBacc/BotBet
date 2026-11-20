@@ -1,5 +1,8 @@
 # PROGRESS — settle lane (feat/settle)
 
+**For the integration lead:** G5 is runnable now: `cd contracts && forge build && cd ../referee && npm run rehearse:local`
+(macOS libusb: `export DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib`). Times below are commit times (CST).
+
 ## CHECKPOINT PASSED — two live settles on Arc testnet (run by LIVE-RUNNER, 01:50 CST)
 Source: origin/feat/live-runs LIVE-RUNS.md. `npm run settle` from feat/settle, real keys on ChadYung's laptop,
 MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified Settled events (4 USDC each).
@@ -9,14 +12,14 @@ MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified
   (match 0xcd1bd3b3…932bfd, Deep Thought wins in 55 plies)
 Not run from this laptop (no keys here by design).
 
-## 01:55 — RESTART: resynced to rewritten origin/feat/settle (9de3533); S1 done
+## ~01:50 — RESTART: resynced to rewritten origin/feat/settle (9de3533); S1 done
 - No keys on this laptop by design; LIVE-RUNNER (feat/live-runs) runs live with real keys and owns
   web/public/result.json + cap-demo.json.
 - S1: cherry-picked 3a095ea (keyless play-game). Verified: `npm run play-game` with no keys → 55 plies,
   signature round-trips, deployed-referee check SKIPPED (offline key).
 - Next: S2 live-run readiness.
 
-## 02:10 — S2 live-run readiness: DONE
+## 01:51 — S2 live-run readiness: DONE
 - `scripts/check-setup.mjs` runs before play-game/settle/cap-demo: Node ≥ 20.12, shared built, deps
   installed, each with the exact fix command (verified by hiding shared/dist).
 - settle names every missing/malformed key at once and where it looked for .env (verified, no keys here).
@@ -27,7 +30,7 @@ Not run from this laptop (no keys here by design).
   0xdb0a… (integration ⚠), left alone: not in my file list now.
 - `gh` is not installed here: PR #1 comments unreadable.
 
-## 02:25 — S3 local rehearsal: DONE (G5 now runnable)
+## 01:52 — S3 local rehearsal: DONE (G5 now runnable)
 - anvil/forge work on this Mac with `DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib` (Foundry ships libusb).
 - `npm run rehearse:local [-- --runs n --fen "<FEN>"]` (referee/scripts/local-rehearsal.ts): starts anvil on
   :8545 chain 5042002 (or reuses one), deploys MockUSDC + fresh MatchEscrow from contracts/out, mints, runs the
@@ -36,7 +39,7 @@ Not run from this laptop (no keys here by design).
   result.json keys = sample's + `referee`; keccak(pgn) = pgnHash. `--fen` run settles too (1 ply mate).
 - Needs `cd contracts && forge build` first (read-only use).
 
-## 02:45 — S4 + S5: DONE
+## 01:55 — S4 + S5: DONE
 - S4: `--fen` verified end to end in the rehearsal path; total + game time now printed. feat/demo not on
   origin yet (no positions.ts / REQUESTS.md to act on).
 - S5: summary boxes (settle: winner, payout, balances, settle link, total time; dry run; failure box) and
