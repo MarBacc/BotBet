@@ -1,7 +1,8 @@
 # BotBet QA report
 
 **🟢 SOLO RELEASE GATE: PASS** (solo @ `775d267`, fresh clone, 04:18 CST; 9 checks, G9 now exercised with the on-chain refusal). First PASS was at `907b1e7` (03:11).
-**feat/poker `5b83148` merged onto solo (preview): PASS 9/9.** Poker checks: live result (`offline:false`, Theory beats Maniac 200–0 in 9 hands), handHistoryHash recomputes and equals the signed pgnHash, moveCount = hands, all 6 txs + matchId in LIVE-RUNS.md, Poker (beta) tab 0 console errors. Nit P1 below.
+**🔴 feat/poker `2b7b8d8` merged onto solo (preview, 04:25): FAIL (1): G10.** Bot registry (PR #31) does not verify on a Windows clone: `register-bot --verify` → MISMATCH for all 5 house bots (Deep Thought, Hasty Hal, Maniac, Nit, Theory) with `core.autocrlf=true`. Registered hashes are over LF bytes; Windows checks the sources out as CRLF. `npm test` (32/32) does not catch it. Confirms FIXER's P3 (feat/settle-tp `586375a`). **Do not merge feat/poker into solo until G10 is ✅.** Fix (registry owner, either one): (a) one line in the repo-root `.gitattributes`: `referee/src/registry/house/** text eol=lf` (forces LF checkout everywhere, hashes unchanged); or (b) FIXER's tested `readForHash()` in registry-core.ts (CRLF→LF for text files before hashing). Check: `MERGE=feat/poker bash qa/release-gate.sh solo <dir>` → G10 ✅.
+At `5b83148` (before the registry): PASS 9/9. Poker checks: live result (`offline:false`, Theory beats Maniac 200–0 in 9 hands), handHistoryHash recomputes and equals the signed pgnHash, moveCount = hands, all 6 txs + matchId in LIVE-RUNS.md, Poker (beta) tab 0 console errors. Nit P1 below.
 Earlier heads: feat/demo `f7aa2e4` (in solo), feat/web `b75a3ae` (in solo), feat/settle-tp `ff5a9e6` (in solo), **feat/live-runs `19ffa31` (preview merge: FAIL G9, see #7, merge only together with a docs update)**.
 
 ## Release gate (solo)
