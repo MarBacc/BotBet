@@ -12,7 +12,9 @@
     "settle": "node scripts/check-setup.mjs && tsx src/settle.ts",
     "cap-demo": "node scripts/check-setup.mjs && tsx src/cap-demo.ts",
     "check-setup": "node scripts/check-setup.mjs",
-    "rehearse:local": "node scripts/check-setup.mjs && tsx scripts/local-rehearsal.ts"
+    "rehearse:local": "node scripts/check-setup.mjs && tsx scripts/local-rehearsal.ts",
+    "demo": "node scripts/check-setup.mjs && tsx src/presenter.ts",
+    "replay-last": "tsx src/replay-last.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
