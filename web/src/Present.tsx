@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import qrcode from 'qrcode-generator'
 import { Board } from './Board'
 import { dollars, PaceControl, paceMs, type PaceId } from './plain/plain'
+import { loadCapDemo } from './CapCard'
+import { buildScript } from './commentary/script'
+import { useCommentary } from './commentary/useCommentary'
+import { CaptionBar } from './commentary/CaptionBar'
 
 export interface PresentProps {
   fens: string[]
   lastMoves: ([string, string] | null)[]
   /** one plain-English sentence per move */
   story: string[]
+  /** chess notation, used only by the spoken commentary script */
+  sans: string[]
   winnerName: string
   loserName: string
   potUsdc: string
@@ -32,6 +38,22 @@ export default function Present(p: PresentProps) {
   const total = p.story.length
   const [ply, setPly] = useState(0)
   const done = ply >= total
+  // live commentator: captions always; ElevenLabs audio when /api/tts has a key (holds the replay while speaking)
+  const [hasCap, setHasCap] = useState<boolean | null>(null)
+  useEffect(() => { loadCapDemo().then(c => setHasCap(!!c), () => setHasCap(false)) }, [])
+  const lines = useMemo(() => (hasCap === null ? [] : buildScript({ fens: p.fens, sans: p.sans, winnerName: p.winnerName, loserName: p.loserName, potUsdc: p.potUsdc, hasCapDemo: hasCap })),
+    [hasCap, p.fens, p.sans, p.winnerName, p.loserName, p.potUsdc])
+  const voice = useCommentary(lines)
+  const { reach } = voice
+  // the final move is spoken over the final board; the result screen (with the payout lines) follows it
+  const [ended, setEnded] = useState(false)
+  useEffect(() => { if (ply < total) reach(ply); else reach(ply, ['final']) }, [ply, total, reach])
+  const { isIdle, audible } = voice
+  useEffect(() => {
+    if (!done || ended || (audible && (voice.busy || !isIdle()))) return
+    setEnded(true)
+    reach(total, ['end'])
+  }, [done, voice.busy, ended, reach, total, audible, isIdle])
 
   useEffect(() => {
     document.documentElement.requestFullscreen?.().catch(() => { /* not allowed: overlay still fills the window */ })
@@ -39,26 +61,26 @@ export default function Present(p: PresentProps) {
   }, [])
 
   useEffect(() => {
-    if (done) return
+    if (done || voice.busy || hasCap === null) return
     const t = setTimeout(() => setPly(n => n + 1), ply === 0 ? 1200 : paceMs(p.pace))
     return () => clearTimeout(t)
-  }, [ply, done, p.pace])
+  }, [ply, done, voice.busy, hasCap, p.pace])
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') { e.stopImmediatePropagation(); p.onExit() }
       if (e.key === ' ') { e.preventDefault(); e.stopImmediatePropagation(); setPly(total) }
-      if (e.key === 'r' || e.key === 'R') setPly(0)
+      if (e.key === 'r' || e.key === 'R') { voice.reset(); setEnded(false); setPly(0) }
     }
     window.addEventListener('keydown', k, true)
     return () => window.removeEventListener('keydown', k, true)
-  }, [p, total])
+  }, [p, total, voice.reset])
 
   const move = ply > 0 ? p.story[ply - 1] : 'The game is about to start'
   return (
     <div className="present" role="dialog" aria-modal="true" aria-label="Full-screen replay">
       {p.sample && <div className="sample-ribbon">SAMPLE DATA</div>}
-      {!done ? (
+      {!ended ? (
         <div className="pr-replay">
           <Board fen={p.fens[ply]} hl={p.lastMoves[ply]} label={move} className="pr-board" />
           <div className="pr-side">
@@ -83,10 +105,11 @@ export default function Present(p: PresentProps) {
               </div>
             </div>
           )}
-          <div className="ctl"><button onClick={() => setPly(0)}>Watch again</button><button onClick={p.onExit}>Close</button></div>
+          <div className="ctl"><button onClick={() => { voice.reset(); setEnded(false); setPly(0) }}>Watch again</button><button onClick={p.onExit}>Close</button></div>
         </div>
       )}
-      <div className="pr-help">Esc to close · Space to skip to the end · R to watch again</div>
+      <CaptionBar c={voice} />
+      <div className="pr-help">Esc to close · Space to skip to the end · R to watch again{voice.enabled ? ' · M for sound' : ''}</div>
     </div>
   )
 }

@@ -221,7 +221,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
     <div className="page">
       {present && (
         <Suspense fallback={<div className="present center"><div className="spin" /></div>}>
-          <Present fens={fens} lastMoves={lastMoves} story={story} winnerName={winner.name} loserName={loser?.name ?? ''}
+          <Present fens={fens} lastMoves={lastMoves} story={story} sans={sans} winnerName={winner.name} loserName={loser?.name ?? ''}
             potUsdc={d.potUsdc} settleUrl={tx(d.settleTxHash)} sample={sample} pace={pace} onPace={setPace}
             onExit={() => setPresent(false)} />
         </Suspense>

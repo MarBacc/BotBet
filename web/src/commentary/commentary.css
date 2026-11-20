@@ -1,0 +1,5 @@
+.cap-bar{position:absolute;left:4vw;right:4vw;bottom:6vh;display:flex;align-items:center;gap:20px;justify-content:center;pointer-events:none}
+.cap-text{margin:0;background:#000000cc;color:#fff;border-radius:14px;padding:1.2vh 2.4vw;font-size:min(4.4vh,2.8vw);font-weight:800;text-align:center;max-width:80vw;min-height:1.3em;line-height:1.25;box-shadow:0 6px 24px #0008}
+.cap-text:empty{visibility:hidden}
+.cap-sound{pointer-events:auto;font-size:min(4vh,2.4vw);padding:.6vh 1vw;background:#000000aa}
+.cap-sound small{font-size:.5em;color:var(--mut)}
