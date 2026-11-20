@@ -18,11 +18,12 @@ cd "$WORK"
 run git clone -q -b "$BRANCH" https://github.com/MarBacc/BotBet.git repo || { echo "SOLO RELEASE GATE: FAIL (1): clone failed"; exit 1; }
 cd repo
 # MERGE=feat/demo simulates "solo after merging that branch" (local throwaway clone, never pushed)
-if [ -n "${MERGE:-}" ]; then
-  run git fetch -q origin "$MERGE" && run git merge --no-edit -q FETCH_HEAD \
-    || { echo "SOLO RELEASE GATE: FAIL (1): $BRANCH + $MERGE does not merge cleanly: $(git diff --name-only --diff-filter=U | tr '\n' ' ')"; exit 1; }
-  BRANCH="$BRANCH+$MERGE@$(git rev-parse --short FETCH_HEAD)"
-fi
+# MERGE may list several branches, space-separated, merged in order.
+for MB in ${MERGE:-}; do
+  run git fetch -q origin "$MB" && run git merge --no-edit -q FETCH_HEAD \
+    || { echo "SOLO RELEASE GATE: FAIL (1): $BRANCH + $MB does not merge cleanly: $(git diff --name-only --diff-filter=U | tr '\n' ' ')"; exit 1; }
+  BRANCH="$BRANCH+$MB@$(git rev-parse --short FETCH_HEAD)"
+done
 SHA=$(git rev-parse --short HEAD)
 
 # 1) judge README, not the internal one
