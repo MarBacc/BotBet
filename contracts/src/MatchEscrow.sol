@@ -14,7 +14,6 @@ enum Status {
     Settled
 }
 
-/// @dev stakeAmount is per bot, in 6-decimal USDC base units.
 struct Match {
     address botA;
     address botB;
@@ -24,7 +23,6 @@ struct Match {
     Status status;
 }
 
-/// @dev The referee-signed outcome. The PGN itself travels beside the signature, unsigned.
 struct MatchResult {
     bytes32 matchId;
     address winner;
@@ -42,6 +40,9 @@ contract MatchEscrow is EIP712, ReentrancyGuard {
 
     bytes32 private constant MATCH_RESULT_TYPEHASH =
         keccak256("MatchResult(bytes32 matchId,address winner,uint16 moveCount,bytes32 pgnHash,uint64 finishedAt)");
+
+    /// @dev 1,000,000 USDC in base units; more is an 18-decimal amount, i.e. the decimals trap.
+    uint256 public constant MAX_STAKE = 1_000_000_000_000;
 
     address public immutable referee;
     address public immutable admin;
@@ -76,7 +77,8 @@ contract MatchEscrow is EIP712, ReentrancyGuard {
     function createMatch(bytes32 matchId, address botA, address botB, uint256 stakeAmount) external {
         if (msg.sender != admin) revert NotAdmin();
         if (matches[matchId].status != Status.None) revert MatchExists();
-        if (botA == address(0) || botB == address(0) || botA == botB || stakeAmount == 0) revert InvalidMatch();
+        if (botA == address(0) || botB == address(0) || botA == botB) revert InvalidMatch();
+        if (stakeAmount == 0 || stakeAmount > MAX_STAKE) revert InvalidMatch();
 
         matches[matchId] = Match({
             botA: botA, botB: botB, stakeAmount: stakeAmount, stakedA: false, stakedB: false, status: Status.Open
