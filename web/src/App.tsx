@@ -1,8 +1,9 @@
-import { Component, Suspense, lazy, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { Component, Suspense, lazy, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Chess } from 'chess.js'
 import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
-import { CapCard, useCapDemo } from './CapCard'
+import { CapCard, CapTech, useCapDemo } from './CapCard'
+import { describeMove, dollars, PaceControl, paceMs, Proof, Tip, TIPS, type PaceId } from './plain/plain'
 import { HearResult, announcerLine } from './Announcer'
 import { Board } from './Board'
 import { loadPoker, type PokerResult } from './poker/data'
@@ -144,7 +145,12 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   const referee = d.referee ?? deployments.referee
   const [cap, capSample, toggleCap] = useCapDemo()
 
-  const { fens, sans, lastMoves, mate } = useMemo(() => {
+  const winner = d.bots.find(b => b.id === d.winnerId) ?? d.bots[0]
+  const loser = d.bots.find(b => b.id !== winner.id)
+  const [wb, bb] = d.bots
+  const byColor = { w: (d.bots.find(b => b.color === 'white') ?? wb).name, b: (d.bots.find(b => b.color === 'black') ?? bb).name }
+
+  const { fens, sans, lastMoves, mate, story } = useMemo(() => {
     const g = new Chess()
     g.loadPgn(d.pgn)
     const hist = g.history({ verbose: true })
@@ -153,23 +159,29 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
       fens: [hist.length ? hist[0].before : new Chess().fen(), ...hist.map(m => m.after)],
       sans: hist.map(m => m.san),
       lastMoves: [null, ...hist.map(m => [m.from, m.to] as [string, string])],
+      story: hist.map((m, i) => describeMove(m, i + 1, byColor, winner.name)),
     }
-  }, [d.pgn])
+  }, [d.pgn, byColor.w, byColor.b, winner.name])
   const total = sans.length
   const [ply, setPly] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [pace, setPace] = useState<PaceId>('normal')
+  const [pick, setPick] = useState<string | null>(null)
   const [present, setPresent] = useState(() => typeof location !== 'undefined' && new URLSearchParams(location.search).get('present') === '1')
+  const cur = useRef<HTMLLIElement | null>(null)
 
   useEffect(() => {
     if (!playing) return
     if (ply >= total) { setPlaying(false); return }
-    const t = setTimeout(() => setPly(p => p + 1), 450)
+    const t = setTimeout(() => setPly(p => p + 1), paceMs(pace))
     return () => clearTimeout(t)
-  }, [playing, ply, total])
+  }, [playing, ply, total, pace])
+
+  useEffect(() => { cur.current?.scrollIntoView?.({ block: 'nearest' }) }, [ply])
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|BUTTON)$/.test(e.target.tagName) && e.key === ' ') return
+      if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|BUTTON|SUMMARY)$/.test(e.target.tagName) && e.key === ' ') return
       if (e.key === 'ArrowLeft') { setPlaying(false); setPly(p => Math.max(0, p - 1)) }
       if (e.key === 'ArrowRight') { setPlaying(false); setPly(p => Math.min(total, p + 1)) }
       if ((e.key === 'p' || e.key === 'P') && !e.metaKey && !e.ctrlKey) { setPlaying(false); setPresent(true); return }
@@ -184,12 +196,17 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   }, [total])
 
   const hl = lastMoves[ply]
-  const winner = d.bots.find(b => b.id === d.winnerId) ?? d.bots[0]
-  const loser = d.bots.find(b => b.id !== winner.id)
-  const [wb, bb] = d.bots
   const delta = (id: string) => (isInt(d.balances.after[id]) && isInt(d.balances.before[id]) ? BigInt(d.balances.after[id]) - BigInt(d.balances.before[id]) : null)
+  const balanceLine = d.bots.map(b => {
+    const dl = delta(b.id)
+    if (dl === null) return null
+    return dl >= 0n ? `${b.name} finished with ${dollars(dl)} more` : `${b.name} lost ${dollars(-dl)}`
+  }).filter(Boolean).join('; ')
+  const date = d.finishedAt ? new Date(d.finishedAt * 1000).toLocaleDateString([], { dateStyle: 'long' }) : ''
+  const strong = (b: Bot) => (b.depth >= Math.max(wb.depth, bb.depth) ? 'the stronger bot' : 'the faster bot')
+  const done = ply >= total
 
-  // Move numbers follow the start FEN (demo games start mid-game, possibly with Black to move).
+  // Developer view: move numbers follow the start FEN (demo games start mid-game, possibly with Black to move).
   const [, side0 = 'w', , , , full0 = '1'] = fens[0].split(' ')
   const start = { no: Number(full0) || 1, black: side0 === 'b' }
   const rows: { n: number; w: number | null; b: number | null }[] = []
@@ -204,115 +221,135 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
     <div className="page">
       {present && (
         <Suspense fallback={<div className="present center"><div className="spin" /></div>}>
-          <Present startNo={start.no} startBlack={start.black} fens={fens} lastMoves={lastMoves} sans={sans} winnerName={winner.name} loserName={loser?.name ?? ''}
-            winnerAddress={winner.address} potUsdc={d.potUsdc} settleUrl={tx(d.settleTxHash)} sample={sample}
+          <Present fens={fens} lastMoves={lastMoves} story={story} winnerName={winner.name} loserName={loser?.name ?? ''}
+            potUsdc={d.potUsdc} settleUrl={tx(d.settleTxHash)} sample={sample} pace={pace} onPace={setPace}
             onExit={() => setPresent(false)} />
         </Suspense>
       )}
       {sample && <div className="sample-ribbon">SAMPLE DATA</div>}
       {warning && <div className="warn" role="status">{warning}</div>}
       <header>
-        <h1>BotBet — Arena</h1>
+        <h1>Watch two AI bots play chess for real money</h1>
         {sample
-          ? <span className="tag" title="result.json not found; showing result.sample.json">SAMPLE DATA</span>
-          : <span className="tag live"><span aria-hidden="true">● </span>LIVE ON ARC{d.finishedAt ? ` · settled ${new Date(d.finishedAt * 1000).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}` : ''}</span>}
+          ? <span className="tag" title="This is example data, not a real match">Example match (sample data)</span>
+          : <span className="tag live">Played and paid out for real on the Arc blockchain <Tip text={TIPS.blockchain} />{date ? ` · ${date}` : ''}</span>}
         {import.meta.env.DEV && <button className="dev" onClick={toggleCap}>dev: cap card</button>}
-        <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
 
+      <section className="how" aria-label="How this works">
+        <h2>How this works</h2>
+        <ol className="strip">
+          <li className="step"><b>1. Each bot puts 2 digital dollars <Tip text={TIPS.dollars} /> into a locked prize pool.</b>
+            {d.bots.map(b => <span key={b.id} className="l">{b.name}: <Proof href={tx(b.stakeTxHash)} label={`${b.name} entry money`} /></span>)}</li>
+          <li className="step"><b>2. The bots play a full game on their own.</b>
+            <span className="l">{Math.ceil(total / 2)} moves each, no human help.</span></li>
+          <li className="step"><b>3. A referee <Tip text={TIPS.referee} /> confirms the winner and the {dollars(d.potUsdc).replace('.00', '')} are paid out automatically.</b>
+            <span className="l"><Proof href={tx(d.settleTxHash)} label="payout" /></span></li>
+        </ol>
+      </section>
+
       <div className="banner">
-        <span><span aria-hidden="true">🏆 </span>{winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
-        <span>Pot {formatUsdc(d.potUsdc)} paid to {short(winner.address, 6, 4)}</span>
+        <span><span aria-hidden="true">🏆 </span>{winner.name} wins{loser ? ` against ${loser.name}` : ''}!</span>
+        <span>{dollars(d.potUsdc)} prize pool paid out automatically <Proof href={tx(d.settleTxHash)} label="payout" /></span>
       </div>
       <HearResult line={announcerLine({ plies: d.plies, mate, winnerName: winner.name, potUsdc: d.potUsdc })} />
 
-      <div className="strip">
-        <div className="step"><small>1</small><b>Stake</b>
-          {d.bots.map(b => <a key={b.id} className="l" href={tx(b.stakeTxHash)} target="_blank" rel="noreferrer">{b.name}: {short(b.stakeTxHash, 8, 6)}</a>)}
-          <span className="arr">→</span></div>
-        <div className="step"><small>2</small><b>Play</b><span className="l">{total} plies · depth {wb.depth} vs {bb.depth}</span><span className="arr">→</span></div>
-        <div className="step"><small>3</small><b>Referee signs</b><span className="l">EIP-712 · {short(d.signature, 10, 6)}</span><span className="arr">→</span></div>
-        <div className="step"><small>4</small><b>Contract pays</b>
-          <a className="l" href={tx(d.settleTxHash)} target="_blank" rel="noreferrer">settle {short(d.settleTxHash, 8, 6)}</a></div>
-      </div>
+      <section className="panel guess" aria-label="Pick the winner">
+        <h2>Pick the winner (just for fun, no money)</h2>
+        {!pick
+          ? <div className="ctl">{d.bots.map(b => <button key={b.id} onClick={() => { setPick(b.id); setPly(0); setPlaying(true) }}>{b.name}</button>)}</div>
+          : done
+            ? <p className="pick-result" role="status">{pick === winner.id ? 'You picked right! 🎉' : 'Not this time.'}</p>
+            : <p role="status">You picked {d.bots.find(b => b.id === pick)?.name}. Watch the game to find out…</p>}
+        <p className="why">No real money is involved for you.</p>
+      </section>
 
       <div className="grid">
         <div>
-          <Board fen={fens[ply]} hl={hl} label={`Chess board after ply ${ply} of ${total}${ply ? `, last move ${sans[ply - 1]}` : ''}`} />
+          <Board fen={fens[ply]} hl={hl} label={ply ? story[ply - 1] : 'The board before the first move'} />
           <div className="ctl">
-            <button aria-label="First move" onClick={() => { setPlaying(false); setPly(0) }} disabled={ply === 0}>⏮</button>
+            <button aria-label="Back to the start" onClick={() => { setPlaying(false); setPly(0) }} disabled={ply === 0}>⏮</button>
             <button aria-label="Previous move" onClick={() => setPly(p => Math.max(0, p - 1))} disabled={ply === 0}>◀</button>
             <button onClick={() => { if (ply >= total) setPly(0); setPlaying(p => !p) }}>{playing ? <><span aria-hidden="true">⏸ </span>Pause</> : <><span aria-hidden="true">▶ </span>Play</>}</button>
             <button aria-label="Next move" onClick={() => setPly(p => Math.min(total, p + 1))} disabled={ply === total}>▶</button>
-            <button aria-label="Last move" onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>⏭</button>
-            <span className="ply">ply {ply}/{total}</span>
-            <button onClick={() => { setPlaying(false); setPresent(true) }}><span aria-hidden="true">⛶ </span>Present</button>
-            <span className="keys">Space play/pause · ←/→ step · P present</span>
+            <button onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>Skip to the end</button>
+            <PaceControl pace={pace} onChange={setPace} />
+            <button onClick={() => { setPlaying(false); setPresent(true) }}><span aria-hidden="true">⛶ </span>Full screen</button>
           </div>
-          <div className="ctl"><input type="range" aria-label="Replay position" aria-valuetext={`ply ${ply} of ${total}`} min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
+          <div className="ctl"><span className="ply">Move {ply} of {total}</span>
+            <input type="range" aria-label="Replay position" aria-valuetext={`move ${ply} of ${total}`} min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
         </div>
 
         <div className="panel">
-          <h2>Moves</h2>
-          <div className="moves" role="group" aria-label="Move list">
-            {rows.map(r => (
-              <Row key={r.n} row={r} sans={sans} ply={ply} go={setPly} />
+          <h2>The game, move by move</h2>
+          <ol className="story" aria-label="Moves in words">
+            {story.map((s, i) => (
+              <li key={i} ref={ply === i + 1 ? cur : undefined} className={ply === i + 1 ? 'cur' : ''} aria-current={ply === i + 1 ? 'step' : undefined}>
+                <button onClick={() => { setPlaying(false); setPly(i + 1) }}>{s}</button>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
 
         <div className="side">
           <div className="badge">
-            <h3><span aria-hidden="true">✔ </span>referee-attested</h3>
-            <div className="kv"><span>referee</span><a className="mono" href={addr(referee)} target="_blank" rel="noreferrer">{referee}</a></div>
-            <div className="kv"><span>matchId</span><span className="mono">{short(d.result.matchId, 10, 8)}</span></div>
-            <div className="kv"><span>moveCount</span><span className="mono">{d.result.moveCount}</span></div>
-            <div className="kv"><span>pgnHash</span><span className="mono">{short(d.result.pgnHash, 10, 8)}</span></div>
-            <div className="kv"><span>signature</span><span className="mono">{short(d.signature, 12, 8)}</span></div>
+            <h3>Result confirmed by an independent referee ✓ <Tip text={TIPS.referee} /></h3>
+            <p>The prize was only released after the referee's signed result was checked. <Proof href={tx(d.settleTxHash)} label="referee-checked payout" /></p>
           </div>
 
           <div className="panel">
-            <h2>Bots</h2>
+            <h2>The bots</h2>
             {d.bots.map(b => (
               <div className="bot" key={b.id}>
                 <span className={`nm${b.id === d.winnerId ? ' w' : ''}`}>{b.name} {b.id === d.winnerId && <span role="img" aria-label="winner">🏆</span>}</span>
-                <span>{b.color} · depth {b.depth} · stake {formatUsdc(d.stakeUsdc)}</span>
-                <a className="mono" href={addr(b.address)} target="_blank" rel="noreferrer">{b.address}</a>
-                <span className="mono">
-                  <a href={tx(b.approveTxHash)} target="_blank" rel="noreferrer">approve {short(b.approveTxHash, 6, 4)}</a>{' · '}
-                  <a href={tx(b.stakeTxHash)} target="_blank" rel="noreferrer">stake {short(b.stakeTxHash, 6, 4)}</a>
-                </span>
+                <span>{b.name}, {strong(b)} (thinks {b.depth} moves ahead). Plays {b.color}.</span>
+                <span>Entry money: {dollars(d.stakeUsdc)} <Proof href={tx(b.stakeTxHash)} label={`${b.name} entry money`} /></span>
               </div>
             ))}
-            <div className="kv"><span>Pot</span><span className="big">{formatUsdc(d.potUsdc)}</span></div>
+            <div className="kv"><span>Prize pool</span><span className="big">{dollars(d.potUsdc)}</span></div>
           </div>
 
           <div className="panel">
-            <h2>Payouts &amp; balances</h2>
-            {d.bots.map(b => {
-              const dl = delta(b.id)
-              return (
-                <div className="kv" key={b.id}>
-                  <span>{b.name}</span>
-                  <span>{money(d.balances.before[b.id], 4)} → <b>{money(d.balances.after[b.id], 4)}</b>{' '}
-                    {dl !== null && <span className={dl >= 0n ? 'pos' : 'neg'}>({dl >= 0n ? '+' : ''}{formatUsdc(dl, { decimals: 4 })})</span>}</span>
-                </div>
-              )
-            })}
-            <div className="kv"><span>Payout</span><span className="pos">{formatUsdc(d.potUsdc)} → {winner.name}</span></div>
+            <h2>Who won what</h2>
+            <p>{balanceLine || `${winner.name} received the ${dollars(d.potUsdc)} prize pool.`}</p>
+            <p className="why">Small differences come from the tiny network fee each bot pays to send its entry money.</p>
           </div>
 
           {cap && <CapCard c={cap} base={base} sample={capSample} />}
-
-          <div className="panel">
-            <h2>On-chain</h2>
-            <div className="kv"><span>Escrow</span><a className="mono" href={addr(d.escrow)} target="_blank" rel="noreferrer">{short(d.escrow, 8, 6)}</a></div>
-            <div className="kv"><span>createMatch</span><a className="mono" href={tx(d.createMatchTxHash)} target="_blank" rel="noreferrer">{short(d.createMatchTxHash, 8, 6)}</a></div>
-            <div className="kv"><span>settle</span><a className="mono" href={tx(d.settleTxHash)} target="_blank" rel="noreferrer">{short(d.settleTxHash, 8, 6)}</a></div>
-          </div>
         </div>
       </div>
-      <Suspense fallback={null}><About base={base} /></Suspense>
+
+      <details className="panel devinfo">
+        <summary>Technical details (for developers)</summary>
+        <div className="kv"><span>Status</span><span>{sample ? 'SAMPLE DATA' : 'LIVE ON ARC'} · chain {d.chainId} · match <span className="mono">{d.matchId}</span></span></div>
+        <div className="kv"><span>Pot</span><span>{formatUsdc(d.potUsdc)} (stake {formatUsdc(d.stakeUsdc)} each)</span></div>
+        <h3>referee-attested (EIP-712)</h3>
+        <div className="kv"><span>referee</span><a className="mono" href={addr(referee)} target="_blank" rel="noreferrer">{referee}</a></div>
+        <div className="kv"><span>matchId</span><span className="mono">{d.result.matchId}</span></div>
+        <div className="kv"><span>moveCount (plies)</span><span className="mono">{d.result.moveCount}</span></div>
+        <div className="kv"><span>pgnHash</span><span className="mono">{d.result.pgnHash}</span></div>
+        <div className="kv"><span>signature</span><span className="mono">{short(d.signature, 12, 8)}</span></div>
+        <h3>Bots</h3>
+        {d.bots.map(b => (
+          <div className="kv" key={b.id}><span>{b.name} · {b.color} · depth {b.depth}</span>
+            <span className="mono"><a href={addr(b.address)} target="_blank" rel="noreferrer">{b.address}</a>{' · '}
+              <a href={tx(b.approveTxHash)} target="_blank" rel="noreferrer">approve {short(b.approveTxHash, 6, 4)}</a>{' · '}
+              <a href={tx(b.stakeTxHash)} target="_blank" rel="noreferrer">stake {short(b.stakeTxHash, 6, 4)}</a></span></div>
+        ))}
+        {d.bots.map(b => (
+          <div className="kv" key={`bal-${b.id}`}><span>{b.name} balance</span><span>{money(d.balances.before[b.id], 4)} → {money(d.balances.after[b.id], 4)}</span></div>
+        ))}
+        <h3>On-chain</h3>
+        <div className="kv"><span>Escrow</span><a className="mono" href={addr(d.escrow)} target="_blank" rel="noreferrer">{d.escrow}</a></div>
+        <div className="kv"><span>createMatch</span><a className="mono" href={tx(d.createMatchTxHash)} target="_blank" rel="noreferrer">{short(d.createMatchTxHash, 8, 6)}</a></div>
+        <div className="kv"><span>settle</span><a className="mono" href={tx(d.settleTxHash)} target="_blank" rel="noreferrer">{short(d.settleTxHash, 8, 6)}</a></div>
+        {cap && <CapTech c={cap} base={base} />}
+        <h3>Moves (SAN) · <span className="ply">ply {ply}/{total}</span></h3>
+        <div className="moves" role="group" aria-label="Move list in chess notation">
+          {rows.map(r => <Row key={r.n} row={r} sans={sans} ply={ply} go={setPly} />)}
+        </div>
+        <Suspense fallback={null}><About base={base} /></Suspense>
+      </details>
     </div>
   )
 }
