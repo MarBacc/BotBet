@@ -34,7 +34,7 @@ export async function loadCapDemo(): Promise<CapDemo | null> {
   try {
     // dev-only: ?cap=/some/path.json previews another cap-demo file (poll-loop checks)
     const q = import.meta.env.DEV ? new URLSearchParams(location.search).get('cap') : null
-    const r = await fetch(q || '/cap-demo.json', { cache: 'no-store' })
+    const r = await fetch(q || `${import.meta.env.BASE_URL}cap-demo.json`, { cache: 'no-store' })
     if (!r.ok || !(r.headers.get('content-type') ?? '').includes('json')) return null
     const c = (await r.json()) as CapDemo
     return c && typeof c === 'object' && c.allowed && c.refused && typeof c.wallet === 'string' ? c : null
