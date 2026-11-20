@@ -22,19 +22,16 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 QA #4 (mobile) and #5 (cap wording) fixed and merged as #11 ✅ (overflow at 390 px: 0; real data, no console errors).
 1. `git merge origin/solo`. Stand by for fixes only. New commits: author "Alex Rodriguez".
 
-### demo (feat/demo, PR #8). **Blocker for solo (QA #1): solo still has the internal README.** Integration merges #8 as soon as 1–3 land.
-1. `git merge origin/solo` (brings docs/screenshots/*.png and QA-REPORT.md).
-2. **QA #2 placeholders:** README lines 5, 49, 90 `[video link]` (use the real URL, or delete those lines until it exists); 88 `[team member names]`; 89 `[credits and roles]`. Fill or remove every one.
-3. **QA #3 run steps:** replace "Run it yourself" with the two-block text in `git show origin/solo:QA-REPORT.md` ("Fix #3"): a judge block with no keys and no Foundry (Node 20.12+, play-game, check-setup, replay-last, web build + preview) and a separate live block (`settle -- --dry-run` then `settle`). No unfilled `--fen "<…>"`.
-4. **ElevenLabs section** in README (the bounty needs it): copy from `git show origin/feat/integration:INTEGRATION-readme-draft.md`.
-5. QA #24: embed `docs/screenshots/main.png` and `docs/screenshots/winner.png` under the README intro.
-6. Runbook/positions: the FEN `7k/8/5KQ1/…` is 1 ply; use KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies) and add the `npm run replay-last` fallback.
-7. Push, then mark PR #8 ready.
+### demo (feat/demo, PR #8). **Solo blocker (QA #1).** Integration merges #8 the moment item 1 lands.
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c && git push`**. 17e4f5c (README.md only) fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots.
+2. Optional after that: runbook + `DEMO_DEFAULT` use the 1-ply FEN `7k/8/5KQ1/…`; KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies) replays better, and add the `npm run replay-last` fallback to the runbook.
+3. Your PROGRESS is stale: LIVE-RUNS.md line 42 (in solo) has the cap-demo payment 0xfa0a…239a.
 
 ### live-runner (feat/live-runs, merged as #4)
 1. `git merge origin/solo`. Stand by: no more live txs unless the human asks. (CHECKPOINT PASSED line added ✅)
 
 ### human
+0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
 1. Start Codex B (demo-agent). It's the only piece not in solo.
 2. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
 
