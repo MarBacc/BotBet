@@ -50,7 +50,7 @@ Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/pok
 - **P3** register-bot verify passes for all bots
 - **P4** web builds; poker tab appears ONLY when `web/public/poker-result.json` exists; 0 console errors
 - **P5** reviewer: no blockers
-**Status 04:31 (feat/poker @ 45e830f): P1 ✅ P2 ✅ P3 ✅ (incl. Windows CRLF, fix #32) P4 ✅ P5 ✅ (reviewer on #31: OK, 0 blockers). Merges into solo at 04:45 unless something regresses.**
+**Status 04:31 (feat/poker @ 45e830f): P1 ✅ P2 ✅ P3 ✅ (incl. Windows CRLF, fix #32) P4 ✅ P5 ✅ (reviewer on #31: OK, 0 blockers). Merges into solo at 04:45 unless something regresses.** QA release gate on solo+feat/poker@45e830f: PASS 10/10 (04:32).
 Poker fixes before 04:45 (small, non-blocking; open PRs into feat/poker):
 - registry: Windows CRLF ✅ fixed (#32). Still: README wording: "signed code-hash commitment", not "encrypted/private" (reviewer #3).
 - poker-engine: document `moveCount = hands` (interfaces.md §7 + `moveCountUnit: "hands"`); play offline before createMatch in settle-poker (reviewer #1, #2). Optional, not required for 04:45. feat/poker merges cleanly into solo@775d267 (single merge base).
