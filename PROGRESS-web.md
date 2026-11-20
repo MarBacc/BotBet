@@ -56,3 +56,6 @@
 - 02:00 DONE: demo d) final check — npm run build ✅, npm run test:smoke 9/9 ✅.
 - NEXT: poll loop (cap-demo.json from live-runs, board asks).
 - BLOCKERS: author-name ask pending owner.
+- 02:05 web renders real cap-demo.json ✅ (live-runs 1a2adc3: wallet 0xaEb5…5262, allowed 0.02 tx 0xfa0a…239a, refused 0.10 CapExceeded: 0.10 > cap 0.05). Added dev-only ?cap= preview param.
+- NEXT: poll loop.
+- BLOCKERS: author-name ask pending owner.

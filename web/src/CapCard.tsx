@@ -30,7 +30,9 @@ export function decodeReason(c: CapDemo): string {
 
 export async function loadCapDemo(): Promise<CapDemo | null> {
   try {
-    const r = await fetch('/cap-demo.json')
+    // dev-only: ?cap=/some/path.json previews another cap-demo file (poll-loop checks)
+    const q = import.meta.env.DEV ? new URLSearchParams(location.search).get('cap') : null
+    const r = await fetch(q || '/cap-demo.json', { cache: 'no-store' })
     if (!r.ok || !(r.headers.get('content-type') ?? '').includes('json')) return null
     const c = (await r.json()) as CapDemo
     return c && typeof c === 'object' && c.allowed && c.refused && typeof c.wallet === 'string' ? c : null
