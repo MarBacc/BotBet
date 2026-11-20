@@ -93,6 +93,18 @@ else
   grep -q "Refused on-chain" web/src/CapCard.tsx && ! grep -q "simulated" web/src/CapCard.tsx && fail G9 "page says on-chain refusal but no refusedTxHash in data" || pass G9 "refusal described as simulated, no refusal tx in data"
 fi
 
+# 10) bot registry: every house bot verifies against its registered hash on this checkout (CRLF on Windows)
+if [ -f referee/src/registry/register-bot.ts ]; then
+  bad=""; nb=0
+  for d in referee/src/registry/house/*/ referee/src/registry/house/*/*/; do
+    [ -f "$d/bot.json" ] || continue; nb=$((nb+1))
+    name=$(node -e "console.log(JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).name)" "$d/bot.json")
+    out=$(cd referee && npx tsx src/registry/register-bot.ts --verify "$name" --dir "${d#referee/}" 2>&1 | tail -1)
+    echo "$out" | grep -q "VERIFIED" || bad+="$name; "
+  done
+  [ -z "$bad" ] && pass G10 "registry: $nb house bots VERIFIED (autocrlf=$(git config core.autocrlf))" || fail G10 "registry verify MISMATCH: ${bad}(autocrlf=$(git config core.autocrlf))"
+else pass G10 "no bot registry on this branch"; fi
+
 n=${#fails[@]}
 if [ "$n" = 0 ]; then echo "SOLO RELEASE GATE: PASS ($BRANCH @ $SHA, $(date +%H:%M))"
 else echo "SOLO RELEASE GATE: FAIL ($n): ${fails[*]} ($BRANCH @ $SHA, $(date +%H:%M))"; fi
