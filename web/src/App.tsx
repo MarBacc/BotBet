@@ -4,6 +4,7 @@ import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
 import { CapCard, useCapDemo } from './CapCard'
 import { HearResult, announcerLine } from './Announcer'
+import { About } from './About'
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -207,6 +208,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
           </div>
         </div>
       </div>
+      <About base={base} />
     </div>
   )
 }

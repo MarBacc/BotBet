@@ -29,3 +29,6 @@
 - 01:43 DONE: W5 TTS — server + client in-memory audio cache, line "X takes the N USDC pot, settled on Arc."; key/voice MISSING locally so button stays hidden.
 - NEXT: W6 About section.
 - BLOCKERS: ELEVENLABS_API_KEY / VOICE_ID not set (owner must add to .env to demo voice).
+- 01:43 DONE: W6 About section (3-line pitch, MatchEscrow from deployments.json with explorer link, repo link, roadmap).
+- NEXT: W7 resilience + test:smoke.
+- BLOCKERS: ELEVENLABS key/voice missing.
