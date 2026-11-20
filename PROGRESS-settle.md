@@ -18,6 +18,11 @@ MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified
   (match 0xcd1bd3b3…932bfd, Deep Thought wins in 55 plies)
 Not run from this laptop (no keys here by design).
 
+## 03:15 — DEMO_DEFAULT wired
+- solo now carries referee/src/demo/positions.ts; `npm run demo -- --dry-run` picks DEMO_DEFAULT
+  (`8/8/8/4k3/8/8/8/3QK3 w - - 0 1`, the position settled live on Arc). rehearse:local with it: 17 plies, settled.
+- tsc clean, npm test 18/18. Inbox S-N1..S-N4 all done.
+
 ## N1–N4 (presenter tooling): DONE
 - N1 `npm run demo [-- --dry-run]` (src/presenter.ts): settle --fen (DEMO_DEFAULT from src/demo/positions.ts if
   present and playable, else built-in `rnb2rk1/ppp2ppp/8/8/2B5/2N2Q2/PPP2PPP/R4RK1 w - - 0 11`, mate in 5 plies),
