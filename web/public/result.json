@@ -5,7 +5,7 @@
   "usdc": "0x3600000000000000000000000000000000000000",
   "referee": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
   "explorerBaseUrl": "https://explorer.testnet.arc.io",
-  "matchId": "0xc237419496934a7158e7948427cfbafa02c2463e7d9da59cadaf582b80017fc0",
+  "matchId": "0xcd1bd3b32d765d92249297abd735286f8808c5719bd7902a604715b1b9932bfd",
   "stakeUsdc": "2000000",
   "potUsdc": "4000000",
   "bots": [
@@ -15,8 +15,8 @@
       "address": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
       "depth": 12,
       "color": "white",
-      "approveTxHash": "0x62c85e13b3b3495920811d73ab400a18f89b7cc569105135e0e0bb190226cf90",
-      "stakeTxHash": "0x65740ac3532e9ab8b6227d66e1a854c07315df55e57f7898e553cf165eb2ebe4"
+      "approveTxHash": "0xb8f7668bbcfc14232c5b4c509c54831b16c2d2116c3097c04931df8493a7a419",
+      "stakeTxHash": "0xe86542a9779913e8e509d69fba164229a6cf74df629206c19d04038b300dabc4"
     },
     {
       "id": "hasty",
@@ -24,33 +24,33 @@
       "address": "0x016E0a0c6a153edFDd05947667Be12Be001Eb661",
       "depth": 4,
       "color": "black",
-      "approveTxHash": "0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11",
-      "stakeTxHash": "0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b"
+      "approveTxHash": "0x2746ab2da6e0b0e6e522638be1d6cf1542937ac373f570398c923685b48cf97b",
+      "stakeTxHash": "0x87c7cdeeae195e6dde8cb98085a97c0a25dbb0e975dca8ebd32b312315cc722c"
     }
   ],
   "winner": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
   "winnerId": "deep",
-  "plies": 17,
-  "pgn": "[Event \"BotBet\"]\n[Site \"offline\"]\n[Date \"2026.11.20\"]\n[Round \"?\"]\n[White \"Deep Thought (Stockfish depth 12)\"]\n[Black \"Hasty Hal (Stockfish depth 4)\"]\n[Result \"1-0\"]\n[SetUp \"1\"]\n[FEN \"8/8/8/4k3/8/8/8/3QK3 w - - 0 1\"]\n\n1. Qd3 Ke6 2. Kd2 Ke5 3. Ke3 Kf6 4. Qd5 Ke7 5. Ke4 Kf8 6. Kf5 Ke7 7. Kg6 Ke8 8. Kf6 Kf8 9. Qf7# 1-0",
+  "plies": 55,
+  "pgn": "[Event \"BotBet\"]\n[Site \"offline\"]\n[Date \"2026.11.20\"]\n[Round \"?\"]\n[White \"Deep Thought (Stockfish depth 12)\"]\n[Black \"Hasty Hal (Stockfish depth 4)\"]\n[Result \"1-0\"]\n\n1. e4 e6 2. Nc3 c5 3. Nf3 Nf6 4. e5 Nd5 5. Ne4 Nc6 6. c4 Nc7 7. d4 cxd4 8. Bg5 Bb4+ 9. Nfd2 Be7 10. Nd6+ Kf8 11. Qh5 g6 12. Qh6+ Kg8 13. Bxe7 Qxe7 14. f4 Qf8 15. Qh4 f5 16. g4 Ne8 17. c5 Nxd6 18. cxd6 b6 19. Bg2 Bb7 20. gxf5 gxf5 21. Bxc6 Rb8 22. Bxb7 Qd8 23. Rg1+ Kf7 24. Qh5+ Kf8 25. Qh6+ Kf7 26. Qg7+ Ke8 27. Qxh8+ Kf7 28. Rg7# 1-0",
   "result": {
-    "matchId": "0xc237419496934a7158e7948427cfbafa02c2463e7d9da59cadaf582b80017fc0",
+    "matchId": "0xcd1bd3b32d765d92249297abd735286f8808c5719bd7902a604715b1b9932bfd",
     "winner": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
-    "moveCount": 17,
-    "pgnHash": "0x289e08054d41e7ffe1ca3e2f710c46fb4788671878e79219bf50c67b5d11fd41",
-    "finishedAt": 1795164605
+    "moveCount": 55,
+    "pgnHash": "0x79902bf1efdda3f1c5c0965b1ab9cfb9f475d6e130c2cae344bf03474c259f51",
+    "finishedAt": 1795161058
   },
-  "signature": "0x4a2e5755c682426d9b1842e57effcc84f09d516249308b2b06987b017b4ef74a0a0a6de1e16af100c8f996b3af16f4030c68bd1890b7c6cb958d0639784f80d01b",
-  "createMatchTxHash": "0x72ca060d945121bca942e37a097cbbc52ca2ad8ec099f79836ef1414e2abf66f",
-  "settleTxHash": "0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3",
+  "signature": "0x5a4446a7941cadd626d6da9304005842d1cfc68b233bd2d82e490bae4d3bbece2dd347ada720956db025611d679c1ae81a007ec763ecafb640e992693717538b1c",
+  "createMatchTxHash": "0xa5c452609c8b9e0c925ff3427fe2696debbcda7cc1223f41894402f2d37f1483",
+  "settleTxHash": "0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4",
   "balances": {
     "before": {
-      "deep": "23993947",
-      "hasty": "15993752"
+      "deep": "21996973",
+      "hasty": "17996876"
     },
     "after": {
-      "deep": "25990920",
-      "hasty": "13990629"
+      "deep": "23993947",
+      "hasty": "15993752"
     }
   },
-  "finishedAt": 1795164605
+  "finishedAt": 1795161058
 }

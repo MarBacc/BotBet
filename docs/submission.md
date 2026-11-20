@@ -1,58 +1,33 @@
-# Submission checklist
+# Hackathon submission checklist
 
-**Devpost: ubc-hackathon-2026.devpost.com — due Friday 20 November, 12:00 PM CST.**
-Work through this at 05:30 Friday. Every line is a requirement from the guide, not a nicety;
-the participation prize alone needs all of it.
+## Categories
 
-## Selections on Devpost
+- [x] Main track: **Agentic Payments and AI**
+- [x] Chain award: **Best use of Arc**
+- [ ] Bounty: **ElevenLabs** — conditional. The voice button is in the merged web build; opt in only if the demo video includes audible commentary.
 
-- [ ] Main track: **Agentic Payments and AI** (exactly one, cannot be changed by submitting twice)
-- [ ] Chain award: **Best use of Arc** (never Solana as well — mutually exclusive)
-- [ ] Bounty: **ElevenLabs** (opt in explicitly; opting in is what makes you eligible)
-- [ ] Not entering: Gemini Prediction Markets, QuickNode Streams, Grok Bot
+## Required links
 
-## Required artifacts
+- Repository: https://github.com/MarBacc/BotBet
+- Demo video: [34-second backup recording](screenshots/demo.webm)
+- MatchEscrow on Arc testnet: [0x9d4EEE03C431c524822c6A1486bE6142d2a4916c](https://explorer.testnet.arc.io/address/0x9d4EEE03C431c524822c6A1486bE6142d2a4916c)
+- AgentWallet on Arc testnet: [0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262)
+- Live demo settle, 17 plies: [0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3)
+- AgentWallet allowed 0.02 USDC payment: [0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a)
+- Successful settle transaction, run 1: [0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4)
+- Successful settle transaction, run 2: [0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
 
-- [ ] **Public GitHub repo** — `github.com/MarBacc/BotBet` is currently **private**. Flip it.
-- [ ] Setup instructions in the repo that actually work from a clean clone
-- [ ] **README with technical documentation and an architecture overview**
-- [ ] **2–3 minute demo video**, Google Drive or YouTube, accessible to judges (not "anyone with
-      the link" turned off)
-- [ ] A working demo or deployed application
-- [ ] Project name, short description, all team members
-- [ ] Technologies and sponsor tools used
+## To do before submitting
 
-## Written answers (Devpost fields)
+- [ ] Publish the repository and confirm judges can access it. Owner: [placeholder]
+- [ ] Produce an accessible 2–3 minute video; include audible ElevenLabs commentary if entering that bounty. Owner: [placeholder]
+- [ ] Confirm the judge keyless commands work on the presentation laptop. Owner: [placeholder]
+- [ ] Confirm the live FEN settle, AgentWallet payment, and contract links open for judges. Owner: [placeholder]
+- [ ] Add the final Devpost description. Team: Alex Rodriguez, Tanish Patro, Marco (ChadYung).
+- [ ] Submit under Agentic Payments and AI and Best use of Arc; select ElevenLabs only if the shipped voice feature and audible demo meet its requirement. Owner: [placeholder]
 
-- [ ] What did you build?
-- [ ] What problem does it solve?
-- [ ] How does it work?
-- [ ] What makes it unique?
-- [ ] What would you build next? — `docs/roadmap.md` is literally the answer: betting pool, paid
-      intel, agent spending caps
+## Team
 
-## Track and award requirements (these are graded)
-
-- [ ] **Agentic Payments:** the README documents the agent's decision loop **and the safety
-      limits**. Ours: funds move only on a referee-signed EIP-712 result, each bot's exposure is
-      capped at its stake, the escrow can settle a match exactly once.
-- [ ] **Best use of Arc:** the README includes the deployed **contract address** and explains how
-      the project uses Arc (USDC as native gas, the 6-decimal ERC-20 interface, Foundry).
-- [ ] **ElevenLabs:** the README names which ElevenLabs product was used (Text to Speech API) and
-      how. **The demo video must show the integration in action, with audible audio.**
-
-## Video shot list (2–3 min)
-
-1. One line on what it is: two AI agents bet real USDC on a chess game they play themselves.
-2. `npm run settle` running in a terminal — stakes, the game, the signed result, the payout,
-   each with a tx hash.
-3. The page: board replaying, **commentary audible** (this is the ElevenLabs requirement), the
-   winner, the balances.
-4. The settle transaction open on `explorer.testnet.arc.io`. Real money moved on a real chain.
-5. One line on what is next, from the roadmap.
-
-## Before you close the laptop
-
-- [ ] Submit early. The deadline is a wall, and Devpost does not care why you were late.
-- [ ] **Be physically present at the closing ceremony on Saturday 21 November** — the guide says
-      teams must attend in person to qualify for any prize, bounties included.
+- Alex Rodriguez
+- Tanish Patro
+- Marco (ChadYung)
