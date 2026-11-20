@@ -1,6 +1,21 @@
 # BotBet QA report
 
-**🟢 SOLO RELEASE GATE: PASS** (solo @ `775d267`, fresh clone, 04:18 CST; 9 checks, G9 now exercised with the on-chain refusal). First PASS was at `907b1e7` (03:11).
+**UX GATE: PASS (provisional)**: temporary merge of solo `fe8184e` + feat/ux-poker `95b4ed7` + feat/ux-plain `8efa039` (→ `3d54909`, never pushed), fresh Windows clone, 05:02 CST. Final run is due when both PRs are open (~05:15).
+| UX check | Result |
+|---|---|
+| Full release gate G1–G10 (chess keyless path, npm test, registry, links, wording) | ✅ PASS 10/10 |
+| Chess works: page, replay to the last move, Present winner screen | ✅ |
+| Poker works: tab, table, replay to the end with winner text, full screen | ✅ |
+| No private poker cards at any replay step: every face-up card or card text on screen must be a table card of the hand shown (inline + full screen) | ✅ 101/101 steps (detector negative-tested: blanked boards → 53 steps flagged) |
+| No hex visible outside the collapsed "Technical details (for developers)" (chess start/end/Present, poker start/middle/end/full screen) | ✅ 0 |
+| Console/page errors, HTTP ≥400 | ✅ 0 |
+| Mobile 390px overflow, chess / poker | ✅ 0 / 0 px |
+| web `npm run build` + `npm run test:smoke` | ✅ green |
+| Screenshots | `docs/screenshots/plain-chess.png` (421 KB), `plain-poker.png` (334 KB) |
+Reproduce: `bash qa/ux-gate.sh <workdir> "feat/ux-poker feat/ux-plain"`.
+
+**🟢 SOLO RELEASE GATE: PASS 10/10** (solo @ `d0770d0`, fresh Windows clone, 04:55 CST). Includes feat/poker (PR #34): registry G10 ✅ (5/5 VERIFIED), npm test ✅. **0 open ❌.** Screenshots + demo.webm regenerated from `d0770d0` (0 console errors, mobile overflow 0).
+Previous: solo `775d267` PASS 9/9 (04:18). First PASS was at `907b1e7` (03:11).
 **🟢 feat/poker `e055cd6` merged onto solo (preview, 04:45): PASS 10/10**, 33/33. P1 pot fix `0eab851` is now in feat/poker (PR #33) → P1 ✅. **0 open ❌.** solo itself is still `775d267`: feat/poker is not merged yet.
 Previous: feat/poker `45e830f` (04:35): PASS 10/10, G10 ✅ (5/5 house bots VERIFIED, autocrlf=true; fix `9dceec0`, PR #32), npm test 33/33. **Ready to merge into solo.**
 P1 pot nit: fix `0eab851` is on feat/settle-tp-poker, **not yet in feat/poker**. Tested solo + feat/poker + feat/settle-tp-poker at 04:36: merges cleanly, 33/33, tsc ✅, web build ✅, Poker banner "Pot 4.00 USDC paid to 0xBAe2…0E24", 0 console errors. Optional: merge it into feat/poker first.
