@@ -3,6 +3,7 @@ import { Chess } from 'chess.js'
 import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
 import { CapCard, useCapDemo } from './CapCard'
+import { HearResult, announcerLine } from './Announcer'
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -47,11 +48,12 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
   const referee = d.referee ?? deployments.referee
   const [cap, capSample, toggleCap] = useCapDemo()
 
-  const { fens, sans, lastMoves } = useMemo(() => {
+  const { fens, sans, lastMoves, mate } = useMemo(() => {
     const g = new Chess()
     g.loadPgn(d.pgn)
     const hist = g.history({ verbose: true })
     return {
+      mate: g.isCheckmate(),
       fens: [hist.length ? hist[0].before : new Chess().fen(), ...hist.map(m => m.after)],
       sans: hist.map(m => m.san),
       lastMoves: [null, ...hist.map(m => [m.from, m.to] as [string, string])],
@@ -100,6 +102,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
         <span>🏆 {winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
         <span>Pot {formatUsdc(d.potUsdc)} paid to {short(winner.address, 6, 4)}</span>
       </div>
+      <HearResult line={announcerLine({ plies: d.plies, mate, winnerName: winner.name, potUsdc: d.potUsdc })} />
 
       <div className="strip">
         <div className="step"><small>1</small><b>Stake</b>

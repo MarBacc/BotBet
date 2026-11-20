@@ -50,3 +50,6 @@ html{background:var(--bg)}
 .pay.no .mono{color:var(--red);font-size:1rem}
 .tag.sm{font-size:.7rem;padding:2px 8px;vertical-align:middle}
 button.dev{font-size:.75rem;padding:4px 10px;opacity:.6}
+.hear{display:flex;align-items:center;gap:18px;margin:-6px 0 20px;flex-wrap:wrap}
+.hear button{background:#3b2a6b;border-color:#7c5cff;font-size:1.25rem}
+.caption{font-size:1.3rem;font-style:italic;color:var(--fg)}

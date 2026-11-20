@@ -14,3 +14,6 @@
 - 2026-11-20T07:16:37Z DONE: agent wallet safety card (reads /cap-demo.json if present, else hidden); dev-only preview toggle using src/dev/cap-demo.sample.json; verified render.
 - NEXT: ElevenLabs /api/tts + "Hear the result".
 - BLOCKERS: push denied (read-only access).
+- 2026-11-20T07:17:58Z DONE: /api/tts (ElevenLabs, server-side env only; GET enabled, POST audio/mpeg; 300-char cap) + "Hear the result" announcer line; hidden when no key; caption fallback. Tested no-key and bad-key paths.
+- NEXT: final build + push.
+- BLOCKERS: push denied (read-only access).
