@@ -34,4 +34,14 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-(pending first loop)
+2026-11-20 ~01:45 CST — feat/integration = solo + settle@370f915 + web@0dcebac + agent-wallet@f4f355f (no conflicts). feat/demo not on origin yet.
+
+- G1 ✅ shared builds
+- G2 ❌ referee tsc clean, but `npm run play-game` needs REFEREE_PRIVATE_KEY matching the deployed referee 0xE632…8345, so no keyless offline run (fix sent to settle: ephemeral key when unset)
+- G3 ✅ forge build + 14/14 tests (MatchEscrow 6, AgentWallet 8)
+- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type field for field. No real result.json / cap-demo.json yet
+- G5 ⏭ no local rehearsal script (settle skipped T3), no demo branch
+- G6 ✅ README commands exist in package.json; "trustless" only in HANDOFF's "not trustless" note. ⚠ result.sample.json has an escrow 0xdb0a…CbE that isn't the deployed MatchEscrow 0x9d4E…916c, plus sample tx hashes. Fine only while the page labels it SAMPLE
+
+Flags: feat/agent-wallet commits after 01:07 are authored "ChadYung", expected "Alex Rodriguez".
+Blocker: GitHub account TanishPatro has pull-only access to MarBacc/BotBet, so feat/integration can't be pushed and nothing can be merged into solo.
