@@ -13,7 +13,7 @@
     "cap-demo": "node scripts/check-setup.mjs --quiet && tsx src/cap-demo.ts",
     "check-setup": "node scripts/check-setup.mjs",
     "rehearse:local": "node scripts/check-setup.mjs --quiet && tsx scripts/local-rehearsal.ts",
-    "demo": "node scripts/check-setup.mjs --quiet && tsx src/presenter.ts",
+    "demo": "node scripts/demo.mjs",
     "replay-last": "tsx src/replay-last.ts",
     "test": "node scripts/run-tests.mjs"
   },
