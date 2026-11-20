@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { formatUsdc, toBaseUnits } from 'botbet-shared'
+import { Proof } from './plain/plain'
 
 export interface CapDemo {
   wallet: string
@@ -60,29 +61,49 @@ export function useCapDemo(): [CapDemo | null, boolean, () => void] {
   return [live ?? preview, !live && !!preview, toggle]
 }
 
-export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
-  const refusedTx = typeof c.refusedTxHash === 'string' && c.refusedTxHash ? c.refusedTxHash
+/** "0.05" (or base units) -> 5 */
+function cents(v: string): number {
+  const t = String(v ?? '').trim()
+  const n = t.includes('.') ? Number(t) : Number(t) / 1_000_000
+  return Math.round(n * 100)
+}
+const centWord = (n: number) => `${n} ${n === 1 ? 'cent' : 'cents'}`
+
+function refusedTxOf(c: CapDemo): string | null {
+  return typeof c.refusedTxHash === 'string' && c.refusedTxHash ? c.refusedTxHash
     : typeof c.refused.txHash === 'string' && c.refused.txHash ? c.refused.txHash : null
-  const short = (h: string) => (typeof h === 'string' && h.length > 18 ? `${h.slice(0, 10)}…${h.slice(-6)}` : String(h ?? '—'))
+}
+
+/** Plain-English spending-limit card: no addresses, hashes or error codes (those are in CapTech). */
+export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
+  const refusedTx = refusedTxOf(c)
+  const link = (h: string | null) => (h && base ? `${base}/tx/${h}` : undefined)
   return (
     <div className="panel cap">
-      <h2>Agent wallet safety {sample && <span className="tag sm">sample</span>}</h2>
-      <p className="why">The spending cap lives in the contract, so even a buggy agent can't overspend.</p>
-      <div className="kv"><span>Wallet</span>{base ? <a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a> : <span className="mono">{c.wallet}</span>}</div>
-      <div className="kv"><span>Cap</span><b>{capUsdc(c.capUsdc)}</b></div>
+      <h2>Spending limit test {sample && <span className="tag sm">sample</span>}</h2>
+      <p className="why">This bot's wallet has a built-in limit of {centWord(cents(c.capUsdc))} per payment.</p>
       <div className="pay ok">
-        <span>Allowed: {capUsdc(c.allowed.amount)} <span aria-hidden="true">✓</span></span>
-        {c.allowed.txHash && base
-          ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a>
-          : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}
+        <span><span aria-hidden="true">✅ </span>A {cents(c.allowed.amount)}-cent payment went through.</span>
+        <Proof href={link(c.allowed.txHash)} label="the payment that went through" />
       </div>
       <div className="pay no">
-        <span>{refusedTx ? 'Refused on-chain (tx reverted)' : 'Refused by the contract (simulated)'}: {capUsdc(c.refused.amount)}</span>
-        <span className="mono" title={c.refused.reason}>— {decodeReason(c)}</span>
-        {refusedTx && (base
-          ? <a className="mono" href={`${base}/tx/${refusedTx}`} target="_blank" rel="noreferrer">reverted tx {short(refusedTx)}</a>
-          : <span className="mono">reverted tx {short(refusedTx)}</span>)}
+        <span><span aria-hidden="true">❌ </span>A {cents(c.refused.amount)}-cent payment was blocked by the wallet itself; no money moved.{refusedTx ? '' : ' (Tested without sending it.)'}</span>
+        <Proof href={link(refusedTx)} label="the blocked payment" />
       </div>
     </div>
+  )
+}
+
+/** Developer details for the spending-limit test (address, hashes, revert reason). */
+export function CapTech({ c, base }: { c: CapDemo; base: string }) {
+  const refusedTx = refusedTxOf(c)
+  return (
+    <>
+      <h3>Agent wallet cap</h3>
+      <div className="kv"><span>Wallet</span>{base ? <a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a> : <span className="mono">{c.wallet}</span>}</div>
+      <div className="kv"><span>Cap</span><span>{capUsdc(c.capUsdc)}</span></div>
+      <div className="kv"><span>Allowed {capUsdc(c.allowed.amount)}</span><span className="mono">{c.allowed.txHash ?? 'tx pending'}</span></div>
+      <div className="kv"><span>Refused {capUsdc(c.refused.amount)} {refusedTx ? '(on-chain, tx reverted)' : '(simulated)'}</span><span className="mono">{decodeReason(c)}{refusedTx ? ` · ${refusedTx}` : ''}</span></div>
+    </>
   )
 }
