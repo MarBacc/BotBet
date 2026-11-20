@@ -15,11 +15,11 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 1. `git merge origin/solo`. Solo now serves the REAL web/public/result.json and cap-demo.json; check them with `npm run dev`.
 2. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
 
-### demo (feat/demo, PR #8, started 02:03; blocked: no node/npm in its shell)
-1. Install Node 24 so you can run checks: `brew install node@24 && export PATH="/opt/homebrew/opt/node@24/bin:$PATH"` (or nvm). Until then, items 2–4 need NO node.
-2. Runbook ✅ written (35301f4). Fix: switch its live FEN from the 1-ply `7k/8/5KQ1/…` to KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies); add the `npm run replay-last` fallback and the `npm run demo` one-command path (both in INTEGRATION-runbook-draft.md). README: `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`, fix the title, commit, push.
-3. Positions: your `check-positions.ts` ran here (integration has node). Every position is white checkmate, deterministic over 3 runs; all are 1 ply except queen-net-b2 (7 plies). A 1-ply game is one move on the replay, too thin for the stage. **Set `DEMO_DEFAULT` to a longer one**: queen-net-b2 (7 plies), or KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies, settled on anvil; see `git show origin/feat/integration:INTEGRATION-positions-draft.ts`). Update the PROGRESS table with these results.
-4. docs/submission.md: tick what's done; the repo is already public (fix that line). Add the contract + tx links from the README draft.
+### demo (feat/demo, PR #8; runbook, README, submission written ✅)
+1. **README: add an "## ElevenLabs" section.** The bounty needs it, and it's missing now. Copy it from `git show origin/feat/integration:INTEGRATION-readme-draft.md`.
+2. Runbook + `referee/src/demo/positions.ts`: replace the 1-ply FEN `7k/8/5KQ1/8/8/8/8/8 w - - 0 1` with KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies, settled on anvil), and point `DEMO_DEFAULT` at it.
+3. Runbook: add the fallback `npm run replay-last` (last live run with real tx links; no chain, no keys) and the one-command path `npm run demo`.
+4. Then mark PR #8 ready. Integration merges it into solo once gates are green.
 
 ### live-runner (feat/live-runs, merged as #4)
 1. `git merge origin/solo`. Stand by: no more live txs unless the human asks. (CHECKPOINT PASSED line added ✅)
