@@ -81,3 +81,28 @@ button.dev{font-size:.75rem;padding:4px 10px;color:var(--mut)}
 @media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.grid>.side{grid-column:auto}}
 @media(max-width:600px){.page{padding:16px}.banner{font-size:1.2rem;padding:14px 16px}h1{font-size:1.6rem}.moves{grid-template-columns:2.4rem 1fr 1fr}.kv{flex-wrap:wrap}.sample-ribbon{display:none}}
 .moves .ell{color:var(--mut);padding:4px 10px}
+/* ux-plain */
+.how h2,.guess h2{margin:0 0 10px;font-size:1rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
+ol.strip{list-style:none;padding:0;margin:0 0 24px}
+.how .step b{font-size:1.1rem;line-height:1.4}
+.how .step .l{word-break:normal;margin-top:8px;color:var(--fg)}
+.tag.live{background:var(--acc);text-transform:none;letter-spacing:0}
+.tip{display:inline-block;cursor:help;color:var(--blue);font-weight:700;margin:0 2px;position:relative;text-transform:none;letter-spacing:0}
+.tag .tip{color:#000}
+.tip:focus{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+.tip:hover::after,.tip:focus::after{content:attr(data-tip);position:absolute;left:50%;top:130%;transform:translateX(-50%);width:max-content;max-width:min(320px,80vw);background:#0b0e14;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.85rem;font-weight:500;z-index:20;white-space:normal}
+a.proof{display:inline-block;background:#1f2a3b;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:.9rem;font-weight:700;color:var(--blue);white-space:nowrap}
+a.proof:hover{background:#2a3850;text-decoration:none}
+.banner a.proof{font-size:1rem;vertical-align:middle}
+.pace{display:inline-flex;gap:4px}.pace button{padding:8px 12px;font-size:1rem}.pace button.on{background:var(--gold);color:#000;border-color:var(--gold)}
+.guess .ctl{margin-top:0}.pick-result{font-size:1.6rem;font-weight:800;margin:4px 0}
+.story{list-style:none;margin:0;padding:0;max-height:640px;overflow:auto;font-size:1rem}
+.story li button{all:unset;display:block;cursor:pointer;padding:6px 10px;border-radius:8px;line-height:1.4}
+.story li button:hover{background:#1f2a3b}
+.story li.cur button{background:var(--gold);color:#000;font-weight:700}
+.story li button:focus-visible{outline:2px solid var(--blue)}
+.badge p{margin:6px 0 0}
+details.devinfo summary{cursor:pointer;font-weight:800;font-size:1.1rem}
+details.devinfo h3{margin:16px 0 6px;font-size:1rem;color:var(--mut)}
+details.devinfo .kv span:last-child{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){h1{font-size:1.5rem}.pace button{padding:8px 10px}.banner a.proof{font-size:.9rem}}
