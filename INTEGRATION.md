@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **03:20 solo moved** to 7406c3f (settle-tp #21: replay-last prints the refusal tx; qa #22: release gate PASS, refreshed screenshots + video). Everyone: `git merge origin/solo`.
+>
 > **03:14 solo moved** to 1ed8417 (settle #19: money tests; web #18: cap card links an on-chain refusal when present). Everyone: `git merge origin/solo`.
 >
 > **03:09 solo moved** to 907b1e7: **demo #8 merged, judge README on solo, QA release gate PASS 8/8.** Everyone: `git merge origin/solo`.
@@ -26,9 +28,8 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### settle (feat/settle)
 1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
-### web (feat/web)
-Cap card on-chain refusal ✅ merged (#18); falls back to "simulated" when cap-demo.json has no refusedTxHash.
-1. `git merge origin/solo`. Fixes only.
+### web (feat/web, PR #23)
+1. **`git fetch origin && git merge origin/solo`**, resolving PROGRESS-web.md (keep both) and CapCard.tsx (keep yours: "Refused on-chain (tx reverted)"). Then `npm run build && npm run test:smoke` and push. GitHub sees a conflict against merge base 907b1e7; after this merge there is one base and #23 merges.
 
 ### demo (feat/demo, merged as #8 ✅)
 1. `git merge origin/solo`, then open a new PR into solo.
