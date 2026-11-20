@@ -93,6 +93,8 @@ export function pokerResultJson(o: MatchOutcome, extra: {
   signature: Hex;
   offline: boolean;
   txs?: Record<string, string>;
+  /** Per-bot stake in 6-decimal USDC base units (on-chain runs only). */
+  stakeUsdc?: bigint;
 }) {
   const winner = o.bots[o.winnerSeat];
   return {
@@ -103,6 +105,8 @@ export function pokerResultJson(o: MatchOutcome, extra: {
     chainId: extra.chainId,
     escrow: extra.escrow,
     matchId: extra.matchId,
+    // Base-unit strings, same convention as result.json (the page shows "Pot … paid to …").
+    ...(extra.stakeUsdc !== undefined ? { stakeUsdc: extra.stakeUsdc.toString(), potUsdc: (extra.stakeUsdc * 2n).toString() } : {}),
     bots: o.bots.map((b, i) => ({ id: b.id, name: b.name, strategy: b.strategy, address: extra.addresses[i] })),
     hands: o.hands,
     chips: { [o.bots[0].name]: o.chips[0], [o.bots[1].name]: o.chips[1] },

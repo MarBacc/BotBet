@@ -6,6 +6,8 @@
   "chainId": 5042002,
   "escrow": "0x9d4EEE03C431c524822c6A1486bE6142d2a4916c",
   "matchId": "0xb10aaf497ca8cdd2811769735e414f5afccbe4180decf6295e250e8efa8c7581",
+  "stakeUsdc": "2000000",
+  "potUsdc": "4000000",
   "bots": [
     {
       "id": "theory",

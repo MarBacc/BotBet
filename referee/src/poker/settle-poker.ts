@@ -120,7 +120,7 @@ async function main(): Promise<void> {
   if (!ev) throw new Error(`settle mined but no Settled event: ${txUrl(txs.settle as Hash)}`);
 
   // 8. poker-result.json
-  const json = pokerResultJson(o, { addresses: [botAccts[0].address, botAccts[1].address], matchId, chainId: ARC_TESTNET_CHAIN_ID, escrow, refereeAddress: referee.address, finishedAt, signature, offline: false, txs });
+  const json = pokerResultJson(o, { addresses: [botAccts[0].address, botAccts[1].address], matchId, chainId: ARC_TESTNET_CHAIN_ID, escrow, refereeAddress: referee.address, finishedAt, signature, offline: false, txs, stakeUsdc: stake });
   mkdirSync(dirname(args.out), { recursive: true });
   writeFileSync(args.out, `${JSON.stringify(json, null, 2)}\n`);
   console.log(`\n${box("✅ POKER SETTLED", [`winner ${bots[o.winnerSeat].name} in ${o.handsPlayed} hands`, `settle ${txUrl(txs.settle as Hash)}`, `wrote  ${args.out}`])}`);
