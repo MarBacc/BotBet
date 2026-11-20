@@ -9,7 +9,7 @@ import { randomBytes } from "node:crypto";
 import { toHex, type Address } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { BOTS, type BotConfig } from "./bots.js";
-import { loadEnv, readDeployments, requirePrivateKey } from "./env.js";
+import { loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
 import { resolveEnginePath } from "./engine.js";
 import { MAX_FULL_MOVES, MOVE_TIME_MS, playGame, sides } from "./game.js";
 import { hashPgn, matchDomain, recoverMatchResultSigner, signMatchResult, type MatchResult } from "./result.js";
@@ -22,10 +22,10 @@ function botAddress(bot: BotConfig): Address {
 async function main(): Promise<void> {
   loadEnv();
 
-  const deployments = readDeployments();
+  const deployments = readArcDeployments();
   const escrow = deployments.contracts.MatchEscrow.address;
+  const referee = refereeAccount(deployments); // throws unless the key matches the deployed referee
   const refereeKey = requirePrivateKey("REFEREE_PRIVATE_KEY");
-  const referee = privateKeyToAccount(refereeKey);
 
   const { white, black } = sides();
   const addresses = new Map<string, Address>(BOTS.map((bot) => [bot.id, botAddress(bot)]));

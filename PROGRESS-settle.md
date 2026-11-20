@@ -1,0 +1,46 @@
+# PROGRESS — settle lane (feat/settle)
+
+## T1 — keys check
+**Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
+
+## T3 — local anvil rehearsal: SKIPPED
+`anvil` and `forge` both fail: `Library not loaded: /usr/local/opt/libusb/lib/libusb-1.0.0.dylib`. No Homebrew on
+this machine, so `brew install libusb` is impossible; `contracts/out` does not exist either. Option if wanted:
+a JS chain (hardhat node) + solc-js build — needs the owner's go-ahead.
+
+## T4 — robust errors + demo output: DONE (no live txs)
+- `settle-core.ts` `runSettle(config)` holds the loop (injectable rpcUrl/escrow/usdc/keys/explorer/outPath);
+  `settle.ts` is the CLI and still reads .env + shared/deployments.json exactly as before.
+- `errors.ts`: decoded custom errors (verified read-only on Arc: `NotAdmin()`, `MatchNotFound()`), RPC
+  unreachable → ARC_RPC_URL hint, all short balances listed with faucet hint, receipt wait 60 s → 3 min → exit 1.
+- `--json` (progress → stderr, summary → stdout, `{ok:false,step,error,hint}` on failure); numbered `[n/11]` ✅/❌ steps.
+- Untested live: the send/receipt path (no keys, no local chain).
+
+Commit author email is the placeholder `TANISH_EMAIL` (name OK); not changed per instructions.
+
+## 2026-11-20 — steps 0–2 (code), live run blocked on keys
+
+**Done**
+- Merged origin/solo; interfaces.md keeps solo's contract spec (incl. `InvalidMatch()`) + result.json schema v1.
+- Verified: `moveCount` is plies (55-ply game → 55); MatchEscrow only hashes it, no constraint.
+- Verified on-chain (read-only): chainId 5042002; `referee()` 0xE632…8345, `admin()` 0xEAb9…1f7F,
+  `usdc()` 0x3600…0000, `MAX_STAKE` 1e12 base units, `eip712Domain` = BotBet/1/5042002/0x9d4E…916c.
+- `env.ts`: `readArcDeployments()` (asserts chain 5042002 + USDC 0x3600…), `refereeAccount()` (asserts
+  REFEREE_PRIVATE_KEY derives to deployments.referee, clear error), `BOTBET_ENV_FILE` override.
+- `game.ts`/`engine.ts`: optional `startFen` (UCI `position fen …`, PGN SetUp/FEN headers).
+- `npm run settle [-- --fen "<FEN>"] [--dry-run]` in `referee/src/settle.ts`.
+  - Stake: **not stored in the contract or deploy script** — it's a per-match `createMatch` arg. Read
+    from `STAKE_USDC` (default "2"), checked against on-chain `MAX_STAKE`.
+  - `createMatch` is admin-only → uses DEPLOYER_PRIVATE_KEY; fresh random 32-byte matchId every run.
+  - Preflight: RPC chainId, escrow immutables vs keys, EIP-712 domain, balances (stake + 0.05 gas
+    buffer, 6-dec ERC-20 view) with faucet message naming the short address; fees floored at 2×20 gwei.
+  - Each tx simulated, sent, receipt awaited, status checked; explorer links printed.
+  - Settle verified via `Settled` event filtered by emitter = escrow. Writes web/public/result.json (schema v1).
+
+**Blockers**
+- No `.env` in this worktree; `/Users/alexrdz/Bot-Arena/.env` has no REFEREE_PRIVATE_KEY. Need the
+  BotBet burner keys (REFEREE, DEPLOYER, BOT_1, BOT_2) in `botbet-settle/.env` (or `BOTBET_ENV_FILE`).
+
+**Next**: dry run → owner OK → live `npm run settle` ×2.
+
+**Tx hashes**: none yet.
