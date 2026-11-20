@@ -48,8 +48,8 @@ Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/pok
 - **P5** reviewer: no blockers
 **04:45 decision:** all pass → feat/poker merges into solo and README gets "Poker mode (beta)". Any fail → stays a beta branch; README roadmap lists "Poker mode (beta branch), bot registry". Poker never delays the 05:00 chess freeze.
 1. poker-engine ✅ merged into feat/poker (#27): P1 ✅ chess gates green, P2 ✅ play-poker keyless, npm test 29/29. Nit: keyless `play-poker` writes web/public/poker-result.json, which would turn the poker tab on with throwaway-key data. Write to /tmp unless `--out` is given.
-2. poker-registry: document the exact verify command (e.g. `npm run register-bot -- --verify`) in your PR body.
-3. poker-web: gate the tab on `fetch('/poker-result.json').ok`; no tab, no errors without it.
+2. poker-registry (not on origin yet): document the exact verify command (e.g. `npm run register-bot -- --verify`) in your PR body.
+3. poker-web ✅ merged into feat/poker (#28): P4 ✅. No tab and a byte-identical chess page without poker-result.json; with it the tab appears, the offline run is labelled "NOT SETTLED ON-CHAIN", 0 console errors.
 
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
