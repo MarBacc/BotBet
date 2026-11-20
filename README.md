@@ -1,98 +1,113 @@
 # BotBet
 
-Two Stockfish bots stake USDC on Arc testnet, play a chess game, and the winner is paid
-automatically against a referee-signed result. Solo hackathon build, 10 hours.
+**Two AI chess agents stake USDC on Arc, play their own game, and pay the winner through a referee-attested result.**
 
-**The loop:** two bots stake → the game is played → the referee signs the result → `settle()`
-pays the winner → one page shows it with a link to the transaction.
+![BotBet result page](docs/screenshots/main.png)
 
-- [docs/plan.md](docs/plan.md) — the schedule, the deadline and what is cut
-- [docs/submission.md](docs/submission.md) — the Devpost checklist, worked through before noon Friday
-- [docs/arc.md](docs/arc.md) — Arc testnet RPC, chain ID, USDC address, faucet, gotchas
-- [docs/roadmap.md](docs/roadmap.md) — everything cut from the solo build, spec intact
-- [interfaces.md](interfaces.md) — the spec being built
-- [CLAUDE.md](CLAUDE.md) — working rules for Claude Code sessions
+![BotBet Present mode](docs/screenshots/present.png)
 
-## Layout
+[Watch the 34-second demo recording](docs/screenshots/demo.webm)
 
-| Folder | Stack |
-|---|---|
-| `contracts/` | Foundry — `MatchEscrow` |
-| `referee/` | Node 24 + TypeScript — plays the game, signs the result, settles |
-| `web/` | Vite + React + TypeScript — the result page |
-| `shared/` | `botbet-shared` — the only USDC conversion helpers |
+BotBet makes an agent-to-agent deal visible from stake to payout. Deep Thought (Stockfish depth 12) plays White against Hasty Hal (depth 4). Each bot stakes 2 USDC in MatchEscrow. After a decisive game, the referee signs the result with EIP-712 and the escrow pays the 4 USDC pot to the winner. The web page replays the game, links to the Arc transaction, and includes presentation and voice-commentary features. The live demo position finished by checkmate in 17 plies in 21.8 seconds; its settlement is linked below.
 
-## Setup
+## How it works
 
-```bash
-cp .env.example .env    # testnet burner keys only; never commit .env
+1. **Stake:** the admin creates a fresh match; each bot approves and stakes 2 USDC.
+2. **Play:** the referee runs the Stockfish engines against a chess.js board and records the legal moves.
+3. **Sign:** the referee signs the match ID, winner, ply count, PGN hash, and finish time using EIP-712.
+4. **Settle:** MatchEscrow checks the signature and match state, then transfers the 4 USDC pot to the winner.
+5. **Review:** the web app loads the result, replays the moves, and links to the settle transaction.
+
+```mermaid
+sequenceDiagram
+    participant Bot1 as Bot 1 (Deep Thought)
+    participant Bot2 as Bot 2 (Hasty Hal)
+    participant Admin
+    participant MatchEscrow
+    participant Referee
+    Admin->>MatchEscrow: createMatch(matchId, bots, stake)
+    Bot1->>MatchEscrow: approve 2 USDC; stake(matchId)
+    Bot2->>MatchEscrow: approve 2 USDC; stake(matchId)
+    Referee->>Referee: play Stockfish game and record PGN
+    Referee->>Referee: sign EIP-712 match result
+    Referee->>MatchEscrow: settle(matchId, result, signature)
+    MatchEscrow-->>Bot1: pay winner (or Bot2)
+    MatchEscrow-->>Referee: Settled event
 ```
 
-Two things bite every fresh terminal. `forge` on this machine is Laravel Herd's Forge CLI, not
-Foundry, and `shared/dist/` is gitignored, so it must be built before anything that imports it:
+## Architecture
+
+- `contracts/`: `MatchEscrow` holds stakes, verifies signed results, and pays the winner. `AgentWallet` is a separate agent-payment wallet with an on-chain per-payment cap.
+- `referee/`: TypeScript referee, Stockfish WASM engine, chess.js game rules, and viem signing/Arc calls.
+- `web/`: React replay page, Present mode (`P`), transaction links, and voice commentary.
+- `shared/`: shared 6-decimal USDC conversion helpers used by the referee and web app.
+
+## Deployed on Arc testnet
+
+- Chain ID: `5042002`
+- MatchEscrow: [`0x9d4EEE03C431c524822c6A1486bE6142d2a4916c`](https://explorer.testnet.arc.io/address/0x9d4EEE03C431c524822c6A1486bE6142d2a4916c) (address from `shared/deployments.json`)
+- AgentWallet: [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262), deployed with a 0.05 USDC per-payment cap.
+- Live demo settle (17 plies, 21.8 seconds): [`0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3`](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3)
+- AgentWallet allowed 0.02 USDC payment: [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC over-cap request was simulated and returned `CapExceeded(100000, 50000)`; it was not broadcast.
+- Two recorded successful full-game settles paid 4 USDC to Deep Thought in 55 plies:
+  - [Run 1 settle transaction](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4)
+  - [Run 2 settle transaction](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
+
+Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interface at `0x3600000000000000000000000000000000000000` for stake and payout amounts.
+
+## Security model and limits
+
+- The EIP-712 domain binds the signature to MatchEscrow's address and Arc testnet chain ID `5042002`.
+- A match ID can settle only once, preventing a signed result from replaying against an already-settled match.
+- `MAX_STAKE` limits an individual match stake to 1,000,000 USDC (6-decimal base units).
+- AgentWallet enforces its 0.05 USDC per-payment limit in the contract. The allowed 0.02 USDC payment is mined; the over-cap 0.10 USDC request returned `CapExceeded` in simulation and was not broadcast.
+- **Trust limitation:** MatchEscrow verifies the referee's attestation; it does not independently verify the chess moves or PGN. The referee could attest to an incorrect result. On-chain move verification is on the roadmap.
+
+## Run it yourself
+
+### Judges (no keys, nothing sent on-chain)
+
+Prerequisites: Node.js 20.12+ and npm.
+
+```bash
+git clone https://github.com/MarBacc/BotBet.git && cd BotBet
+cd shared && npm install && npm run build
+cd ../referee && npm install
+npm run play-game      # offline Stockfish game and ephemeral signature
+npm run check-setup    # shows the live-run prerequisites without exposing keys
+npm run replay-last    # replays the recorded Arc game and links its transactions
+cd ../web && npm install && npm run build && npm run preview
+```
+
+### Live on Arc (needs keys)
+
+Use funded testnet burner wallets. Add the four required keys to a local `.env` file; never commit or display it. From the repository root:
+
+```bash
+cp .env.example .env   # fill the four testnet keys locally
+cd referee
+npm run settle -- --dry-run
+npm run settle
+npm run settle -- --fen "8/8/8/4k3/8/8/8/3QK3 w - - 0 1"
+```
+
+The settle commands create matches and send real Arc testnet transactions. The FEN above is the exact live demo position recorded in the linked 17-ply settlement.
+
+### Contract development
+
+Foundry is only needed to rebuild or redeploy the contracts:
 
 ```bash
 export PATH="$HOME/.foundry/bin:$PATH"
-```
-
-```bash
-cd shared && npm install && npm run build
-```
-
-Then:
-
-```bash
 cd contracts && forge build && forge test
 ```
 
-```bash
-cd referee && npm install && npm run build
-```
+## Roadmap
 
-```bash
-cd web && npm install && npm run dev
-```
+Next steps from [`docs/roadmap.md`](docs/roadmap.md): spectator betting pools, paid bot intel, per-match agent budgets, and on-chain move verification. The longer plan also includes bot APIs, match feeds, and a leaderboard.
 
-## For the judges
+## Team
 
-> Fill these in as they become true. They are graded: the track requires the decision loop and
-> safety limits, Best use of Arc requires the contract address, and the ElevenLabs bounty
-> requires naming the product used. See [docs/submission.md](docs/submission.md).
-
-### Architecture
-
-TODO after the loop runs: `MatchEscrow` on Arc testnet holds both stakes; a Node referee plays
-the game with Stockfish, signs an EIP-712 `MatchResult` with the referee key, and calls
-`settle()`; the page replays the game from `result.json` with generated commentary.
-
-### How this uses Arc
-
-TODO: deployed `MatchEscrow` address + explorer link. USDC is Arc's native gas token, so the
-agents pay their own fees in the same asset they stake; we use the 6-decimal ERC-20 interface at
-`0x3600000000000000000000000000000000000000` throughout, never the 18-decimal native view.
-Contracts are Foundry, Solidity 0.8.24.
-
-### The agents' decision loop and safety limits
-
-TODO: each bot is Stockfish at a fixed depth choosing its own moves under a 3-second limit; no
-human approves a move or a payment. Limits: funds move only on a referee-signed EIP-712 result
-bound to this contract and this match, a bot's exposure is capped at its stake, and a match can
-settle exactly once.
-
-### ElevenLabs
-
-TODO: Text to Speech API, used to narrate the match replay — which lines, which voice.
-
-## Schedule at a glance
-
-Deadline **Friday 20 November, 12:00 PM CST**.
-
-| Clock | Goal |
-|---|---|
-| 20:00 Thu | Setup, faucet, ElevenLabs credits |
-| 20:45 Thu | `MatchEscrow` tested and deployed to Arc testnet |
-| 23:00 Thu | Referee plays and settles on-chain — **hard checkpoint at 01:30** |
-| 01:30 Fri | The page |
-| 03:30 Fri | ElevenLabs commentary |
-| 04:30 Fri | Demo match and the 2–3 minute video |
-| 05:30 Fri | README, Devpost, submit |
+- Alex Rodriguez
+- Tanish Patro
+- Marco (ChadYung)
