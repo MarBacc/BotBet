@@ -77,3 +77,6 @@
 - 02:54 DONE: merged solo; verified live-runs 074c3d7 demo-length game (17 plies from FEN, referee field present) renders. Fix: move numbers now follow the start FEN (side to move + fullmove) in move list and Present mode; smoke 11/11.
 - NEXT: stand by, fixes only.
 - BLOCKERS: none.
+- 03:08 DONE: merged solo; cap card links the on-chain refusal (refusedTxHash 0xd21f…3aa3, status 0) as "Refused on-chain" + reverted tx link; falls back to "(simulated)" without it. Verified with live-runs 19ffa31 and old 1a2adc3 data.
+- NEXT: stand by, fixes only.
+- BLOCKERS: none.
