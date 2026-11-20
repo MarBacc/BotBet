@@ -1,7 +1,8 @@
 # BotBet QA report
 
-**🟢 SOLO RELEASE GATE: PASS** (solo @ `a156dcd`, fresh clone, 03:28 CST; 9 checks). First PASS was at `907b1e7` (03:11).
-Branch heads: feat/demo `f7aa2e4` (preview merge: PASS; PROGRESS only, #7 docs not yet changed), feat/web `b75a3ae` (in solo), feat/settle-tp `ff5a9e6` (in solo), **feat/live-runs `19ffa31` (preview merge: FAIL G9, see #7, merge only together with a docs update)**.
+**🟢 SOLO RELEASE GATE: PASS** (solo @ `775d267`, fresh clone, 04:18 CST; 9 checks, G9 now exercised with the on-chain refusal). First PASS was at `907b1e7` (03:11).
+**feat/poker `5b83148` merged onto solo (preview): PASS 9/9.** Poker checks: live result (`offline:false`, Theory beats Maniac 200–0 in 9 hands), handHistoryHash recomputes and equals the signed pgnHash, moveCount = hands, all 6 txs + matchId in LIVE-RUNS.md, Poker (beta) tab 0 console errors. Nit P1 below.
+Earlier heads: feat/demo `f7aa2e4` (in solo), feat/web `b75a3ae` (in solo), feat/settle-tp `ff5a9e6` (in solo), **feat/live-runs `19ffa31` (preview merge: FAIL G9, see #7, merge only together with a docs update)**.
 
 ## Release gate (solo)
 
@@ -24,7 +25,9 @@ Backup video: `docs/screenshots/demo.webm`, 3.78 MB, 1920×1080, 34 s (page → 
 Tested: `origin/solo` @ `49e5c2e`, `origin/feat/demo` @ `c6e885d` (README unchanged since `28c8d6d`; `docs/submission.md` hashes match, still has `[video link]` at line 12, see #2) · Windows 11, Git Bash, Node v20.20.2, npm 10.8.2 · 2026-11-20 02:38 CST.
 Fresh clone in an empty temp folder, no keys (`.env` copied from `.env.example`), no transactions sent.
 
-**Open: 1 ❌ (#7, latent: only happens if feat/live-runs merges). Fixed: #1 #2 #3 (`e7dbce3`, solo `907b1e7`), #4 #5 (`e74dada`), #6 (`72e4105`). Screenshots + demo.webm regenerated from solo `907b1e7` at 03:12 (main 396 KB, mobile 191 KB, demo.webm 3.66 MB, 0 console errors).**
+**Open: 0 ❌ on solo; 1 nit on feat/poker (P1). #7 fixed in `775d267` ("Record the on-chain cap refusal everywhere"; G9 ✅).
+P1 (nit, poker-engine + poker-web): the poker banner reads "Pot paid to 0xBAe2…0E24" with no amount, because poker-result.json has no stake/pot field. Fix: the engine adds `stakeUsdc`/`potUsdc` (base units, as in result.json) to settle-poker's output, and poker-web shows them. Only needed if poker is in the demo.
+Screenshots + demo.webm regenerated from solo `775d267` at 04:18 (wallet card now shows the reverted tx; 0 console errors). Fixed: #1 #2 #3 (`e7dbce3`, solo `907b1e7`), #4 #5 (`e74dada`), #6 (`72e4105`). Screenshots + demo.webm regenerated from solo `907b1e7` at 03:12 (main 396 KB, mobile 191 KB, demo.webm 3.66 MB, 0 console errors).**
 
 ## Results
 
@@ -36,7 +39,7 @@ Fresh clone in an empty temp folder, no keys (`.env` copied from `.env.example`)
 | 4 | Mobile layout (390×844) | ✅ `e74dada` (on solo via PR #11, `8b49caa`); gate G6 overflow 0. Originally: | 59 px horizontal scroll; the Moves panel reaches x = 505 px. Cause: `web/src/index.css:59` `@media(max-width:1400px){… .grid{grid-template-columns:minmax(0,520px) minmax(0,1fr)} …}` comes after the 1000 px single-column rule on line 19, so it wins on phones. | web-agent | At the end of `web/src/index.css` add `@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}`. Check with `node qa/screenshots.mjs` ("horizontal overflow px: 0"). |
 | 5 | Cap card wording matches the facts | ✅ `e74dada` now reads "Refused by the contract (simulated)". Originally: | The card says **"Refused on-chain: 0.10 USDC"**. README and LIVE-RUNS.md:43 say the 0.10 payment was *simulated* and not broadcast; `cap-demo.json` has no refusal tx. A judge looking for that tx won't find one. | web-agent | `web/src/CapCard.tsx:76`: change `Refused on-chain:` to `Refused by the contract (simulated):`. |
 | 6 | `npm test` (referee) on Windows | ✅ `72e4105` (`node scripts/run-tests.mjs`, on solo via PR #10); passes in the gate. Originally: | `Could not find '…\referee\test\*.test.ts'`, exit 1. npm runs scripts through cmd.exe, which does not expand globs, and Node 20's `--test` doesn't either. | settle | `referee/package.json`: `"test": "tsx --test test/eip712.test.ts test/fen.test.ts test/money.test.ts"`. |
-| 7 | Cap refusal story is the same everywhere | ❌ latent | feat/live-runs `19ffa31` adds `refusedTxHash 0xd21f2097…3aa3` (on-chain revert, status 0, block 73163897). Once merged, the page shows "Refused on-chain (tx reverted)" with a link, but README.md:51 and :63, docs/demo-runbook.md:42, :44 (presenter line "no reverting transaction was sent") and :56, and LIVE-RUNS.md:45 still say *simulated / not broadcast*. | demo-agent (README, docs) + live-runs (LIVE-RUNS.md:45) | Merge feat/live-runs **only together with** the doc update in the owner message, or don't merge it. Check: `MERGE=feat/live-runs bash qa/release-gate.sh` → G9 ✅. |
+| 7 | Cap refusal story is the same everywhere | ✅ `775d267` (G9). Originally ❌ latent: | feat/live-runs `19ffa31` adds `refusedTxHash 0xd21f2097…3aa3` (on-chain revert, status 0, block 73163897). Once merged, the page shows "Refused on-chain (tx reverted)" with a link, but README.md:51 and :63, docs/demo-runbook.md:42, :44 (presenter line "no reverting transaction was sent") and :56, and LIVE-RUNS.md:45 still say *simulated / not broadcast*. | demo-agent (README, docs) + live-runs (LIVE-RUNS.md:45) | Merge feat/live-runs **only together with** the doc update in the owner message, or don't merge it. Check: `MERGE=feat/live-runs bash qa/release-gate.sh` → G9 ✅. |
 | 7a | Fresh clone of `solo` | ✅ | 1 s | | |
 | 8 | `shared`: `npm install && npm run build` | ✅ | 3 s + 1 s (`prepare` already builds) | | |
 | 9 | `referee`: `npm install` | ✅ | 18 s. Nit: rewrites `referee/package-lock.json` (drops 2 `"peer": true`), harmless | | |
