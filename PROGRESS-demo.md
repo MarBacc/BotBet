@@ -1,6 +1,6 @@
 # Demo progress
 
-Updated: 2026-11-20 03:05 CST
+Updated: 2026-11-20 03:17 CST
 
 ## Done
 
@@ -11,6 +11,7 @@ Updated: 2026-11-20 03:05 CST
 - Added main, Present, and other screenshot assets. README links main/present screenshots and the repository's 34-second demo recording, has the supplied team names, and contains no video/team placeholder text.
 - README run instructions now separate judge keyless commands from live Arc commands that require keys. Foundry appears only under Contract development.
 - All five positions passed chess.js loading and three deterministic depth-12/depth-4 checkmate runs; none are mate-in-one.
+- Corrections and screenshot assets are committed and pushed to `origin/feat/demo` at `e7dbce3`; the working tree is clean.
 
 ## Position checker results
 
@@ -28,7 +29,6 @@ The checker reports the 13-ply mirrored position as the shortest offline candida
 
 ## Next
 
-- Commit and push the correction set to `origin/feat/demo`.
 - Open a pull request from `feat/demo` into `solo`.
 
 ## Remaining submission items
