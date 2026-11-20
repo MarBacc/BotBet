@@ -9,11 +9,9 @@ Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 
 ### settle (feat/settle, merged into solo as #1)
 _No open asks. Stay on call for fixes only in referee/** and shared/**._
 
-### web (feat/web, PR #2)
-1. `git merge origin/solo` (settle and agent-wallet landed; keep solo's AGENTS.md/HANDOFF.md). Then `npm run build && npm run test:smoke`.
-2. Your `web/src/CapCard.tsx` is equivalent to integration's 2e88fba panel, so **do not** take 2e88fba.
-3. Check the page against the REAL result.json: `git show origin/feat/live-runs:web/public/result.json > /tmp/r.json` and load it locally (don't commit it). Notes: it has no `referee` field (falls back to deployments.json), escrow is 0x9d4E…916c, 55 plies, Deep Thought wins.
-4. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
+### web (feat/web, PR #2, merges after live-runs)
+1. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite). Latest commits are still "Tanish".
+2. Once live-runner commits `web/public/cap-demo.json`, eyeball the CapCard against it. Its shape is already verified against the anvil rehearsal output.
 
 ### demo (feat/demo, not started)
 1. Create `feat/demo` from `origin/solo` and push it. Owns referee/src/demo/**, docs/demo-runbook.md, docs/submission.md, README.md, AGENTS.md, PROGRESS-demo.md.
@@ -22,10 +20,10 @@ _No open asks. Stay on call for fixes only in referee/** and shared/**._
 4. If not started by 02:30 the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
 
 ### live-runner (feat/live-runs, PR #4)
-1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both are verified on Arc RPC: status 1, to MatchEscrow.
+1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both are verified on Arc RPC: status 1, to MatchEscrow. (settle already recorded it in PROGRESS-settle.md.)
 2. Deploy AgentWallet (`contracts/script/DeployAgentWallet.s.sol`), commit `contracts/broadcast/DeployAgentWallet.s.sol/5042002/run-latest.json`, record the address in LIVE-RUNS.md.
 3. `npm run cap-demo` with AGENT_WALLET_ADDRESS set, commit `web/public/cap-demo.json`, record the allowed tx in LIVE-RUNS.md.
-4. `git merge origin/solo` before pushing. Optional: one more `npm run settle` afterwards so result.json carries the new `referee` field.
+4. `git merge origin/solo` before pushing. Tip: `cd referee && npm run rehearse:local` (from feat/settle) rehearses the settle loop and the cap demo on anvil first. Optional: one more `npm run settle` afterwards so result.json carries the new `referee` field.
 5. Touch only web/public/result.json, web/public/cap-demo.json, LIVE-RUNS.md, contracts/broadcast/DeployAgentWallet.s.sol/5042002/*.json.
 
 ### human
@@ -64,13 +62,13 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 01:57 CST — solo = settle #1 + agent-wallet #3 merged. integration = solo + live-runs@f90cda8 + web@5cc0acc.
+2026-11-20 02:01 CST — solo = settle #1 + agent-wallet #3. integration = solo + settle@8d192f5 + live-runs@f90cda8 + web@f1692e0, no conflicts.
 
 - G1 ✅ shared builds
-- G2 ✅ tsc clean; keyless play-game plays and signs, deployed-referee check SKIPPED, nothing sent
+- G2 ✅ tsc clean; keyless play-game plays and signs, nothing sent
 - G3 ✅ forge build + 14/14 tests
-- G4 ✅ web build + smoke test green with the sample AND with live-runs' real result.json (escrow 0x9d4E…916c, settle 0xf177…f6f4). cap-demo.json not produced yet
-- G5 ⏭ no local anvil rehearsal script; live settles replace it (2 verified on Arc RPC)
+- G4 ✅ web build + smoke test green with the real result.json; CapCard type matches cap-demo.json from the rehearsal
+- G5 ✅ `npm run rehearse:local`: 2 settles on anvil in 1.5s + cap demo (paid 0.02, refused 0.10 CapExceeded)
 - G6 ⏭ waiting on demo branch (README/runbook). No "trustless" claim in repo
 
 Flags: feat/web new commits authored "Tanish" (expected Alex Rodriguez). Rewritten history ~01:30 (see PR comments).
