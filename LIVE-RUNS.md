@@ -85,3 +85,9 @@ CHECKPOINT PASSED
 | AgentWallet | `0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262` | 0.180000 |
 
 Both bots are above 8 USDC, and the admin and referee are above 1 USDC. No faucet top-up is needed.
+
+## 2026-11-20 03:05:13 CST — On-chain cap refusal
+
+- Sent one 0.10 USDC payment attempt to the referee from the wallet owner with a 100,000 gas limit.
+- Verified Arc testnet receipt status 0 at block 73163897 and `CapExceeded(100000, 50000)` decoded by replaying the exact call at the preceding block. [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3)
+- The wallet balance stayed at 0.18 USDC. The owner paid 0.0005935 USDC in gas.
