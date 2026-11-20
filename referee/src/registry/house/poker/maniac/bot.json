@@ -1,0 +1,6 @@
+{
+  "name": "Maniac",
+  "game": "poker",
+  "strategySummary": "HOUSE BOT — Loose-aggressive: raises most hands preflop and bets or raises any pair, plus seeded random bluffs more than half the time.",
+  "entry": "../../../../poker/bots/maniac.ts"
+}
