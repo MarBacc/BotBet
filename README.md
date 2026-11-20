@@ -48,7 +48,7 @@ sequenceDiagram
 - MatchEscrow: [`0x9d4EEE03C431c524822c6A1486bE6142d2a4916c`](https://explorer.testnet.arc.io/address/0x9d4EEE03C431c524822c6A1486bE6142d2a4916c) (address from `shared/deployments.json`)
 - AgentWallet: [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262), deployed with a 0.05 USDC per-payment cap.
 - Live demo settle (17 plies, 21.8 seconds): [`0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3`](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3)
-- AgentWallet allowed 0.02 USDC payment: [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC over-cap payment was sent on-chain and reverted with `CapExceeded(100000, 50000)`: [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3) (receipt status 0; the wallet balance did not change).
+- AgentWallet allowed 0.02 USDC payment: [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC over-cap payment was broadcast and **reverted on-chain** with `CapExceeded(100000, 50000)` (receipt status 0, wallet balance unchanged): [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3).
 - Two recorded successful full-game settles paid 4 USDC to Deep Thought in 55 plies:
   - [Run 1 settle transaction](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4)
   - [Run 2 settle transaction](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4)
@@ -60,12 +60,8 @@ Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interfac
 - The EIP-712 domain binds the signature to MatchEscrow's address and Arc testnet chain ID `5042002`.
 - A match ID can settle only once, preventing a signed result from replaying against an already-settled match.
 - `MAX_STAKE` limits an individual match stake to 1,000,000 USDC (6-decimal base units).
-- AgentWallet enforces its 0.05 USDC per-payment limit in the contract. The allowed 0.02 USDC payment is mined; the over-cap 0.10 USDC payment was sent and reverted on-chain with `CapExceeded`, so no money moved.
+- AgentWallet enforces its 0.05 USDC per-payment limit in the contract. The allowed 0.02 USDC payment is mined; the over-cap 0.10 USDC payment was broadcast and reverted on-chain with `CapExceeded`, so no money moved.
 - **Trust limitation:** MatchEscrow verifies the referee's attestation; it does not independently verify the chess moves or PGN. The referee could attest to an incorrect result. On-chain move verification is on the roadmap.
-
-## ElevenLabs voice commentary
-
-The page's **Hear the result** button narrates the outcome with the **ElevenLabs Text to Speech API**. It builds one announcer line from `result.json` (for example "Checkmate in 28 moves! Deep Thought takes the 4 USDC pot, settled on Arc.") and sends it to a server-side `/api/tts` route in `web/vite.config.ts`, which calls ElevenLabs and returns the MP3. The API key stays on the server and never reaches the browser. Set `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` in `.env` and run the page with `npm run dev` or `npm run preview`. Without them, the button hides itself.
 
 ## Run it yourself
 

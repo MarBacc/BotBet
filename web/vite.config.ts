@@ -63,5 +63,7 @@ function tts(mode: string): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
+  // GitHub Pages serves the site under /BotBet/; local dev and preview stay at /
+  base: process.env.GITHUB_PAGES ? '/BotBet/' : '/',
   plugins: [react(), tts(mode)],
 }))

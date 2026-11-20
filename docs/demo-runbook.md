@@ -39,9 +39,9 @@ Open the settle transaction in the Arc explorer and point to `Settled` and the 4
 
 ## 2:10–2:30 — AgentWallet safety
 
-Show the deployed AgentWallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262) and its 0.05 USDC per-payment cap. The allowed 0.02 USDC transfer to the referee was mined and verified in [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC attempt was sent on-chain and reverted with `CapExceeded(100000, 50000)`: [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3).
+Show the deployed AgentWallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](https://explorer.testnet.arc.io/address/0xaeb54edfe9f702b926df7eaeb0e3ebfa6c005262) and its 0.05 USDC per-payment cap. The allowed 0.02 USDC transfer to the referee was mined and verified in [`0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a`](https://explorer.testnet.arc.io/tx/0xfa0a3a6faefa6c3fdd00a32620f089edb04b84432429428ba99fd3a3a468239a). The 0.10 USDC attempt was broadcast and reverted on-chain with `CapExceeded(100000, 50000)`: [`0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3`](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3).
 
-**Say:** “The allowed payment is on Arc. The larger payment was sent too, and the wallet contract reverted it with `CapExceeded`, so no money moved. Here's the failed transaction.”
+**Say:** “The allowed payment is on Arc. The larger one is on Arc too, as a reverted transaction: the wallet's own code refused it with `CapExceeded`, so no money moved.”
 
 ## 2:30–3:00 — Why Arc, roadmap, close
 
@@ -53,4 +53,4 @@ Show the deployed AgentWallet [`0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262`](htt
 - **The settle run fails:** show the verified 17-ply live settle at [the Arc explorer](https://explorer.testnet.arc.io/tx/0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3), then show the page replay. The earlier [run 1](https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4) and [run 2](https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4) are also verified settles.
 - **The page is broken:** open `web/public/result.json` from the live run or use the recording and explorer transaction.
 - **Present mode does not start:** click the page's Present button; press `P` or `Esc` to exit, `Space` to skip to the result, and `R` to replay.
-- **AgentWallet card is missing:** open `web/public/cap-demo.json` and the allowed-payment transaction link; show the reverted over-cap transaction linked above.
+- **AgentWallet card is missing:** open `web/public/cap-demo.json` and the allowed-payment transaction link; open the reverted refusal transaction from `refusedTxHash` in the same file.
