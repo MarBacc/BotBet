@@ -1,0 +1,822 @@
+{
+  "schemaVersion": 1,
+  "game": "poker",
+  "variant": "HU-LHE",
+  "offline": false,
+  "chainId": 5042002,
+  "escrow": "0x9d4EEE03C431c524822c6A1486bE6142d2a4916c",
+  "matchId": "0xb10aaf497ca8cdd2811769735e414f5afccbe4180decf6295e250e8efa8c7581",
+  "bots": [
+    {
+      "id": "theory",
+      "name": "Theory",
+      "strategy": "By the book: a 169-hand heads-up preflop chart by position, then a 200-sample Monte Carlo equity estimate against pot odds after the flop.",
+      "address": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24"
+    },
+    {
+      "id": "maniac",
+      "name": "Maniac",
+      "strategy": "Loose-aggressive: raises most hands preflop and bets or raises any pair, plus seeded random bluffs more than half the time.",
+      "address": "0x016E0a0c6a153edFDd05947667Be12Be001Eb661"
+    }
+  ],
+  "hands": [
+    {
+      "n": 1,
+      "holeCards": {
+        "Theory": [
+          "5h",
+          "6h"
+        ],
+        "Maniac": [
+          "Ts",
+          "Kh"
+        ]
+      },
+      "board": [
+        "3s",
+        "5d",
+        "8s",
+        "3d",
+        "8c"
+      ],
+      "actions": [
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "call",
+          "amount": 4
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "call",
+          "amount": 4
+        }
+      ],
+      "winner": "Theory",
+      "pot": 32,
+      "showdown": true
+    },
+    {
+      "n": 2,
+      "holeCards": {
+        "Theory": [
+          "8c",
+          "4d"
+        ],
+        "Maniac": [
+          "Td",
+          "Ad"
+        ]
+      },
+      "board": [],
+      "actions": [
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "fold",
+          "amount": 0
+        }
+      ],
+      "winner": "Maniac",
+      "pot": 4,
+      "showdown": false
+    },
+    {
+      "n": 3,
+      "holeCards": {
+        "Theory": [
+          "2d",
+          "Qc"
+        ],
+        "Maniac": [
+          "2h",
+          "4s"
+        ]
+      },
+      "board": [
+        "Ks",
+        "3c",
+        "6s",
+        "4d"
+      ],
+      "actions": [
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "fold",
+          "amount": 0
+        }
+      ],
+      "winner": "Maniac",
+      "pot": 4,
+      "showdown": false
+    },
+    {
+      "n": 4,
+      "holeCards": {
+        "Theory": [
+          "2c",
+          "Ac"
+        ],
+        "Maniac": [
+          "7c",
+          "3s"
+        ]
+      },
+      "board": [
+        "8h",
+        "Jd",
+        "4c",
+        "2s",
+        "Kd"
+      ],
+      "actions": [
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "call",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "check",
+          "amount": 0
+        }
+      ],
+      "winner": "Theory",
+      "pot": 28,
+      "showdown": true
+    },
+    {
+      "n": 5,
+      "holeCards": {
+        "Theory": [
+          "5c",
+          "4s"
+        ],
+        "Maniac": [
+          "3c",
+          "6s"
+        ]
+      },
+      "board": [
+        "8h",
+        "3d",
+        "Jd",
+        "Jh"
+      ],
+      "actions": [
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "fold",
+          "amount": 0
+        }
+      ],
+      "winner": "Maniac",
+      "pot": 16,
+      "showdown": false
+    },
+    {
+      "n": 6,
+      "holeCards": {
+        "Theory": [
+          "3c",
+          "Kh"
+        ],
+        "Maniac": [
+          "9d",
+          "Th"
+        ]
+      },
+      "board": [
+        "6d",
+        "3d",
+        "7h",
+        "Js",
+        "Kd"
+      ],
+      "actions": [
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "call",
+          "amount": 4
+        }
+      ],
+      "winner": "Theory",
+      "pot": 44,
+      "showdown": true
+    },
+    {
+      "n": 7,
+      "holeCards": {
+        "Theory": [
+          "5h",
+          "Ac"
+        ],
+        "Maniac": [
+          "Ts",
+          "4c"
+        ]
+      },
+      "board": [
+        "2c",
+        "8d",
+        "2s",
+        "Ks",
+        "As"
+      ],
+      "actions": [
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "call",
+          "amount": 4
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "call",
+          "amount": 4
+        }
+      ],
+      "winner": "Theory",
+      "pot": 56,
+      "showdown": true
+    },
+    {
+      "n": 8,
+      "holeCards": {
+        "Theory": [
+          "Qs",
+          "Kc"
+        ],
+        "Maniac": [
+          "Td",
+          "Qc"
+        ]
+      },
+      "board": [
+        "9s",
+        "7h",
+        "8s",
+        "Tc",
+        "Js"
+      ],
+      "actions": [
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "check",
+          "amount": 0
+        },
+        {
+          "bot": "Maniac",
+          "street": "turn",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "turn",
+          "type": "call",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "bet",
+          "amount": 4
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Maniac",
+          "street": "river",
+          "type": "raise",
+          "amount": 8
+        },
+        {
+          "bot": "Theory",
+          "street": "river",
+          "type": "call",
+          "amount": 4
+        }
+      ],
+      "winner": "Theory",
+      "pot": 48,
+      "showdown": true
+    },
+    {
+      "n": 9,
+      "holeCards": {
+        "Theory": [
+          "7d",
+          "As"
+        ],
+        "Maniac": [
+          "5s",
+          "Kh"
+        ]
+      },
+      "board": [
+        "8c",
+        "6c",
+        "7h",
+        "3h",
+        "Ac"
+      ],
+      "actions": [
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "post",
+          "amount": 1
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "post",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 3
+        },
+        {
+          "bot": "Maniac",
+          "street": "preflop",
+          "type": "raise",
+          "amount": 4
+        },
+        {
+          "bot": "Theory",
+          "street": "preflop",
+          "type": "call",
+          "amount": 2
+        },
+        {
+          "bot": "Maniac",
+          "street": "flop",
+          "type": "bet",
+          "amount": 2
+        },
+        {
+          "bot": "Theory",
+          "street": "flop",
+          "type": "call",
+          "amount": 2
+        }
+      ],
+      "winner": "Theory",
+      "pot": 16,
+      "showdown": true
+    }
+  ],
+  "chips": {
+    "Theory": 200,
+    "Maniac": 0
+  },
+  "winner": "Theory",
+  "winnerId": "theory",
+  "handsPlayed": 9,
+  "tiebreak": "none",
+  "handHistoryHash": "0x4c2a9820f1f8b756d81d290899517e63c17211cab4249c1afa6e014e8d51f084",
+  "referee": {
+    "address": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
+    "result": {
+      "matchId": "0xb10aaf497ca8cdd2811769735e414f5afccbe4180decf6295e250e8efa8c7581",
+      "winner": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
+      "moveCount": 9,
+      "pgnHash": "0x4c2a9820f1f8b756d81d290899517e63c17211cab4249c1afa6e014e8d51f084",
+      "finishedAt": 1795168721
+    },
+    "signature": "0xee7c67012eac5bcf62e10faff8e40346c7c1b472cc0cb9f26e58d0543060e74155083f400e23d3c484a9145646b6af6913a6269869c2ccb6f1eb791fb76207b21b"
+  },
+  "txs": {
+    "createMatch": "0x1414055df30877e47ba76af7100a61bcac7bcdc1c7374f8e805cf3ecd42407b0",
+    "theory.approve": "0xb23e23566974c3c5eb39ee04e53cfdc7d70c6f96bca22994c6bfc0ddac943cae",
+    "theory.stake": "0x51cd9dc89d89776f0c451f5dbbd1b61232a0af2e729802e22bb15ee412a2ff6b",
+    "maniac.approve": "0x0325944bedd4607a66d21ec11ae5bd126705e77cb8c6817c9e3c7e363e2b006e",
+    "maniac.stake": "0x27d7376fe78291fe68ef41f80e1c52f5b25881429fbe9739d94ce34213803d36",
+    "settle": "0xa79492719be7dd5e7fd182f1f45db9515ae324a9f1ebc2cc000e6b429b9f304d"
+  }
+}
