@@ -8,9 +8,10 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "play-game": "tsx src/play-game.ts",
-    "settle": "tsx src/settle.ts",
-    "cap-demo": "tsx src/cap-demo.ts"
+    "play-game": "node scripts/check-setup.mjs && tsx src/play-game.ts",
+    "settle": "node scripts/check-setup.mjs && tsx src/settle.ts",
+    "cap-demo": "node scripts/check-setup.mjs && tsx src/cap-demo.ts",
+    "check-setup": "node scripts/check-setup.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
