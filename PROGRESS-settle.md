@@ -18,6 +18,15 @@
   0xdb0a… (integration ⚠), left alone: not in my file list now.
 - `gh` is not installed here: PR #1 comments unreadable.
 
+## 02:25 — S3 local rehearsal: DONE (G5 now runnable)
+- anvil/forge work on this Mac with `DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib` (Foundry ships libusb).
+- `npm run rehearse:local [-- --runs n --fen "<FEN>"]` (referee/scripts/local-rehearsal.ts): starts anvil on
+  :8545 chain 5042002 (or reuses one), deploys MockUSDC + fresh MatchEscrow from contracts/out, mints, runs the
+  REAL `runSettle()` (same code as `npm run settle`), writes /tmp/rehearsal-result.json, stops anvil.
+- Result: 2/2 settles in 2.6 s with Settled events verified (local settle txs 0x00d72a30…c9746, 0xb5cf7afe…398c6).
+  result.json keys = sample's + `referee`; keccak(pgn) = pgnHash. `--fen` run settles too (1 ply mate).
+- Needs `cd contracts && forge build` first (read-only use).
+
 ## T1 — keys check
 **Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
 
