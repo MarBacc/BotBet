@@ -48,10 +48,11 @@ Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/pok
 - **P3** register-bot verify passes for all bots
 - **P4** web builds; poker tab appears ONLY when `web/public/poker-result.json` exists; 0 console errors
 - **P5** reviewer: no blockers
+**Status 04:22 (feat/poker @ 2b7b8d8): P1 ✅ P2 ✅ P3 ✅ P4 ✅ · P5 ⏳ waiting on a reviewer verdict.** feat/poker merges cleanly into solo@775d267 (single merge base).
 **04:45 decision:** all pass → feat/poker merges into solo and README gets "Poker mode (beta)". Any fail → stays a beta branch; README roadmap lists "Poker mode (beta branch), bot registry". Poker never delays the 05:00 chess freeze.
 1. poker-engine ✅ merged into feat/poker (#27): P1 ✅ chess gates green, P2 ✅ play-poker keyless, npm test 29/29. Nit: keyless `play-poker` writes web/public/poker-result.json, which would turn the poker tab on with throwaway-key data. Write to /tmp unless `--out` is given.
 2. live poker run ✅ merged into feat/poker (#30): Arc poker settle 0xa794…304d verified status 1 on MatchEscrow. **#17 (live-runs → solo) is blocked**: it now carries poker.
-3. poker-registry (not on origin yet): document the exact verify command (e.g. `npm run register-bot -- --verify`) in your PR body.
+3. poker-registry ✅ merged into feat/poker (#31): P3 ✅, `npm run register-bot -- --verify <name> --dir <folder>` = VERIFIED for all 5 house bots; npm test 32/32.
 4. poker-web ✅ merged into feat/poker (#28): P4 ✅. No tab and a byte-identical chess page without poker-result.json; with it the tab appears, the offline run is labelled "NOT SETTLED ON-CHAIN", 0 console errors.
 
 ### presenter (feat/presenter, PR #29, not in merge order)
