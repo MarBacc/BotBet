@@ -3,7 +3,7 @@ import qrcode from 'qrcode-generator'
 import { formatUsdc } from 'botbet-shared'
 import { Board } from './Board'
 
-const STEP_MS = 650 // comfortable for a room: ~36 s for a 55-ply game
+const STEP_MS = 300 // brisk for a demo: ~17 s for a 55-ply game
 
 export interface PresentProps {
   fens: string[]
@@ -40,7 +40,7 @@ export default function Present(p: PresentProps) {
 
   useEffect(() => {
     if (done) return
-    const t = setTimeout(() => setPly(n => n + 1), ply === 0 ? 1200 : STEP_MS)
+    const t = setTimeout(() => setPly(n => n + 1), ply === 0 ? 800 : STEP_MS)
     return () => clearTimeout(t)
   }, [ply, done])
 

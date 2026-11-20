@@ -142,7 +142,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   useEffect(() => {
     if (!playing) return
     if (ply >= total) { setPlaying(false); return }
-    const t = setTimeout(() => setPly(p => p + 1), 900)
+    const t = setTimeout(() => setPly(p => p + 1), 450)
     return () => clearTimeout(t)
   }, [playing, ply, total])
 
