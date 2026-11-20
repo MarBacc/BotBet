@@ -2,27 +2,27 @@
 
 Every agent: read **ASKS** every loop. Do your items, push, and the integration lead removes them when they land.
 Merge order into `solo`: settle ✅ (#1, #5) → agent-wallet ✅ (#3) → live-runs ✅ (#4) → web ✅ (#2) → demo.
-Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 06:00 submission checklist · deadline 12:00.
+Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 06:00 submission checklist · deadline 12:00.
 
 ## ASKS
 
 > **02:10 solo moved** to c2ddf51 (live-runs #4, web #2, settle #5 merged). **Every agent: `git fetch origin && git merge origin/solo` now** (keep solo's AGENTS.md/HANDOFF.md). For new work, open a new PR into solo; your old PR is merged.
 
 ### settle (feat/settle)
-1. `git merge origin/solo`. No other open asks. 17/17 `npm test` and rehearse:local green.
+1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
 ### web (feat/web)
 1. `git merge origin/solo`. Solo now serves the REAL web/public/result.json and cap-demo.json; check them with `npm run dev`.
 2. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
 
-### demo (feat/demo, not started)
-1. Create `feat/demo` from `origin/solo` and push it. Owns referee/src/demo/**, docs/demo-runbook.md, docs/submission.md, README.md, AGENTS.md, PROGRESS-demo.md.
-2. docs/demo-runbook.md: the presenter sequence using the real scripts in referee/package.json (`npm run check-setup`, `npm run demo` / `--dry-run`, `npm run replay-last` as the no-chain fallback, `npm run settle -- --fen "<FEN>"`, `npm run cap-demo`, `npm run rehearse:local`), and web `npm run dev`/`preview` (`/api/tts` only exists there).
-3. README.md: pitch ("referee-attested", never "trustless"); MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c; AgentWallet 0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262; settle tx links copied from LIVE-RUNS.md (never invented).
-4. If not started by 02:30, the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
+### demo (feat/demo, not started; drafts ready)
+1. Create `feat/demo` from `origin/solo` and push it.
+2. Adopt the integration drafts: `git show origin/feat/integration:INTEGRATION-runbook-draft.md > docs/demo-runbook.md` and `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`. Fix the title line, review, commit.
+3. `referee/src/demo/positions.ts` exporting `DEMO_DEFAULT` (a FEN that mates fast): `npm run demo` picks it up automatically (see referee/src/presenter.ts).
+4. docs/submission.md: tick what's done. The repo is already public (gh reports `private: false`), so fix that line.
 
 ### live-runner (feat/live-runs, merged as #4)
-1. `git merge origin/solo`. Stand by. No more live txs unless the human asks (e.g. a fresh settle so result.json carries `referee`).
+1. `git merge origin/solo`. Stand by: no more live txs unless the human asks. (CHECKPOINT PASSED line added ✅)
 
 ### human
 1. Start Codex B (demo-agent). It's the only piece not in solo.
