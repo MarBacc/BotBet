@@ -2,3 +2,9 @@
 - 2026-11-20T06:25:31Z DONE: single result page (board replay, move list, bots, pot, payouts, attestation badge, flow strip, explorer links, sample fallback). Build green.
 - NEXT: visual check against a real result.json from settle.
 - BLOCKERS: none. (Board is hand-rendered with unicode glyphs + chess.js; not browser-screenshot verified.)
+- 2026-11-20T07:14:32Z DONE: synced solo + feat/settle (interfaces.md conflict -> took incoming). shared + web build green.
+- NEXT: QA result page.
+- BLOCKERS: TanishPatro has read-only access to MarBacc/BotBet; push needs collaborator access.
+- 2026-11-20T07:15:23Z DONE: QA pass — PGN replay (55 plies, mate), USDC formatting, explorer links, sample fallback OK; added referee address to attestation badge.
+- NEXT: projector polish.
+- BLOCKERS: push denied (read-only access); commits held locally.

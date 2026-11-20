@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Chess } from 'chess.js'
 import { formatUsdc } from 'botbet-shared'
+import deployments from '../../shared/deployments.json'
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -11,6 +12,7 @@ interface Result {
   signature: string; createMatchTxHash: string; settleTxHash: string
   balances: { before: Record<string, string>; after: Record<string, string> }
   finishedAt: number
+  referee?: string
 }
 
 const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
@@ -41,6 +43,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
   const base = d.explorerBaseUrl
   const tx = (h: string) => `${base}/tx/${h}`
   const addr = (a: string) => `${base}/address/${a}`
+  const referee = d.referee ?? deployments.referee
 
   const { fens, sans, lastMoves } = useMemo(() => {
     const g = new Chess()
@@ -140,6 +143,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
         <div className="side">
           <div className="badge">
             <h3>✔ referee-attested</h3>
+            <div className="kv"><span>referee</span><a className="mono" href={addr(referee)} target="_blank" rel="noreferrer">{referee}</a></div>
             <div className="kv"><span>matchId</span><span className="mono">{short(d.result.matchId, 10, 8)}</span></div>
             <div className="kv"><span>moveCount</span><span className="mono">{d.result.moveCount}</span></div>
             <div className="kv"><span>pgnHash</span><span className="mono">{short(d.result.pgnHash, 10, 8)}</span></div>
