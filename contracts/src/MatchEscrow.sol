@@ -5,6 +5,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 enum Status {
     None,
@@ -36,7 +37,7 @@ struct MatchResult {
 /// @notice Two bots stake equal USDC; the winner takes the pot against a referee-signed result.
 ///         `settle` is authorised by the signature, not the caller, so a crashed referee
 ///         strands nothing.
-contract MatchEscrow is EIP712 {
+contract MatchEscrow is EIP712, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     bytes32 private constant MATCH_RESULT_TYPEHASH =
@@ -85,7 +86,7 @@ contract MatchEscrow is EIP712 {
     }
 
     /// @notice A participant posts its stake; the escrow must already be approved for it.
-    function stake(bytes32 matchId) external {
+    function stake(bytes32 matchId) external nonReentrant {
         Match storage m = matches[matchId];
         if (m.status == Status.None) revert MatchNotFound();
         if (m.status != Status.Open) revert WrongStatus(uint8(Status.Open), uint8(m.status));
@@ -100,17 +101,19 @@ contract MatchEscrow is EIP712 {
         }
 
         uint256 amount = m.stakeAmount;
-        bool funded = m.stakedA && m.stakedB;
-        if (funded) m.status = Status.Funded;
-
-        emit Staked(matchId, msg.sender, amount);
-        if (funded) emit MatchFunded(matchId, amount * 2);
-
+        // Pull the stake before flipping to Funded: until the money is actually here, the
+        // match must not claim a pot, or a settle could pay it out of another match's funds.
         usdc.safeTransferFrom(msg.sender, address(this), amount);
+        emit Staked(matchId, msg.sender, amount);
+
+        if (m.stakedA && m.stakedB) {
+            m.status = Status.Funded;
+            emit MatchFunded(matchId, amount * 2);
+        }
     }
 
     /// @notice Pay the whole pot to the signed winner. Anyone may call it with a valid signature.
-    function settle(bytes32 matchId, MatchResult calldata result, bytes calldata signature) external {
+    function settle(bytes32 matchId, MatchResult calldata result, bytes calldata signature) external nonReentrant {
         Match storage m = matches[matchId];
         if (m.status == Status.None) revert MatchNotFound();
         if (m.status != Status.Funded) revert WrongStatus(uint8(Status.Funded), uint8(m.status));

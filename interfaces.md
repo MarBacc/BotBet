@@ -77,9 +77,14 @@ signature, unsigned. `settle` verifies in order:
 3. `ECDSA.recover(_hashTypedDataV4(structHash), signature) == referee`, else `InvalidSignature`.
    A signature is thus bound to the chain, to this contract, and to one match, settleable once.
 
-**Foundry tests — these six, nothing else:** both stake and the winner is paid; a bad signature,
+**Foundry tests — these seven, nothing else:** both stake and the winner is paid; a bad signature,
 a replayed result, and a signature made for a *different contract address* each revert; `settle`
-before both bots staked reverts; a stranger without a valid signature cannot settle.
+before both bots staked reverts; a stranger without a valid signature cannot settle; and a token
+that re-enters `stake` cannot settle the match it is still funding.
+
+`stake` pulls the USDC *before* flipping the match to `Funded`, and both `stake` and `settle` are
+`nonReentrant`: the escrow pools every match's funds in one balance, so a match that claims a pot
+it does not yet hold could be settled out of another match's money.
 
 ## 3. The referee flow
 
