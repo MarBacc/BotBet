@@ -8,6 +8,14 @@
 this machine, so `brew install libusb` is impossible; `contracts/out` does not exist either. Option if wanted:
 a JS chain (hardhat node) + solc-js build — needs the owner's go-ahead.
 
+## T4 — robust errors + demo output: DONE (no live txs)
+- `settle-core.ts` `runSettle(config)` holds the loop (injectable rpcUrl/escrow/usdc/keys/explorer/outPath);
+  `settle.ts` is the CLI and still reads .env + shared/deployments.json exactly as before.
+- `errors.ts`: decoded custom errors (verified read-only on Arc: `NotAdmin()`, `MatchNotFound()`), RPC
+  unreachable → ARC_RPC_URL hint, all short balances listed with faucet hint, receipt wait 60 s → 3 min → exit 1.
+- `--json` (progress → stderr, summary → stdout, `{ok:false,step,error,hint}` on failure); numbered `[n/11]` ✅/❌ steps.
+- Untested live: the send/receipt path (no keys, no local chain).
+
 Commit author email is the placeholder `TANISH_EMAIL` (name OK); not changed per instructions.
 
 ## 2026-11-20 — steps 0–2 (code), live run blocked on keys
