@@ -71,3 +71,6 @@
 - 02:12 DONE: merged origin/solo (PRs #5/#6 settle, #7 web); build + smoke green.
 - NEXT: poll loop.
 - BLOCKERS: none.
+- 02:45 DONE: merged solo (QA #9). Fixed QA-REPORT #4 (mobile 390x844: 0px overflow, was 59px; also 0 at 1280x720/1920x1080 via CDP) and #5 (cap card: "Refused by the contract (simulated)" — no refusal tx exists). Build + smoke green.
+- NEXT: poll loop.
+- BLOCKERS: none for web; QA #1 (judge README) is demo-agent.
