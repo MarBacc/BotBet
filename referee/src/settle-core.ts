@@ -33,7 +33,7 @@ import { formatUsdc, toBaseUnits } from "botbet-shared";
 import { BOTS, type BotConfig } from "./bots.js";
 import { box, seconds } from "./box.js";
 import { NotMinedError, SettleError, StepFailure, explain } from "./errors.js";
-import { playGame, sides } from "./game.js";
+import { playGame, sides, validateStartFen } from "./game.js";
 import { hashPgn, matchDomain, recoverMatchResultSigner, signMatchResult, type MatchResult } from "./result.js";
 
 /** Arc drops (silently) any tx whose maxFeePerGas is below this. Gas-price units (wei/gas), not USDC. */
@@ -198,6 +198,16 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
     ["bots distinct", !isAddressEqual(bots[0]!.account.address, bots[1]!.account.address), `${bots[0]!.account.address} / ${bots[1]!.account.address}`],
   ];
   for (const [name, passed, detail] of checks) log(`  ${passed ? "✅" : "❌"} ${name.padEnd(25)} ${detail}`);
+  if (cfg.startFen) {
+    let fenProblem = "";
+    try {
+      validateStartFen(cfg.startFen);
+    } catch (error) {
+      fenProblem = error instanceof Error ? error.message : String(error);
+    }
+    checks.push(["start FEN is playable", !fenProblem, fenProblem || cfg.startFen]);
+    log(`  ${fenProblem ? "❌" : "✅"} ${"start FEN is playable".padEnd(25)} ${fenProblem || cfg.startFen}`);
+  }
   const failedChecks = checks.filter(([, passed]) => !passed).map(([name]) => name);
 
   // Fees: Arc silently drops a tx below the 20 gwei minimum base fee, so pin it explicitly.

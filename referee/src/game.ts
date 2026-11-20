@@ -56,12 +56,8 @@ export async function playGame(options: PlayGameOptions = {}): Promise<GameOutco
   const startFen = options.startFen?.trim() || undefined;
   const chess = new Chess();
   if (startFen) {
-    try {
-      chess.load(startFen);
-    } catch (error) {
-      throw new Error(`invalid --fen ${JSON.stringify(startFen)}: ${error instanceof Error ? error.message : String(error)}`);
-    }
-    if (chess.isGameOver()) throw new Error("the --fen position is already over; nothing to play.");
+    validateStartFen(startFen);
+    chess.load(startFen);
   }
 
   chess.setHeader("Event", "BotBet");
@@ -141,4 +137,40 @@ function drawReason(chess: Chess): string {
   if (chess.isThreefoldRepetition()) return "threefold repetition";
   if (chess.isDraw()) return "fifty-move rule or draw";
   return "unknown reason";
+}
+
+/**
+ * Everything that can be wrong with a start FEN, checked before any money moves: settle calls this in
+ * preflight, because the game is played only after both bots have staked (and there is no refund).
+ */
+export function validateStartFen(fen: string): void {
+  const chess = new Chess();
+  try {
+    chess.load(fen);
+  } catch (error) {
+    throw new Error(`invalid --fen ${JSON.stringify(fen)}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  if (chess.isGameOver()) throw new Error("the --fen position is already over; nothing to play.");
+  assertLegalStart(fen);
+}
+
+/**
+ * chess.js accepts a FEN whose side NOT to move is in check, but Stockfish hangs on it (seen: an
+ * 18 s engine timeout). Flip the side to move and ask whether that side is in check.
+ */
+export function assertLegalStart(fen: string): void {
+  const fields = fen.trim().split(/\s+/);
+  if (fields.length < 2) return;
+  fields[1] = fields[1] === "w" ? "b" : "w";
+  if (fields.length >= 4) fields[3] = "-"; // en passant is only valid for the real side to move
+  let flipped: Chess;
+  try {
+    flipped = new Chess(fields.join(" "));
+  } catch {
+    return; // the flip itself can be unparseable (e.g. castling quirks); the real FEN already loaded
+  }
+  if (flipped.isCheck()) {
+    const notToMove = fields[1] === "w" ? "white" : "black";
+    throw new Error(`illegal --fen: ${notToMove} is in check but it is not ${notToMove}'s move.`);
+  }
 }
