@@ -27,6 +27,32 @@ export function loadEnv(): void {
   else if (override) throw new Error(`BOTBET_ENV_FILE points at ${envPath}, which does not exist.`);
 }
 
+/** The .env path loadEnv reads (BOTBET_ENV_FILE or the repo root). */
+export function envFilePath(): string {
+  const override = process.env.BOTBET_ENV_FILE?.trim();
+  return override ? resolve(override) : resolve(REPO_ROOT, ".env");
+}
+
+/**
+ * Check several private-key variables at once and name every one that is missing or malformed, so a
+ * fresh machine gets one complete list instead of one error per run. Never prints a value.
+ */
+export function assertPrivateKeys(names: readonly string[]): void {
+  loadEnv();
+  const bad = names.filter((name) => {
+    const raw = process.env[name]?.trim() ?? "";
+    return !/^(0x)?[0-9a-fA-F]{64}$/.test(raw);
+  });
+  if (bad.length) {
+    const path = envFilePath();
+    throw new Error(
+      `missing or malformed in the environment: ${bad.join(", ")}.\n` +
+        `   .env ${existsSync(path) ? "found" : "NOT found"} at ${path}. ` +
+        `Each must be a 0x-prefixed 32-byte hex testnet key: NAME=0x… (see .env.example).`,
+    );
+  }
+}
+
 export function requireEnv(name: string): string {
   loadEnv();
   const value = process.env[name]?.trim();
