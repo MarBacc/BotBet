@@ -4,10 +4,10 @@ import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
 import { CapCard, useCapDemo } from './CapCard'
 import { HearResult, announcerLine } from './Announcer'
-import { About } from './About'
 import { Board } from './Board'
 
 const Present = lazy(() => import('./Present'))
+const About = lazy(() => import('./About').then(m => ({ default: m.About })))
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -283,7 +283,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
           </div>
         </div>
       </div>
-      <About base={base} />
+      <Suspense fallback={null}><About base={base} /></Suspense>
     </div>
   )
 }

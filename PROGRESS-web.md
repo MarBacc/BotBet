@@ -47,3 +47,6 @@
 - 01:59 DONE: demo a) Present mode (P / ⛶ button / ?present=1): fullscreen, autoplay 650ms/ply, then winner + payout + settle-tx QR (qrcode-generator, lazy chunk). Screenshot-verified at 1920x1080.
 - NEXT: b) load time.
 - BLOCKERS: author-name ask pending owner.
+- 02:00 DONE: demo b) load time — measured via CDP: preview app-ready 105ms (FCP 36ms, 95KB), dev ~140ms. Present (QR) and About are lazy chunks.
+- NEXT: c) accessibility.
+- BLOCKERS: author-name ask pending owner.
