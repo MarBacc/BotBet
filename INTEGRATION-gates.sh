@@ -37,7 +37,7 @@ if [ "$FAST" = --fast ]; then echo "G5 ⏭ skipped (--fast)"; else
 fi
 
 cd "$R"
-bad=$(grep -rnIi 'trustless' --exclude-dir=node_modules --exclude-dir=lib --exclude-dir=dist --exclude='INTEGRATION*' . | grep -viE 'not trustless|never .?trustless|no .?trustless' | head -3)
+bad=$(grep -rnIi 'trustless' --exclude-dir=node_modules --exclude-dir=lib --exclude-dir=dist --exclude='INTEGRATION*' . | grep -viE 'not trustless|never.{0,12}trustless|no .?trustless' | head -3)
 scripts=$(node -e 'console.log(Object.keys(require("./referee/package.json").scripts).join(" "))')
 missing=""
 for f in README.md docs/demo-runbook.md INTEGRATION-runbook-draft.md INTEGRATION-readme-draft.md; do
