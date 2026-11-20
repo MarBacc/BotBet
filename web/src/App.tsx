@@ -1,10 +1,13 @@
-import { Component, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { Component, Suspense, lazy, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Chess } from 'chess.js'
 import { formatUsdc } from 'botbet-shared'
 import deployments from '../../shared/deployments.json'
 import { CapCard, useCapDemo } from './CapCard'
 import { HearResult, announcerLine } from './Announcer'
 import { About } from './About'
+import { Board } from './Board'
+
+const Present = lazy(() => import('./Present'))
 
 interface Bot { id: string; name: string; address: string; depth: number; color: string; approveTxHash: string; stakeTxHash: string }
 interface Result {
@@ -18,7 +21,6 @@ interface Result {
   referee?: string
 }
 
-const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
 const short = (s: string, a = 10, b = 8) => (s.length > a + b + 1 ? `${s.slice(0, a)}…${s.slice(-b)}` : s)
 
 const DEFAULT_EXPLORER = 'https://explorer.testnet.arc.io' // docs/arc.md
@@ -135,6 +137,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
   const total = sans.length
   const [ply, setPly] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [present, setPresent] = useState(() => typeof location !== 'undefined' && new URLSearchParams(location.search).get('present') === '1')
 
   useEffect(() => {
     if (!playing) return
@@ -148,6 +151,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
       if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|BUTTON)$/.test(e.target.tagName) && e.key === ' ') return
       if (e.key === 'ArrowLeft') { setPlaying(false); setPly(p => Math.max(0, p - 1)) }
       if (e.key === 'ArrowRight') { setPlaying(false); setPly(p => Math.min(total, p + 1)) }
+      if ((e.key === 'p' || e.key === 'P') && !e.metaKey && !e.ctrlKey) { setPlaying(false); setPresent(true); return }
       if (e.key === ' ') {
         e.preventDefault()
         setPly(p => (p >= total ? 0 : p))
@@ -158,7 +162,6 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
     return () => window.removeEventListener('keydown', k)
   }, [total])
 
-  const board = useMemo(() => new Chess(fens[ply]).board(), [fens, ply])
   const hl = lastMoves[ply]
   const winner = d.bots.find(b => b.id === d.winnerId) ?? d.bots[0]
   const loser = d.bots.find(b => b.id !== winner.id)
@@ -170,6 +173,13 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
 
   return (
     <div className="page">
+      {present && (
+        <Suspense fallback={<div className="present center"><div className="spin" /></div>}>
+          <Present fens={fens} lastMoves={lastMoves} sans={sans} winnerName={winner.name} loserName={loser?.name ?? ''}
+            winnerAddress={winner.address} potUsdc={d.potUsdc} settleUrl={tx(d.settleTxHash)} sample={sample}
+            onExit={() => setPresent(false)} />
+        </Suspense>
+      )}
       {sample && <div className="sample-ribbon">SAMPLE DATA</div>}
       {warning && <div className="warn" role="status">{warning}</div>}
       <header>
@@ -199,16 +209,7 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
 
       <div className="grid">
         <div>
-          <div className="board">
-            {board.flatMap((row, r) => row.map((p, c) => {
-              const name = 'abcdefgh'[c] + (8 - r)
-              return (
-                <div key={name} className={`sq ${(r + c) % 2 ? 'd' : 'l'}${hl && (hl[0] === name || hl[1] === name) ? ' hl' : ''}`}>
-                  {p && <span className={p.color === 'w' ? 'pw' : 'pb'}>{GLYPH[p.type]}</span>}
-                </div>
-              )
-            }))}
-          </div>
+          <Board fen={fens[ply]} hl={hl} label={`Chess board after ply ${ply} of ${total}${ply ? `, last move ${sans[ply - 1]}` : ''}`} />
           <div className="ctl">
             <button onClick={() => { setPlaying(false); setPly(0) }} disabled={ply === 0}>⏮</button>
             <button onClick={() => setPly(p => Math.max(0, p - 1))} disabled={ply === 0}>◀</button>
@@ -216,7 +217,8 @@ export function Page({ data: d, sample, warning }: { data: Result; sample: boole
             <button onClick={() => setPly(p => Math.min(total, p + 1))} disabled={ply === total}>▶</button>
             <button onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>⏭</button>
             <span className="ply">ply {ply}/{total}</span>
-            <span className="keys">Space play/pause · ←/→ step</span>
+            <button onClick={() => { setPlaying(false); setPresent(true) }}>⛶ Present</button>
+            <span className="keys">Space play/pause · ←/→ step · P present</span>
           </div>
           <div className="ctl"><input type="range" min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
         </div>

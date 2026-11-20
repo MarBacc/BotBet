@@ -44,3 +44,6 @@
 - 01:58 web renders real result.json ✅ (live-runs f90cda8: escrow 0x9d4E…916c, settle 0xf177…f6f4, 55 plies, referee via deployments.json fallback). No fixes needed.
 - NEXT: demo polish a) Present mode.
 - BLOCKERS: cap-demo.json not on live-runs yet; author-name ask (#4) pending owner decision.
+- 01:59 DONE: demo a) Present mode (P / ⛶ button / ?present=1): fullscreen, autoplay 650ms/ply, then winner + payout + settle-tx QR (qrcode-generator, lazy chunk). Screenshot-verified at 1920x1080.
+- NEXT: b) load time.
+- BLOCKERS: author-name ask pending owner.
