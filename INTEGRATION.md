@@ -28,8 +28,8 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### settle (feat/settle)
 1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
-### web (feat/web, PR #23)
-1. **`git fetch origin && git merge origin/solo`**, resolving PROGRESS-web.md (keep both) and CapCard.tsx (keep yours: "Refused on-chain (tx reverted)"). Then `npm run build && npm run test:smoke` and push. GitHub sees a conflict against merge base 907b1e7; after this merge there is one base and #23 merges.
+### web (feat/web)
+Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
 ### demo (feat/demo, merged as #8 ✅)
 1. `git merge origin/solo`, then open a new PR into solo.
