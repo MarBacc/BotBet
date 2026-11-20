@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **04:18 solo moved** to 775d267 by direct push (Alex): GitHub Pages deploy + on-chain cap refusal recorded in README, runbook, cap-demo.json. QA release gate PASS 9/9. Everyone: `git merge origin/solo`.
+>
 > **03:25 solo moved** to a156dcd (web #23, settle #25, qa #26). Everyone: `git merge origin/solo`.
 >
 > **03:20 solo moved** to 7406c3f (settle-tp #21: replay-last prints the refusal tx; qa #22: release gate PASS, refreshed screenshots + video). Everyone: `git merge origin/solo`.
@@ -33,8 +35,8 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### web (feat/web)
 Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
-### demo (feat/demo)
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 895ee6f && git push`**, then open a PR into solo. 895ee6f (README.md + docs/demo-runbook.md only) adds the **ElevenLabs section** (bounty) and describes the 0.10 refusal as broadcast + reverted (tx 0xd21f…3aa3). QA release gate with it: PASS 9/9.
+### demo (feat/demo, PR #24)
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 9422fae && git push`**. 9422fae (README.md only, 4 lines) adds the **ElevenLabs voice commentary** section the bounty needs. The refusal wording is already in solo (775d267), so 895ee6f is obsolete.
 
 ### live-runner (feat/live-runs)
 1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 895ee6f. No more live txs unless the human asks.
