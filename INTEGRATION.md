@@ -11,7 +11,7 @@ _No open asks. Stay on call for fixes only in referee/** and shared/**._
 
 ### web (feat/web, PR #2, merges after live-runs)
 1. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite). Latest commits are still "Tanish".
-2. Once live-runner commits `web/public/cap-demo.json`, eyeball the CapCard against it. Its shape is already verified against the anvil rehearsal output.
+2. Eyeball the CapCard against the REAL cap-demo.json: `git show origin/feat/live-runs:web/public/cap-demo.json` (wallet 0xaEb5…5262, cap 0.05, paid 0.02, refused 0.10). Don't commit it; it lands via live-runs.
 
 ### demo (feat/demo, not started)
 1. Create `feat/demo` from `origin/solo` and push it. Owns referee/src/demo/**, docs/demo-runbook.md, docs/submission.md, README.md, AGENTS.md, PROGRESS-demo.md.
@@ -20,15 +20,13 @@ _No open asks. Stay on call for fixes only in referee/** and shared/**._
 4. If not started by 02:30 the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
 
 ### live-runner (feat/live-runs, PR #4)
-1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both are verified on Arc RPC: status 1, to MatchEscrow. (settle already recorded it in PROGRESS-settle.md.)
-2. Deploy AgentWallet (`contracts/script/DeployAgentWallet.s.sol`), commit `contracts/broadcast/DeployAgentWallet.s.sol/5042002/run-latest.json`, record the address in LIVE-RUNS.md.
-3. `npm run cap-demo` with AGENT_WALLET_ADDRESS set, commit `web/public/cap-demo.json`, record the allowed tx in LIVE-RUNS.md.
-4. `git merge origin/solo` before pushing. Tip: `cd referee && npm run rehearse:local` (from feat/settle) rehearses the settle loop and the cap demo on anvil first. Optional: one more `npm run settle` afterwards so result.json carries the new `referee` field.
-5. Touch only web/public/result.json, web/public/cap-demo.json, LIVE-RUNS.md, contracts/broadcast/DeployAgentWallet.s.sol/5042002/*.json.
+1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both verified on Arc RPC.
+2. `git merge origin/solo`, then push. Touch only web/public/result.json, web/public/cap-demo.json, LIVE-RUNS.md, contracts/broadcast/DeployAgentWallet.s.sol/5042002/*.json.
+3. Optional, only if the human asks: one more `npm run settle` after the merge so result.json carries the new `referee` field.
 
 ### human
 1. Start Codex B (demo-agent). feat/demo is not on origin yet.
-2. LIVE-RUNNER is running ✅ (two live settles at 01:50). Type **"go live"** once it has added CHECKPOINT PASSED, so feat/live-runs can merge into solo.
+2. LIVE-RUNNER is done ✅: 2 live settles, AgentWallet 0xaEb5…5262 deployed, cap demo paid 0.02 (tx 0xfa0a…239a), all verified on Arc RPC. Type **"go live"** to merge feat/live-runs into solo.
 3. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
 
 ## Role
@@ -62,13 +60,14 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 02:01 CST — solo = settle #1 + agent-wallet #3. integration = solo + settle@8d192f5 + live-runs@f90cda8 + web@f1692e0, no conflicts.
+2026-11-20 02:07 CST — solo = settle #1 + agent-wallet #3. integration = solo + settle@f130dce + live-runs@1a2adc3 + web@a75449e, no conflicts.
 
 - G1 ✅ shared builds
-- G2 ✅ tsc clean; keyless play-game plays and signs, nothing sent
-- G3 ✅ forge build + 14/14 tests
-- G4 ✅ web build + smoke test green with the real result.json; CapCard type matches cap-demo.json from the rehearsal
-- G5 ✅ `npm run rehearse:local`: 2 settles on anvil in 1.5s + cap demo (paid 0.02, refused 0.10 CapExceeded)
-- G6 ⏭ waiting on demo branch (README/runbook). No "trustless" claim in repo
+- G2 ✅ tsc clean (no referee code changes this round; keyless play-game green last round)
+- G3 ✅ 14/14 tests
+- G4 ✅ web build + smoke test green with the REAL result.json and REAL cap-demo.json in dist/
+- G5 ✅ `npm run rehearse:local` (last round; unchanged code)
+- G6 ⏭ waiting on demo branch. No "trustless" claim in repo
 
-Flags: feat/web new commits authored "Tanish" (expected Alex Rodriguez). Rewritten history ~01:30 (see PR comments).
+Verified on Arc RPC: settle 0x41ba…02b4 and 0xf177…f6f4 (status 1, to MatchEscrow); AgentWallet 0xaEb5…5262 has code; allowed payment 0xfa0a…239a status 1.
+Flags: feat/web commits authored "Tanish" (expected Alex Rodriguez).
