@@ -1,73 +1,63 @@
-# BotBet — The Plan
+# BotBet — the solo 10-hour plan
 
-_Extracted from `docs/prompts.md` (Parts 1 and 2) so any Claude Code session can reference it with `@docs/plan.md`._
+Cut down from the 3-person, 2-day plan (still in `docs/prompts.md`; the full spec it was written
+against is in `docs/roadmap.md`). One person, 10 hours, one loop that works.
 
-# Part 1: The Plan
+## The loop
 
-Two days really means about 30 to 36 working hours once you count sleep and the pitch. That's enough for a polished core plus two or three bounty integrations, but not everything. This plan assumes 3 to 4 people, with at least one comfortable writing Solidity.
+**Two bots stake → the game is played → the referee signs the result → `settle()` pays the
+winner → one page shows it with a link to the transaction.**
 
-## The rule: one loop, working end to end, by Thursday night
-
-The loop is: **bots stake → match runs live → spectators bet → a bot buys intel → match ends → automatic payout → leaderboard updates.**
-
-If that works by the end of Thursday, Friday goes to voice, integrations and polish. If it doesn't, drop the bounties and finish the loop. A clean core demo beats a half-working everything.
-
-## What to build, in priority order
-
-**Must have (no demo without these)**
-- **Three contracts on Arc testnet:** `AgentWallet` (spending caps), `MatchEscrow`, and `BetPool` (the shared betting pool). Keep each under about 150 lines and test only the happy path and the cap refusal.
-- **A referee server** that runs bot-vs-bot games of one game only. Use chess with a move cap of about 3 seconds per move and 80 moves max. Its result is signed by the referee's key.
-- **3 or 4 built-in bots** with different personalities: a cheap one that never buys intel, a balanced one, and a big spender. Use Stockfish at different depths so moves are fast and believable.
-- **Paid intel, done the simple way.** Skip x402 for now. The bot calls `wallet.pay(referee, amount, matchId)`, the referee checks the transaction receipt, then returns the evaluation. Call it "x402-style" in the pitch and list full x402 as next steps. _(The third argument, `matchId`, was added when `interfaces.md` was agreed — decision D2 there. `interfaces.md` is authoritative for every signature in this file.)_
-- **One page with the live board, betting panel, bot wallet ledger and leaderboard.**
-
-**Should have (this is where you win)**
-- **ElevenLabs commentator, text-to-speech only.** An LLM writes a one-line comment on big swings in the engine's evaluation, on intel purchases and on large bets, and ElevenLabs voices it. About 4 hours of work and the biggest wow factor.
-- **QuickNode Stream → webhook → live odds and leaderboard.** About 3 to 4 hours, and it also makes the backend simpler.
-- **The spending-cap refusal moment** in the demo. Almost free once the wallet contract exists.
-
-**Only if time allows**
-- **Grok Bot MCP server.** Only if the organizers give you access, with one person on a 4-hour timebox. If access isn't confirmed by Thursday noon, drop it.
-- Checking Connect Four moves on-chain, so results need no trust at all.
-- A voice agent spectators can ask questions.
-- Bot registration for outside builders.
-
-**Cut entirely:** poker, humans playing, multiple games, accounts and logins (use a demo wallet or wallet connect), and real weekly-ranking history (seed it with fake past data).
+That is the entire product. A judge should see real USDC move on Arc testnet because a chess
+game ended.
 
 ## Schedule
 
-| When | Goal |
+| Hours | Goal |
 |---|---|
-| **Wednesday night (1 to 2 hrs)** | Agree on the bot move API and contract function signatures in writing. Deploy stub contracts. Get testnet USDC from the faucet. Ask the organizers about Grok Bot access. Then sleep. |
-| **Thursday morning** | Contracts finished and deployed. Referee runs a full game locally. Frontend shows a live board from mock data. |
-| **Thursday afternoon** | Connect it all: escrow → game → payout on testnet. Betting works. |
-| **Thursday evening** | Intel purchases plus the wallet ledger. **Checkpoint: the full loop works.** |
-| **Friday morning** | Commentator, QuickNode Stream, cap-refusal demo. Grok Bot only if access came through. |
-| **Friday afternoon** | **Feature freeze 6 hours before the deadline.** Seed the leaderboard, fix bugs, record a backup demo video. |
-| **Final 2 to 3 hrs** | Write slides, rehearse the 3-minute demo at least twice, submit early. |
+| **0 – 0.75** | Setup: Foundry PATH, build `shared/`, branch, settings, Arc docs, spec cut |
+| **0.75 – 3** | `MatchEscrow` written, tested, deployed to Arc testnet |
+| **3 – 5.5** | Referee plays a full game and settles it on-chain. **HARD CHECKPOINT at 5.5** |
+| **5.5 – 7.5** | The page: replayed board, stakes, winner, link to the settle transaction |
+| **7.5 – 8.5** | One extra, chosen *after* the checkpoint passes |
+| **8.5 – 9.5** | Short demo match from a mid-game position, and a backup video |
+| **9.5 – 10** | Slides, rehearse, submit early |
 
-## Biggest risks and fallbacks
+**The checkpoint is the whole plan.** At hour 5.5, `npm run settle` either works from a clean
+terminal or it does not. If it does not, the extra at 7.5 is cancelled and those hours go to
+fixing the loop. A working loop with an ugly page beats a beautiful page with no loop.
 
-- **The contracts and the referee don't connect.** The most common failure. Lock the interfaces on Wednesday night so nobody waits on anyone.
-- **The live demo breaks on stage.** Have a recorded backup video and pre-funded wallets. Make the demo match short (10 to 15 moves) or start it from a mid-game position.
-- **USDC decimals.** Arc's native USDC uses 18 decimals, but its ERC-20 interface uses 6. Pick one in the contracts and the frontend on Wednesday night, or you'll lose hours to amounts that are off by a factor of 10^12.
-- **LLM latency in the commentary.** Generate lines in parallel with play and drop any that arrive late. Never let the game wait on the voice.
-- **A sudden urge to add features.** Anything not in the "must" list waits until the Thursday checkpoint passes.
-- **`forge` is shadowed on the dev machine.** On this Mac, `forge` on PATH resolves to Laravel Herd's Forge CLI, not Foundry. Foundry lives at `~/.foundry/bin/forge`. Put it first in your shell profile before touching `contracts/`: `export PATH="$HOME/.foundry/bin:$PATH"`.
+## What is cut
 
----
+`BetPool` and spectator betting, `AgentWallet` and paid intel, the bot HTTP API, the referee
+HTTP and WebSocket APIs, the ElevenLabs commentator, QuickNode Streams, the leaderboard, draws,
+timeouts, refunds and fees. All of it is written up in `docs/roadmap.md` — cut, not forgotten,
+and the pitch can honestly call it "next".
 
-# Part 2: Lanes
+Demo matches are **decisive by construction**: two Stockfish instances at depth 12 and depth 4.
+No draw handling exists, so a draw would be a bug, not an outcome.
 
-| Person | Lane | Owns |
-|---|---|---|
-| **A** | Contracts | `contracts/`, deploys, USDC decimals decision |
-| **B** | Referee and bots | `referee/`, `bots/`, intel payment check |
-| **C** | Frontend and extras | `web/`, commentator, QuickNode webhook |
+## Risks
 
-Rules:
-- One folder per person. Nobody's agent edits another lane's folder.
-- Interface changes go in `interfaces.md` first, then everyone is told, then code changes.
-- Each person has their own `.env` and a testnet-only burner wallet. Never commit secrets.
-- Commit after each green step. Merge small and often, and pull before starting each task.
+- **`forge` is shadowed.** On this Mac `forge` resolves to Laravel Herd's Forge CLI. Run
+  `export PATH="$HOME/.foundry/bin:$PATH"` in every new terminal, or Foundry commands fail with a
+  PHP notice. See `CLAUDE.md`.
+- **`shared/dist/` is gitignored.** Build `shared/` before `referee/` or `web/`, or the import of
+  `botbet-shared` fails in a way that looks like a missing package.
+- **USDC decimals.** Arc exposes one balance two ways: native at 18 decimals, ERC-20 at 6. We use
+  the ERC-20 view only, through `shared/src/money.ts`. See `docs/arc.md`.
+- **Gas comes out of the stake balance.** A wallet funded with exactly its stake cannot pay for
+  the transaction that stakes it.
+- **The faucet gives 20 USDC per address every 2 hours.** Request early; keep stakes at 1–5 USDC
+  so one round funds several demo runs.
+- **A transaction below Arc's 20 Gwei minimum base fee is silently dropped.** No error — it just
+  never lands. Suspect this first when something "disappears".
+- **The live demo breaks on stage.** Record the backup video at hour 9, before anything can rot,
+  and keep pre-funded wallets.
 
+## Habits
+
+- Start a session with "Read CLAUDE.md and interfaces.md first."
+- End every task with the command that proves it works, and read the output.
+- Commit each green step.
+- If a session loops for 20 minutes, `/clear` and restate the smaller task.

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(forge *)",
+      "Bash(cast *)",
+      "Bash(anvil *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/.env)",
+      "Read(./.env.local)",
+      "Read(./**/.env.local)"
+    ]
+  }
+}
