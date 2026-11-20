@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **04:46 POKER MERGED: feat/poker → solo (#34, 7958eca). All P1–P5 passed; QA release gate PASS on solo+feat/poker.** Everyone: `git merge origin/solo`.
+>
 > ## ⏰ FREEZE IN 30 MIN (04:30 CST). At **05:00 = FEATURE FREEZE: fixes only.** Push what you have, open your PR now. Anything not in a PR by 05:00 waits until after the demo.
 
 > **04:18 solo moved** to 775d267 by direct push (Alex): GitHub Pages deploy + on-chain cap refusal recorded in README, runbook, cap-demo.json. QA release gate PASS 9/9. Everyone: `git merge origin/solo`.
@@ -37,31 +39,14 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### web (feat/web)
 Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
-### demo (feat/demo, PR #24)
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 9422fae && git push`**. 9422fae (README.md only, 4 lines) adds the **ElevenLabs voice commentary** section the bounty needs. The refusal wording is already in solo (775d267), so 895ee6f is obsolete.
+### demo (feat/demo, PR #24). Last chess items before the 05:00 freeze
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 9422fae 9e1cbc8 && git push`**. Both README.md only, both cherry-pick cleanly onto solo@7958eca:
+   - 9422fae: **ElevenLabs voice commentary** section (bounty requirement)
+   - 9e1cbc8: **Poker mode (beta)** section (live poker settle 0xa794…304d, Poker tab, `npm run play-poker`, bot registry verify command); says "referee-attested"
+2. Then #24 merges.
 
 ### live-runner (feat/live-runs)
-1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo together with demo's PR for 895ee6f. No more live txs unless the human asks.
-
-### poker beta (umbrella `feat/poker`, created 03:45 from solo@a156dcd)
-Open PRs **into `feat/poker`, not solo**: feat/poker-engine (ThinkPad), feat/poker-registry (Codex), feat/poker-web (web-agent), plus the live poker run on feat/live-runs. Integration merges them into feat/poker as they land and gates it:
-- **P1** chess unchanged: G1–G6 still pass, chess page identical (QA release gate 9/9)
-- **P2** `npm run play-poker` works keyless; `npm test` passes
-- **P3** register-bot verify passes for all bots
-- **P4** web builds; poker tab appears ONLY when `web/public/poker-result.json` exists; 0 console errors
-- **P5** reviewer: no blockers
-**Status 04:31 (feat/poker @ 45e830f): P1 ✅ P2 ✅ P3 ✅ (incl. Windows CRLF, fix #32) P4 ✅ P5 ✅ (reviewer on #31: OK, 0 blockers). Merges into solo at 04:45 unless something regresses.** QA release gate on solo+feat/poker@45e830f: PASS 10/10 (04:32).
-Poker fixes before 04:45 (small, non-blocking; open PRs into feat/poker):
-- registry: Windows CRLF ✅ fixed (#32). Still: README wording: "signed code-hash commitment", not "encrypted/private" (reviewer #3).
-- poker-engine: document `moveCount = hands` (interfaces.md §7 + `moveCountUnit: "hands"`); play offline before createMatch in settle-poker (reviewer #1, #2). Optional, not required for 04:45. feat/poker merges cleanly into solo@775d267 (single merge base).
-**04:45 decision:** all pass → feat/poker merges into solo and README gets "Poker mode (beta)". Any fail → stays a beta branch; README roadmap lists "Poker mode (beta branch), bot registry". Poker never delays the 05:00 chess freeze.
-1. poker-engine ✅ merged into feat/poker (#27): P1 ✅ chess gates green, P2 ✅ play-poker keyless, npm test 29/29. Nit: keyless `play-poker` writes web/public/poker-result.json, which would turn the poker tab on with throwaway-key data. Write to /tmp unless `--out` is given.
-2. live poker run ✅ merged into feat/poker (#30): Arc poker settle 0xa794…304d verified status 1 on MatchEscrow. **#17 (live-runs → solo) is blocked**: it now carries poker.
-3. poker-registry ✅ merged into feat/poker (#31): P3 ✅, `npm run register-bot -- --verify <name> --dir <folder>` = VERIFIED for all 5 house bots; npm test 32/32.
-4. poker-web ✅ merged into feat/poker (#28): P4 ✅. No tab and a byte-identical chess page without poker-result.json; with it the tab appears, the offline run is labelled "NOT SETTLED ON-CHAIN", 0 console errors.
-
-### presenter (feat/presenter, PR #29, not in merge order)
-Held: replaces `npm run demo` (settle-owned package.json) and fails on Windows (settle-tp). Needs a human yes/no before 05:00. If yes: new script name `demo:auto`, Windows spawn fix.
+PR #17 is superseded: the refusal reached solo via 775d267 and the poker run via #34. Close #17. Stand by; no live txs unless the human asks.
 
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
