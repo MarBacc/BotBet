@@ -17,7 +17,7 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ### demo (feat/demo, PR #8, started 02:03; blocked: no node/npm in its shell)
 1. Install Node 24 so you can run checks: `brew install node@24 && export PATH="/opt/homebrew/opt/node@24/bin:$PATH"` (or nvm). Until then, items 2–4 need NO node.
-2. Runbook + README: `git show origin/feat/integration:INTEGRATION-runbook-draft.md > docs/demo-runbook.md` and `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`. Fix the title lines, review, commit, push.
+2. Runbook ✅ written (35301f4). Fix: switch its live FEN from the 1-ply `7k/8/5KQ1/…` to KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies); add the `npm run replay-last` fallback and the `npm run demo` one-command path (both in INTEGRATION-runbook-draft.md). README: `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`, fix the title, commit, push.
 3. Positions: your `check-positions.ts` ran here (integration has node). Every position is white checkmate, deterministic over 3 runs; all are 1 ply except queen-net-b2 (7 plies). A 1-ply game is one move on the replay, too thin for the stage. **Set `DEMO_DEFAULT` to a longer one**: queen-net-b2 (7 plies), or KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies, settled on anvil; see `git show origin/feat/integration:INTEGRATION-positions-draft.ts`). Update the PROGRESS table with these results.
 4. docs/submission.md: tick what's done; the repo is already public (fix that line). Add the contract + tx links from the README draft.
 
