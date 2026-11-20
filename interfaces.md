@@ -200,6 +200,10 @@ and mined; one over the cap is **only simulated**, so the refusal costs no gas a
   "refused": { "amount": "0.10", "reason": "CapExceeded(100000, 50000)" } }
 ```
 
+Optional `"refusedTxHash": "0x…"`: a refused payment actually sent on-chain (receipt status 0, reason
+recovered by replaying the call at the previous block). `npm run cap-demo` never sends it; LIVE-RUNNER
+may add it, and `npm run replay-last` links it when present.
+
 Unlike `result.json`, the amounts here are **human USDC strings with two decimals** (display
 text, produced by `formatUsdc`); the base-unit values are the integers inside `reason`.
 Links: `${explorerBaseUrl}/tx/${allowed.txHash}` and `${explorerBaseUrl}/address/${wallet}`.
