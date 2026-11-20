@@ -62,3 +62,11 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   `process.execPath --import tsx src/settle.ts|src/replay-last.ts` instead of npm; `detached: !isWin`;
   on win32 kill with `taskkill /pid <pid> /T /F`. With it: fallback replay works, exit 0, Git Bash + PowerShell.
 - Note: new `npm run demo` no longer runs src/presenter.ts (cap demo + summary box): intentional?
+
+## 04:08 POKER GATE: FAIL (P3 only) — origin/feat/poker @ 5b83148 (+ live poker run #30)
+- P1 ✅ npm test 29/29, play-game keyless, web build + smoke; replay-last now prints the on-chain refusal link.
+- P2 ✅ unchanged. P3 ❌ no register-bot script yet (poker-registry not on origin).
+- P4 ✅ real poker-result.json: "LIVE ON ARC", Theory wins, settle 0xa794…304d, referee 0xE632…8345,
+  stake tx links for both bots, present mode OK, 0 console/page errors. Screenshots refreshed (scratchpad).
+- ⚠ feat/poker now carries cap-demo.json `refusedTxHash` (via #30). If feat/poker merges into solo,
+  QA #7 (README/runbook still say "simulated / not broadcast") becomes real unless demo's doc fix lands first.
