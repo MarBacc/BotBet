@@ -14,9 +14,11 @@ cd shared && npm install && npm run build   # shared/dist is gitignored; referee
 
 **Stake, play, settle, payout from a script, then one page showing it.**
 
-A change that does not serve that sentence does not get built today. Everything cut — `BetPool`,
-`AgentWallet`, paid intel, the bot and referee HTTP/WS APIs, the commentator, QuickNode — is
-parked in @docs/roadmap.md, not deleted. `interfaces.md` is the spec: change it before the code.
+A change that does not serve that sentence does not get built today, with one addition: once the
+loop works, the page gets **ElevenLabs voice commentary** — that is the bounty we are entering
+(`interfaces.md` §5). Everything else cut — `BetPool`, `AgentWallet`, paid intel, the bot and
+referee HTTP/WS APIs, QuickNode — is parked in @docs/roadmap.md. `interfaces.md` is the spec:
+change it before the code. **Deadline: Friday 20 November, 12:00 PM CST** (@docs/submission.md).
 
 ## Layout
 

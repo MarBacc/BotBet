@@ -3,8 +3,9 @@
 The spec for the solo 10-hour build; change it before the code, not after. Everything cut is in
 `docs/roadmap.md`, intact; chain facts in `docs/arc.md`.
 
-**Scope: stake, play, settle, payout from a script, then one page showing it.** No draws,
-timeouts, refunds or fees — depth 12 vs depth 4 is decisive, so a draw is a bug, not an outcome.
+**Scope: stake, play, settle, payout from a script, then one page showing it, narrated.** No
+draws, timeouts, refunds or fees — depth 12 vs depth 4 is decisive, so a draw is a bug. §5 is the
+ElevenLabs bounty and only gets built once the loop works.
 
 ## 0. Money
 
@@ -112,6 +113,28 @@ Written by the deploy script, committed, read by the referee and the page.
   "usdc": "0x3600000000000000000000000000000000000000", "referee": "0x…",
   "contracts": { "MatchEscrow": { "address": "0x…", "abi": [] } } }
 ```
+
+## 5. Commentary — the ElevenLabs bounty (hour 7.5)
+
+The bounty needs audio to be **a core feature, not an add-on**, and the demo video must show it
+playing. So the page is narrated, not decorated.
+
+After `settle` writes `result.json`, `npm run commentary` generates 4–6 lines from facts already
+in that file — stakes posted, the first decisive swing, the winning move, the payout — voices
+each with the **ElevenLabs Text to Speech API**
+(`POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}`, `ELEVENLABS_API_KEY`,
+`ELEVENLABS_VOICE_ID`), writes `web/public/audio/<n>.mp3`, and appends to `result.json`:
+
+```json
+"commentary": [
+  { "atPly": 0,  "text": "Two agents, four USDC on the table…", "audio": "audio/0.mp3" },
+  { "atPly": 41, "text": "Hasty Hal hangs the queen.",          "audio": "audio/41.mp3" }
+]
+```
+
+The page plays each clip when the replay reaches `atPly`. **Generated ahead of time, never
+live** — no API call is on the demo's critical path, and a missing file just means silence.
+Line text is templated from the result; an LLM may improve it later, never block on it.
 
 ## Still open
 
