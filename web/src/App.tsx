@@ -13,6 +13,24 @@ interface Result {
   finishedAt: number
 }
 
+/** web/public/cap-demo.json, written by `npm run cap-demo` (settle). Optional: no file → no panel. */
+interface CapDemo {
+  wallet: string; capUsdc: string
+  allowed: { amount: string; txHash: string | null }
+  refused: { amount: string; reason: string }
+}
+
+function useCapDemo(): CapDemo | null {
+  const [cap, setCap] = useState<CapDemo | null>(null)
+  useEffect(() => {
+    fetch('/cap-demo.json')
+      .then(r => (r.ok ? r.json() : null))
+      .then((c: CapDemo | null) => { if (c?.wallet && c.allowed && c.refused) setCap(c) })
+      .catch(() => { /* optional */ })
+  }, [])
+  return cap
+}
+
 const GLYPH: Record<string, string> = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
 const short = (s: string, a = 10, b = 8) => (s.length > a + b + 1 ? `${s.slice(0, a)}…${s.slice(-b)}` : s)
 
@@ -41,6 +59,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
   const base = d.explorerBaseUrl
   const tx = (h: string) => `${base}/tx/${h}`
   const addr = (a: string) => `${base}/address/${a}`
+  const cap = useCapDemo()
 
   const { fens, sans, lastMoves } = useMemo(() => {
     const g = new Chess()
@@ -183,6 +202,19 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
             <div className="kv"><span>createMatch</span><a className="mono" href={tx(d.createMatchTxHash)} target="_blank" rel="noreferrer">{short(d.createMatchTxHash, 8, 6)}</a></div>
             <div className="kv"><span>settle</span><a className="mono" href={tx(d.settleTxHash)} target="_blank" rel="noreferrer">{short(d.settleTxHash, 8, 6)}</a></div>
           </div>
+
+          {cap && (
+            <div className="panel">
+              <h2>AgentWallet spending cap</h2>
+              <div className="kv"><span>Wallet</span><a className="mono" href={addr(cap.wallet)} target="_blank" rel="noreferrer">{short(cap.wallet, 8, 6)}</a></div>
+              <div className="kv"><span>Cap per payment</span><span className="big">{cap.capUsdc} USDC</span></div>
+              <div className="kv"><span className="pos">✅ paid {cap.allowed.amount} USDC</span>
+                {cap.allowed.txHash
+                  ? <a className="mono" href={tx(cap.allowed.txHash)} target="_blank" rel="noreferrer">{short(cap.allowed.txHash, 8, 6)}</a>
+                  : <span className="mono">not sent</span>}</div>
+              <div className="kv"><span className="neg">❌ refused {cap.refused.amount} USDC</span><span className="mono">{cap.refused.reason}</span></div>
+            </div>
+          )}
         </div>
       </div>
     </div>
