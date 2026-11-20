@@ -34,17 +34,19 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 01:45 CST — integration = solo@4bc6490 + settle@9de3533 + web@00cd5a2 + agent-wallet@be74a24 (no conflicts). feat/demo not on origin yet. Draft PRs: #1 settle, #2 web, #3 wallet.
+2026-11-20 01:50 CST — integration = solo@4bc6490 + settle@9de3533 + web@5cc0acc + agent-wallet@be74a24 + glue 3a095ea. feat/demo not on origin yet. Draft PRs: #1 settle, #2 web, #3 wallet.
 
 - G1 ✅ shared builds
-- G2 ✅ (with integration glue 3a095ea) keyless play-game: 55 plies, ephemeral-key signature round-trips, deployed-referee check SKIPPED. ❌ on feat/settle alone until settle cherry-picks 3a095ea
+- G2 ✅ only with glue 3a095ea (keyless play-game: 55 plies, signature round-trips, deployed-referee check SKIPPED). ❌ on feat/settle alone until settle cherry-picks 3a095ea (PR #1)
 - G3 ✅ forge build + 14/14 tests (MatchEscrow 8, AgentWallet 6)
-- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type. with glue 2e88fba the page shows an optional AgentWallet panel; built with a stub cap-demo.json (not committed). Not browser-screenshot verified
+- G4 ✅ web build + `npm run test:smoke` all green with the sample; CapCard handles cap-demo.json including txHash null. No real result.json / cap-demo.json yet
 - G5 ⏭ no local rehearsal script, no demo branch
-- G6 ✅ README commands exist; no "trustless" claim. ⚠ result.sample.json escrow 0xdb0a…CbE is not the deployed 0x9d4E…916c (sample only)
+- G6 ✅ README commands exist; no "trustless" claim. ⚠ result.sample.json escrow 0xdb0a…CbE is not the deployed 0x9d4E…916c (labelled SAMPLE DATA on the page)
 
 Notes:
 - ~01:30 solo and every agent branch were rewritten (same trees, new hashes). feat/integration was re-joined onto the new history with a two-parent merge, no force-push.
-- settle's cap-demo.ts hand-written ABI matches AgentWallet.sol ✅
-- ⚠ feat/agent-wallet commits are authored "ChadYung", expected "Alex Rodriguez"
-- Merge into solo: none yet. settle needs CHECKPOINT PASSED + 2 live tx hashes + "go settle"
+- Glue 2e88fba (cap panel) was dropped in favour of web's CapCard. interfaces.md conflict resolved to settle's schema v1 (web does not change it vs solo).
+- TTS: /api/tts is Vite dev/preview middleware only, so the demo must run `npm run dev` or `npm run preview`, not static hosting. Needs ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID.
+- Open request web → settle: add `referee` to result.json (patch on PR #1).
+- ⚠ Authors: feat/agent-wallet = "ChadYung", feat/web new commits = "Tanish"; expected "Alex Rodriguez" for both.
+- Merge into solo: none yet. settle needs CHECKPOINT PASSED + 2 live tx hashes + "go settle".
