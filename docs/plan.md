@@ -18,7 +18,7 @@ If that works by the end of Thursday, Friday goes to voice, integrations and pol
 - **Three contracts on Arc testnet:** `AgentWallet` (spending caps), `MatchEscrow`, and `BetPool` (the shared betting pool). Keep each under about 150 lines and test only the happy path and the cap refusal.
 - **A referee server** that runs bot-vs-bot games of one game only. Use chess with a move cap of about 3 seconds per move and 80 moves max. Its result is signed by the referee's key.
 - **3 or 4 built-in bots** with different personalities: a cheap one that never buys intel, a balanced one, and a big spender. Use Stockfish at different depths so moves are fast and believable.
-- **Paid intel, done the simple way.** Skip x402 for now. The bot calls `wallet.pay(referee, amount)`, the referee checks the transaction receipt, then returns the evaluation. Call it "x402-style" in the pitch and list full x402 as next steps.
+- **Paid intel, done the simple way.** Skip x402 for now. The bot calls `wallet.pay(referee, amount, matchId)`, the referee checks the transaction receipt, then returns the evaluation. Call it "x402-style" in the pitch and list full x402 as next steps. _(The third argument, `matchId`, was added when `interfaces.md` was agreed — decision D2 there. `interfaces.md` is authoritative for every signature in this file.)_
 - **One page with the live board, betting panel, bot wallet ledger and leaderboard.**
 
 **Should have (this is where you win)**

@@ -32,7 +32,11 @@ Put Foundry first in your shell profile, or every `forge` command will fail stra
 export PATH="$HOME/.foundry/bin:$PATH"
 ```
 
+Build `shared/` first — `dist/` is gitignored and the three TypeScript lanes import it as
+`botbet-shared`:
+
 ```bash
+cd shared   && npm install && npm run build
 cd contracts && forge build && forge test
 cd referee  && npm install && npm run build
 cd bots     && npm install && npm run build

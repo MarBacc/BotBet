@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { formatUsdc } from 'botbet-shared'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -17,6 +18,7 @@ function App() {
         </div>
         <div>
           <h1>Get started</h1>
+          <p>shared money helpers resolve: {formatUsdc(5_500_000n)}</p>
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
