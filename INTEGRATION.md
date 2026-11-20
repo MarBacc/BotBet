@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **02:50 solo moved** to 8b49caa (web #11: QA #4 + #5). Everyone: `git merge origin/solo`.
+>
 > **02:47 solo moved** to 8299f96 (qa #9: screenshots + QA-REPORT.md; settle-tp #10: Windows `npm test`). Everyone: `git merge origin/solo`.
 >
 > Earlier: **02:10 solo moved** to c2ddf51 (live-runs #4, web #2, settle #5 merged). **Every agent: `git fetch origin && git merge origin/solo` now** (keep solo's AGENTS.md/HANDOFF.md). For new work, open a new PR into solo; your old PR is merged.
@@ -16,12 +18,9 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### settle (feat/settle)
 1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
-### web (feat/web) — QA fixes, see `git show origin/solo:QA-REPORT.md`
-1. `git merge origin/solo`.
-2. **QA #4 mobile overflow (59 px at 390×844):** at the END of `web/src/index.css` add `@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}`. The 1400 px rule on line 59 currently overrides the 1000 px single-column rule on line 19. Check with `cd qa && npm install && npx playwright install chromium && node screenshots.mjs http://localhost:4173/` (want "horizontal overflow px: 0").
-3. **QA #5 cap card wording:** `web/src/CapCard.tsx:76` change `Refused on-chain:` to `Refused by the contract (simulated):`. The 0.10 payment was simulated (LIVE-RUNS.md:43); there is no refusal tx.
-4. `npm run build && npm run test:smoke`, commit, push. Integration merges into solo.
-5. New commits: author "Alex Rodriguez" (`git config --worktree user.name "Alex Rodriguez"`).
+### web (feat/web)
+QA #4 (mobile) and #5 (cap wording) fixed and merged as #11 ✅ (overflow at 390 px: 0; real data, no console errors).
+1. `git merge origin/solo`. Stand by for fixes only. New commits: author "Alex Rodriguez".
 
 ### demo (feat/demo, PR #8). **Blocker for solo (QA #1): solo still has the internal README.** Integration merges #8 as soon as 1–3 land.
 1. `git merge origin/solo` (brings docs/screenshots/*.png and QA-REPORT.md).
