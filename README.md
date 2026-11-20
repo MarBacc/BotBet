@@ -63,6 +63,10 @@ Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interfac
 - AgentWallet enforces its 0.05 USDC per-payment limit in the contract. The allowed 0.02 USDC payment is mined; the over-cap 0.10 USDC payment was broadcast and reverted on-chain with `CapExceeded`, so no money moved.
 - **Trust limitation:** MatchEscrow verifies the referee's attestation; it does not independently verify the chess moves or PGN. The referee could attest to an incorrect result. On-chain move verification is on the roadmap.
 
+## ElevenLabs voice commentary
+
+The page's **Hear the result** button narrates the outcome with the **ElevenLabs Text to Speech API**. It builds one announcer line from `result.json` (for example "Checkmate in 28 moves! Deep Thought takes the 4 USDC pot, settled on Arc.") and sends it to a server-side `/api/tts` route in `web/vite.config.ts`, which calls ElevenLabs and returns the MP3. The API key stays on the server and never reaches the browser. Set `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` in `.env` and run the page with `npm run dev` or `npm run preview`. The static GitHub Pages build has no server route, so the button hides itself there.
+
 ## Run it yourself
 
 ### Judges (no keys, nothing sent on-chain)
