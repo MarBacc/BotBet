@@ -1,0 +1,6 @@
+{
+  "name": "Nit",
+  "game": "poker",
+  "strategySummary": "HOUSE BOT — Tight-aggressive: plays only premium hands (77+, AK, AQ, AJs, KQs), then bets hard with top pair or better and gives up otherwise.",
+  "entry": "../../../../poker/bots/nit.ts"
+}
