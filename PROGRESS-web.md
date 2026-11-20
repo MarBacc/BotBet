@@ -74,3 +74,6 @@
 - 02:45 DONE: merged solo (QA #9). Fixed QA-REPORT #4 (mobile 390x844: 0px overflow, was 59px; also 0 at 1280x720/1920x1080 via CDP) and #5 (cap card: "Refused by the contract (simulated)" — no refusal tx exists). Build + smoke green.
 - NEXT: poll loop.
 - BLOCKERS: none for web; QA #1 (judge README) is demo-agent.
+- 02:54 DONE: merged solo; verified live-runs 074c3d7 demo-length game (17 plies from FEN, referee field present) renders. Fix: move numbers now follow the start FEN (side to move + fullmove) in move list and Present mode; smoke 11/11.
+- NEXT: stand by, fixes only.
+- BLOCKERS: none.
