@@ -17,6 +17,7 @@
     "rehearse:local": "node scripts/check-setup.mjs --quiet && tsx scripts/local-rehearsal.ts",
     "demo": "node scripts/check-setup.mjs --quiet && tsx src/presenter.ts",
     "replay-last": "tsx src/replay-last.ts",
+    "register-bot": "tsx src/registry/register-bot.ts",
     "test": "node scripts/run-tests.mjs"
   },
   "devDependencies": {
