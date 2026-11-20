@@ -70,3 +70,16 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   stake tx links for both bots, present mode OK, 0 console/page errors. Screenshots refreshed (scratchpad).
 - ⚠ feat/poker now carries cap-demo.json `refusedTxHash` (via #30). If feat/poker merges into solo,
   QA #7 (README/runbook still say "simulated / not broadcast") becomes real unless demo's doc fix lands first.
+
+## 04:30 Solo 775d267 merged (Pages deploy + on-chain cap refusal everywhere): npm test 18/18, tsc, play-game, web build + smoke ✅.
+
+## 04:30 POKER GATE: FAIL on Windows (P3) — feat/poker 5b83148 + PR #31 feat/poker-registry merged locally
+- P1 ✅ P2 ✅ P4 ✅ as at 04:08. npm test with registry 32/32, tsc ✅.
+- P3 ❌ on Windows: `npm run register-bot -- --verify <name> --dir src/registry/house/<bot>` → MISMATCH for all
+  5 house bots. Cause: git core.autocrlf=true checks the bot sources out with CRLF; registry-core.ts hashes raw
+  bytes, while the registered hashes come from LF files. Proven: LF-normalized files → VERIFIED.
+  Expected to pass on macOS/Linux.
+- Fix (tested, not pushed: registry agent owns PR #31, opened <15 min ago): registry-core.ts
+  `readForHash()` = readFile, and for text files (no NUL byte) replace CRLF with LF before hashing; use it
+  for package files and the @entry alias. LF hashes unchanged. With it on a CRLF checkout: all 5 VERIFIED
+  (Deep Thought 0x132e…d904, Hasty Hal 0x8bf7…5fd9, Maniac 0x9665…7228, Nit 0x0ee1…6c4d, Theory 0x5e57…bde0).
