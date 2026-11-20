@@ -186,6 +186,23 @@ The page plays each clip when the replay reaches `atPly`. **Generated ahead of t
 live** — no API call is on the demo's critical path, and a missing file just means silence.
 Line text is templated from the result; an LLM may improve it later, never block on it.
 
+## 6. web/public/cap-demo.json — the AgentWallet spending cap
+
+Written by `npm run cap-demo` (referee/src/cap-demo.ts) against a deployed `AgentWallet`
+(`AGENT_WALLET_ADDRESS`; owner-only `pay(address to, uint256 amount, bytes32 memo)`, errors
+`CapExceeded(uint256 amount, uint256 cap)` and `NotOwner()`). One payment under the cap is sent
+and mined; one over the cap is **only simulated**, so the refusal costs no gas and moves no money.
+
+```json
+{ "wallet": "0x…", "capUsdc": "0.05",
+  "allowed": { "amount": "0.02", "txHash": "0x…" },
+  "refused": { "amount": "0.10", "reason": "CapExceeded(100000, 50000)" } }
+```
+
+Unlike `result.json`, the amounts here are **human USDC strings with two decimals** (display
+text, produced by `formatUsdc`); the base-unit values are the integers inside `reason`.
+Links: `${explorerBaseUrl}/tx/${allowed.txHash}` and `${explorerBaseUrl}/address/${wallet}`.
+
 ## Still open
 
 **Does Arc's USDC implement EIP-2612 `permit`?** Not stated in the docs, so the flow uses a plain

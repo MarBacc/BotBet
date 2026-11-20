@@ -19,10 +19,8 @@ import { BOTS } from "./bots.js";
 import { ARC_TESTNET_CHAIN_ID, REPO_ROOT, loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
 import { SettleError } from "./errors.js";
 import { StepFailure, runSettle } from "./settle-core.js";
+import { DEFAULT_RPC_URL, EXPLORER_BASE_URL } from "./settle-constants.js";
 
-/** From docs/arc.md. No trailing slash. */
-export const DEFAULT_RPC_URL = "https://rpc.testnet.arc.io";
-export const EXPLORER_BASE_URL = "https://explorer.testnet.arc.io";
 const DEFAULT_STAKE = "2";
 
 interface Args {

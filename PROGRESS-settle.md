@@ -16,6 +16,12 @@ a JS chain (hardhat node) + solc-js build — needs the owner's go-ahead.
 - `--json` (progress → stderr, summary → stdout, `{ok:false,step,error,hint}` on failure); numbered `[n/11]` ✅/❌ steps.
 - Untested live: the send/receipt path (no keys, no local chain).
 
+## T5 — cap-demo script: DONE (not run live)
+- `npm run cap-demo [-- --dry-run]` (referee/src/cap-demo.ts): reads `owner()`/`maxPerTx()` on-chain, signs with
+  whichever known key derives to the owner, pays 0.02 under the cap, simulates 0.10 and decodes `CapExceeded`,
+  writes web/public/cap-demo.json (schema in interfaces.md §6). ABI hand-written from feat/agent-wallet source.
+- Tested: typecheck + the AGENT_WALLET_ADDRESS-missing path. No anvil (libusb), wallet not deployed.
+
 Commit author email is the placeholder `TANISH_EMAIL` (name OK); not changed per instructions.
 
 ## 2026-11-20 — steps 0–2 (code), live run blocked on keys
