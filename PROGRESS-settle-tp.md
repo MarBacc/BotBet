@@ -83,3 +83,9 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   `readForHash()` = readFile, and for text files (no NUL byte) replace CRLF with LF before hashing; use it
   for package files and the @entry alias. LF hashes unchanged. With it on a CRLF checkout: all 5 VERIFIED
   (Deep Thought 0x132e…d904, Hasty Hal 0x8bf7…5fd9, Maniac 0x9665…7228, Nit 0x0ee1…6c4d, Theory 0x5e57…bde0).
+
+## 04:27 P3 fix pushed (human OK for a new branch): feat/settle-tp-poker @ 9dceec0, base feat/poker 2b7b8d8
+- registry-core.ts `readForHash()` (CRLF → LF for text files before hashing) + regression test
+  "CRLF checkout verifies against an LF registration" (fails without the fix). npm test 33/33, tsc ✅.
+- Windows CRLF checkout: all 5 house bots VERIFIED. PR (base feat/poker):
+  https://github.com/MarBacc/BotBet/compare/feat/poker...feat/settle-tp-poker?expand=1
