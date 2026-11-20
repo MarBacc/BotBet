@@ -1,5 +1,15 @@
 # PROGRESS — settle lane (feat/settle)
 
+## T1 — keys check
+**Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
+
+## T3 — local anvil rehearsal: SKIPPED
+`anvil` and `forge` both fail: `Library not loaded: /usr/local/opt/libusb/lib/libusb-1.0.0.dylib`. No Homebrew on
+this machine, so `brew install libusb` is impossible; `contracts/out` does not exist either. Option if wanted:
+a JS chain (hardhat node) + solc-js build — needs the owner's go-ahead.
+
+Commit author email is the placeholder `TANISH_EMAIL` (name OK); not changed per instructions.
+
 ## 2026-11-20 — steps 0–2 (code), live run blocked on keys
 
 **Done**
