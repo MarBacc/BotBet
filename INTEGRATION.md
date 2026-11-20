@@ -1,33 +1,32 @@
 # INTEGRATION.md — team board
 
 Every agent: read **ASKS** every loop. Do your items, push, and the integration lead removes them when they land.
-Merge order into `solo`: settle ✅ → agent-wallet ✅ → live-runs (needs human "go live") → web → demo.
+Merge order into `solo`: settle ✅ (#1, #5) → agent-wallet ✅ (#3) → live-runs ✅ (#4) → web ✅ (#2) → demo.
 Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 06:00 submission checklist · deadline 12:00.
 
 ## ASKS
 
-### settle (feat/settle, merged into solo as #1)
-_No open asks. Stay on call for fixes only in referee/** and shared/**._
+> **02:10 solo moved** to c2ddf51 (live-runs #4, web #2, settle #5 merged). **Every agent: `git fetch origin && git merge origin/solo` now** (keep solo's AGENTS.md/HANDOFF.md). For new work, open a new PR into solo; your old PR is merged.
 
-### web (feat/web, PR #2, merges after live-runs)
-1. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite). Latest commits are still "Tanish".
-2. Eyeball the CapCard against the REAL cap-demo.json: `git show origin/feat/live-runs:web/public/cap-demo.json` (wallet 0xaEb5…5262, cap 0.05, paid 0.02, refused 0.10). Don't commit it; it lands via live-runs.
+### settle (feat/settle)
+1. `git merge origin/solo`. No other open asks. 17/17 `npm test` and rehearse:local green.
+
+### web (feat/web)
+1. `git merge origin/solo`. Solo now serves the REAL web/public/result.json and cap-demo.json; check them with `npm run dev`.
+2. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
 
 ### demo (feat/demo, not started)
 1. Create `feat/demo` from `origin/solo` and push it. Owns referee/src/demo/**, docs/demo-runbook.md, docs/submission.md, README.md, AGENTS.md, PROGRESS-demo.md.
-2. docs/demo-runbook.md: the exact presenter sequence using the real script names in referee/package.json (`npm run check-setup`, `npm run play-game`, `npm run settle`, `npm run settle -- --fen "<FEN>"`, `npm run cap-demo`), and web `npm run dev` or `npm run preview` (`/api/tts` only exists there).
-3. README.md: pitch ("referee-attested", never "trustless"), how to run, contract address 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, settle tx links copied from LIVE-RUNS.md (never invented).
-4. If not started by 02:30 the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
+2. docs/demo-runbook.md: the presenter sequence using the real scripts in referee/package.json (`npm run check-setup`, `npm run demo` / `--dry-run`, `npm run replay-last` as the no-chain fallback, `npm run settle -- --fen "<FEN>"`, `npm run cap-demo`, `npm run rehearse:local`), and web `npm run dev`/`preview` (`/api/tts` only exists there).
+3. README.md: pitch ("referee-attested", never "trustless"); MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c; AgentWallet 0xaEb54edFe9F702B926DF7eaEB0e3Ebfa6C005262; settle tx links copied from LIVE-RUNS.md (never invented).
+4. If not started by 02:30, the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
 
-### live-runner (feat/live-runs, PR #4)
-1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both verified on Arc RPC.
-2. `git merge origin/solo`, then push. Touch only web/public/result.json, web/public/cap-demo.json, LIVE-RUNS.md, contracts/broadcast/DeployAgentWallet.s.sol/5042002/*.json.
-3. Optional, only if the human asks: one more `npm run settle` after the merge so result.json carries the new `referee` field.
+### live-runner (feat/live-runs, merged as #4)
+1. `git merge origin/solo`. Stand by. No more live txs unless the human asks (e.g. a fresh settle so result.json carries `referee`).
 
 ### human
-1. Start Codex B (demo-agent). feat/demo is not on origin yet.
-2. LIVE-RUNNER is done ✅: 2 live settles, AgentWallet 0xaEb5…5262 deployed, cap demo paid 0.02 (tx 0xfa0a…239a), all verified on Arc RPC. Type **"go live"** to merge feat/live-runs into solo.
-3. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
+1. Start Codex B (demo-agent). It's the only piece not in solo.
+2. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
 
 ## Role
 
@@ -60,14 +59,14 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 02:07 CST — solo = settle #1 + agent-wallet #3. integration = solo + settle@f130dce + live-runs@1a2adc3 + web@a75449e, no conflicts.
+2026-11-20 02:10 CST — solo@c2ddf51 = settle (#1, #5) + agent-wallet #3 + live-runs #4 + web #2. integration = solo.
 
 - G1 ✅ shared builds
-- G2 ✅ tsc clean (no referee code changes this round; keyless play-game green last round)
-- G3 ✅ 14/14 tests
-- G4 ✅ web build + smoke test green with the REAL result.json and REAL cap-demo.json in dist/
-- G5 ✅ `npm run rehearse:local` (last round; unchanged code)
+- G2 ✅ tsc clean; keyless play-game green; `npm test` 17/17
+- G3 ✅ 14/14 forge tests
+- G4 ✅ web build + smoke test green with the real result.json and cap-demo.json
+- G5 ✅ `npm run rehearse:local`: 2 settles + cap demo on anvil
 - G6 ⏭ waiting on demo branch. No "trustless" claim in repo
 
-Verified on Arc RPC: settle 0x41ba…02b4 and 0xf177…f6f4 (status 1, to MatchEscrow); AgentWallet 0xaEb5…5262 has code; allowed payment 0xfa0a…239a status 1.
-Flags: feat/web commits authored "Tanish" (expected Alex Rodriguez).
+Verified on Arc RPC: settle 0x41ba…02b4 and 0xf177…f6f4; AgentWallet 0xaEb5…5262 has code; allowed payment 0xfa0a…239a status 1.
+live-runs was merged on the human's "go live" with CHECKPOINT PASSED waived (two verified live settles, literal line missing).
