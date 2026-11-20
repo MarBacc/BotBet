@@ -13,6 +13,13 @@ function tts(mode: string): Plugin {
   const key = env.ELEVENLABS_API_KEY
   const voice = env.ELEVENLABS_VOICE_ID
   const model = env.ELEVENLABS_MODEL_ID || 'eleven_multilingual_v2'
+  const cache = new Map<string, Buffer>() // text -> mp3, so repeat plays cost no credits
+  const sendMp3 = (res: ServerResponse, buf: Buffer) => {
+    res.statusCode = 200
+    res.setHeader('content-type', 'audio/mpeg')
+    res.setHeader('cache-control', 'no-store')
+    res.end(buf)
+  }
 
   const handle = async (req: IncomingMessage, res: ServerResponse) => {
     const json = (code: number, body: unknown) => {
@@ -28,6 +35,8 @@ function tts(mode: string): Plugin {
     let text = ''
     try { text = String(JSON.parse(raw).text ?? '').trim() } catch { return json(400, { error: 'bad json' }) }
     if (!text || text.length > 300) return json(400, { error: 'text must be 1-300 chars' })
+    const hit = cache.get(text)
+    if (hit) return sendMp3(res, hit)
     try {
       const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}`, {
         method: 'POST',
@@ -35,10 +44,10 @@ function tts(mode: string): Plugin {
         body: JSON.stringify({ text, model_id: model }),
       })
       if (!r.ok) return json(502, { error: `elevenlabs ${r.status}` })
-      res.statusCode = 200
-      res.setHeader('content-type', 'audio/mpeg')
-      res.setHeader('cache-control', 'no-store')
-      res.end(Buffer.from(await r.arrayBuffer()))
+      const buf = Buffer.from(await r.arrayBuffer())
+      if (cache.size > 50) cache.clear()
+      cache.set(text, buf)
+      sendMp3(res, buf)
     } catch {
       json(502, { error: 'elevenlabs unreachable' })
     }

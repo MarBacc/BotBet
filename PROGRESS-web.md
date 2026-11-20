@@ -26,3 +26,6 @@
 - 01:42 DONE: W4 cap card per interfaces.md §6 (human amounts), "Allowed ✓ / Refused on-chain" wording, cap-in-contract line, ?sampleCap=1 dev preview; hidden on 404.
 - NEXT: W5 TTS in-memory cache.
 - BLOCKERS: none.
+- 01:43 DONE: W5 TTS — server + client in-memory audio cache, line "X takes the N USDC pot, settled on Arc."; key/voice MISSING locally so button stays hidden.
+- NEXT: W6 About section.
+- BLOCKERS: ELEVENLABS_API_KEY / VOICE_ID not set (owner must add to .env to demo voice).
