@@ -34,7 +34,7 @@ interface ResultV1 {
   balances: { before: Record<string, string>; after: Record<string, string> };
   finishedAt: number;
 }
-interface CapDemo { wallet: string; capUsdc: string; allowed: { amount: string; txHash: string | null }; refused: { amount: string; reason: string } }
+interface CapDemo { wallet: string; capUsdc: string; allowed: { amount: string; txHash: string | null }; refused: { amount: string; reason: string }; refusedTxHash?: string | null }
 
 function parseArgs(argv: string[]) {
   const args = {
@@ -111,6 +111,7 @@ async function main(): Promise<void> {
     console.log(`\n── AgentWallet cap (${c.wallet}) ──`);
     console.log(`  ✅ allowed  ${c.allowed.amount} USDC  ${c.allowed.txHash ? tx(c.allowed.txHash) : "(no tx recorded)"}`);
     console.log(`  ❌ refused  ${c.refused.amount} USDC  ${c.refused.reason}  (cap ${c.capUsdc} USDC)`);
+    if (c.refusedTxHash) console.log(`             on-chain refusal ${tx(c.refusedTxHash)}`);
     summary.push(`cap       ${c.capUsdc} USDC: ${c.allowed.amount} paid, ${c.refused.amount} refused`);
   } else {
     summary.push("cap       no cap-demo.json recorded");

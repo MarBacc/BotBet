@@ -67,3 +67,16 @@ test("parseBaseUnits: integers only", () => {
   assert.throws(() => parseBaseUnits(""), MoneyError);
   assert.throws(() => parseBaseUnits("0x10"), MoneyError);
 });
+
+test("zero, one base unit, and huge values", () => {
+  assert.equal(toBaseUnits("0"), 0n);
+  assert.equal(toBaseUnits("0.000000"), 0n);
+  assert.equal(fromBaseUnits(0n), "0");
+  assert.equal(formatUsdc(0n), "0.00 USDC");
+  assert.equal(formatUsdc(1n), "0.00 USDC"); // 1 base unit truncates at 2 decimals
+  assert.equal(formatUsdc(1n, { decimals: 6 }), "0.000001 USDC");
+  const max = 2n ** 256n - 1n; // uint256 max: no float anywhere, so no precision loss
+  assert.equal(toBaseUnits(fromBaseUnits(max)), max);
+  assert.equal(formatUsdc(max, { decimals: 6, symbol: false }).replace(/,/g, ""), `${max / 1_000_000n}.${(max % 1_000_000n).toString().padStart(6, "0")}`);
+  assert.equal(toBaseUnits("123456789012345678901234567890.123456"), 123456789012345678901234567890123456n);
+});
