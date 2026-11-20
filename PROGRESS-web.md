@@ -32,3 +32,6 @@
 - 01:43 DONE: W6 About section (3-line pitch, MatchEscrow from deployments.json with explorer link, repo link, roadmap).
 - NEXT: W7 resilience + test:smoke.
 - BLOCKERS: ELEVENLABS key/voice missing.
+- 01:44 DONE: W7 resilience — validate()+defaults, error boundary falls back to sample with friendly warning, default explorer base, money guards, dev ?data= preview; npm run test:smoke (9 checks) green.
+- NEXT: poll loop (solo, settle result.json/cap-demo.json, PR comments).
+- BLOCKERS: ELEVENLABS key/voice missing.

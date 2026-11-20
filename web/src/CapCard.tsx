@@ -33,7 +33,7 @@ export async function loadCapDemo(): Promise<CapDemo | null> {
     const r = await fetch('/cap-demo.json')
     if (!r.ok || !(r.headers.get('content-type') ?? '').includes('json')) return null
     const c = (await r.json()) as CapDemo
-    return c && c.allowed && c.refused ? c : null
+    return c && typeof c === 'object' && c.allowed && c.refused && typeof c.wallet === 'string' ? c : null
   } catch {
     return null
   }
@@ -57,7 +57,7 @@ export function useCapDemo(): [CapDemo | null, boolean, () => void] {
 }
 
 export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
-  const short = (h: string) => `${h.slice(0, 10)}…${h.slice(-6)}`
+  const short = (h: string) => (typeof h === 'string' && h.length > 18 ? `${h.slice(0, 10)}…${h.slice(-6)}` : String(h ?? '—'))
   return (
     <div className="panel cap">
       <h2>Agent wallet safety {sample && <span className="tag sm">sample</span>}</h2>
