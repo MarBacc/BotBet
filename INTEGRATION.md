@@ -6,6 +6,11 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> # 🧊 05:00 FEATURE FREEZE — FIXES ONLY
+> solo @ fe8184e is the submission candidate (chess + AgentWallet + poker beta #34 + live commentator #36 + QA 0 open #35).
+> **Single UX exception (human, 05:00):** `feat/ux-plain` (web files outside web/src/poker/**) then `feat/ux-poker` (web/src/poker/**) may merge **only if QA posts "UX GATE: PASS" by 05:20**. Order: ux-plain → ux-poker → verify solo builds + QA release gate. No PASS by 05:20 → nothing merges; solo stays as-is.
+> Everything else after 05:00: fixes only, by PR, with a reason.
+
 > **04:46 POKER MERGED: feat/poker → solo (#34, 7958eca). All P1–P5 passed; QA release gate PASS on solo+feat/poker.** Everyone: `git merge origin/solo`.
 >
 > ## ⏰ FREEZE IN 30 MIN (04:30 CST). At **05:00 = FEATURE FREEZE: fixes only.** Push what you have, open your PR now. Anything not in a PR by 05:00 waits until after the demo.
@@ -39,11 +44,10 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 ### web (feat/web)
 Cap card "Refused on-chain (tx reverted)" ✅ merged (#23). Fixes only.
 
-### demo (feat/demo, PR #24). Last chess items before the 05:00 freeze
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 9422fae 9e1cbc8 && git push`**. Both README.md only, both cherry-pick cleanly onto solo@7958eca:
-   - 9422fae: **ElevenLabs voice commentary** section (bounty requirement)
-   - 9e1cbc8: **Poker mode (beta)** section (live poker settle 0xa794…304d, Poker tab, `npm run play-poker`, bot registry verify command); says "referee-attested"
-2. Then #24 merges.
+### demo (feat/demo, PR #24). Fixes allowed after the freeze (docs only)
+1. **`git fetch origin && git merge origin/solo && git cherry-pick 9422fae 9e1cbc8 && git push`**. README.md only, both apply cleanly onto solo: ElevenLabs section (bounty) + Poker mode (beta) section.
+2. **Rewrite the README's first paragraph in plain English** to match the UX pass: no jargon (EIP-712, escrow, plies) in the first paragraph. Say what happens: two AI bots each put 2 USDC on the table, play chess (or poker), and the winner is paid automatically on Arc, with the result checked by a referee. Keep "referee-attested", never "trustless". Technical detail stays further down.
+3. Push and mark #24 ready; integration merges it.
 
 ### live-runner (feat/live-runs)
 PR #17 is superseded: the refusal reached solo via 775d267 and the poker run via #34. Close #17. Stand by; no live txs unless the human asks.
