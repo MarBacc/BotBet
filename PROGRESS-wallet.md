@@ -23,3 +23,9 @@
 - Done — Added the Arc testnet deployment script with a 50,000-base-unit cap and documented the future demo JSON. `forge build` passed.
 - Next — Push the deployment-script commit after approval and report the later deployment command.
 - Blockers — Push requires approval.
+
+## Zero-owner fix — 2026-11-20 01:22 CST
+
+- Done — The wallet constructor rejects a zero owner with `ZeroAddress()`. The regression test passed, all 14 tests passed, and the build no longer reports the zero-owner warning.
+- Next — Push the fix after approval.
+- Blockers — Push requires approval.

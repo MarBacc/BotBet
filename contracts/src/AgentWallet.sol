@@ -24,9 +24,11 @@ contract AgentWallet {
     event Paid(address indexed to, uint256 amount, bytes32 memo);
 
     /// @param usdc_ The USDC token contract.
-    /// @param owner_ The account authorized to make payments.
+    /// @param owner_ The nonzero account authorized to make payments.
     /// @param maxPerTx_ The per-payment cap in USDC base units.
     constructor(address usdc_, address owner_, uint256 maxPerTx_) {
+        if (owner_ == address(0)) revert ZeroAddress();
+
         usdc = IERC20(usdc_);
         owner = owner_;
         maxPerTx = maxPerTx_;

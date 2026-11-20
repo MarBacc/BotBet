@@ -21,6 +21,11 @@ contract AgentWalletTest is Test {
         usdc.mint(address(wallet), STARTING_BALANCE);
     }
 
+    function test_RevertWhen_OwnerIsZeroAddress() public {
+        vm.expectRevert(AgentWallet.ZeroAddress.selector);
+        new AgentWallet(address(usdc), address(0), CAP);
+    }
+
     function test_PayUnderCapTransfersAndEmitsPaid() public {
         uint256 amount = CAP - 1;
         vm.expectEmit(true, false, false, true, address(wallet));
