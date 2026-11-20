@@ -6,6 +6,10 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **03:09 solo moved** to 907b1e7: **demo #8 merged, judge README on solo, QA release gate PASS 8/8.** Everyone: `git merge origin/solo`.
+>
+> **Pending: on-chain cap refusal.** live-runs 19ffa31 broadcast the 0.10 USDC over-cap payment, which reverted with `CapExceeded` (tx 0xd21f…3aa3, receipt status 0, verified). cap-demo.json gains `refusedTxHash`. It is held out of solo until web and demo stop saying "simulated / not broadcast".
+>
 > **02:55 solo moved** to 6fcb39c (live-runs #12: 17-ply live settle 0x4f49…55f3 is the page's result.json; qa #13: backup demo video docs/screenshots/demo.webm). Everyone: `git merge origin/solo`.
 >
 > **02:50 solo moved** to 8b49caa (web #11: QA #4 + #5). Everyone: `git merge origin/solo`.
@@ -21,16 +25,17 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
 ### web (feat/web)
-QA #4 (mobile) and #5 (cap wording) fixed and merged as #11 ✅ (overflow at 390 px: 0; real data, no console errors).
-1. `git merge origin/solo`. Stand by for fixes only. New commits: author "Alex Rodriguez".
+1. `git merge origin/solo`.
+2. **Cap card, on-chain refusal:** `cap-demo.json` on origin/feat/live-runs now has `"refusedTxHash": "0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3"` (a reverted tx, status 0). In `web/src/CapCard.tsx`: add `refusedTxHash?: string` to the type. When present, render `Refused on-chain (tx reverted): 0.10 USDC` with an explorer link to that tx; when absent, keep `Refused by the contract (simulated):`. Test with `git show origin/feat/live-runs:web/public/cap-demo.json` (don't commit it). `npm run build && npm run test:smoke`, push.
+3. New commits: author "Alex Rodriguez".
 
-### demo (feat/demo, PR #8). **Solo blocker (QA #1).** Integration merges #8 the moment item 1 lands.
-1. **`git fetch origin && git merge origin/solo && git cherry-pick 17e4f5c 190c474 3abf853 && git push`**. All README.md only (3abf853: page replays run 2 again). 17e4f5c fixes QA #2 (placeholders), QA #3 (judge-safe two-block run steps), adds the ElevenLabs section and the screenshots; 190c474 lists the 17-ply live settle the page now shows.
-2. Optional after that: runbook + `DEMO_DEFAULT` use the 1-ply FEN `7k/8/5KQ1/…`; KQ vs K `8/8/8/4k3/8/8/8/3QK3 w - - 0 1` (17 plies) replays better, and add the `npm run replay-last` fallback to the runbook.
-3. Your PROGRESS is stale: LIVE-RUNS.md line 42 (in solo) has the cap-demo payment 0xfa0a…239a.
+### demo (feat/demo, merged as #8 ✅)
+1. `git merge origin/solo`, then open a new PR into solo.
+2. **README: add an "## ElevenLabs voice commentary" section.** The bounty needs it and it is still missing. Text: `git show origin/feat/integration:INTEGRATION-readme-draft.md` ("## ElevenLabs").
+3. **README lines 51 and 63:** the 0.10 USDC over-cap payment WAS broadcast and reverted with `CapExceeded(100000, 50000)`: [tx](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3) (receipt status 0, wallet balance unchanged). Replace "simulated … not broadcast" with that, and do the same in docs/demo-runbook.md if it says simulated.
 
-### live-runner (feat/live-runs, merged as #4)
-1. `git merge origin/solo`. Stand by: no more live txs unless the human asks. (CHECKPOINT PASSED line added ✅)
+### live-runner (feat/live-runs)
+1. Stand by. 19ffa31 (on-chain refusal) is gated green and merges into solo as soon as web item 2 and demo item 3 land. No more live txs unless the human asks.
 
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
