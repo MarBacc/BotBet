@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "chainId": 5042002,
+  "escrow": "0x9d4EEE03C431c524822c6A1486bE6142d2a4916c",
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "referee": "0xE632a919CEE69FC9482a6A719D47878EEDA28345",
+  "explorerBaseUrl": "https://explorer.testnet.arc.io",
+  "matchId": "0xc237419496934a7158e7948427cfbafa02c2463e7d9da59cadaf582b80017fc0",
+  "stakeUsdc": "2000000",
+  "potUsdc": "4000000",
+  "bots": [
+    {
+      "id": "deep",
+      "name": "Deep Thought",
+      "address": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
+      "depth": 12,
+      "color": "white",
+      "approveTxHash": "0x62c85e13b3b3495920811d73ab400a18f89b7cc569105135e0e0bb190226cf90",
+      "stakeTxHash": "0x65740ac3532e9ab8b6227d66e1a854c07315df55e57f7898e553cf165eb2ebe4"
+    },
+    {
+      "id": "hasty",
+      "name": "Hasty Hal",
+      "address": "0x016E0a0c6a153edFDd05947667Be12Be001Eb661",
+      "depth": 4,
+      "color": "black",
+      "approveTxHash": "0x74dc489b74c7078273be2b640ef6756ac76d229fc0258ebbd6b34921f03b3b11",
+      "stakeTxHash": "0x1b7d4ad76a92a23c120afeae0723a1e0405a573ca8f0b57b325892a78029e99b"
+    }
+  ],
+  "winner": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
+  "winnerId": "deep",
+  "plies": 17,
+  "pgn": "[Event \"BotBet\"]\n[Site \"offline\"]\n[Date \"2026.11.20\"]\n[Round \"?\"]\n[White \"Deep Thought (Stockfish depth 12)\"]\n[Black \"Hasty Hal (Stockfish depth 4)\"]\n[Result \"1-0\"]\n[SetUp \"1\"]\n[FEN \"8/8/8/4k3/8/8/8/3QK3 w - - 0 1\"]\n\n1. Qd3 Ke6 2. Kd2 Ke5 3. Ke3 Kf6 4. Qd5 Ke7 5. Ke4 Kf8 6. Kf5 Ke7 7. Kg6 Ke8 8. Kf6 Kf8 9. Qf7# 1-0",
+  "result": {
+    "matchId": "0xc237419496934a7158e7948427cfbafa02c2463e7d9da59cadaf582b80017fc0",
+    "winner": "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24",
+    "moveCount": 17,
+    "pgnHash": "0x289e08054d41e7ffe1ca3e2f710c46fb4788671878e79219bf50c67b5d11fd41",
+    "finishedAt": 1795164605
+  },
+  "signature": "0x4a2e5755c682426d9b1842e57effcc84f09d516249308b2b06987b017b4ef74a0a0a6de1e16af100c8f996b3af16f4030c68bd1890b7c6cb958d0639784f80d01b",
+  "createMatchTxHash": "0x72ca060d945121bca942e37a097cbbc52ca2ad8ec099f79836ef1414e2abf66f",
+  "settleTxHash": "0x4f49823d648fc2512bd96c79622c17d04f4ce77d577ad87c6dd2f35c4d8755f3",
+  "balances": {
+    "before": {
+      "deep": "23993947",
+      "hasty": "15993752"
+    },
+    "after": {
+      "deep": "25990920",
+      "hasty": "13990629"
+    }
+  },
+  "finishedAt": 1795164605
+}

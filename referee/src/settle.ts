@@ -17,6 +17,7 @@ import type { Abi, Hex } from "viem";
 import { toBaseUnits } from "botbet-shared";
 import { BOTS } from "./bots.js";
 import { ARC_TESTNET_CHAIN_ID, REPO_ROOT, assertPrivateKeys, loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
+import { box } from "./box.js";
 import { SettleError } from "./errors.js";
 import { StepFailure, runSettle } from "./settle-core.js";
 import { DEFAULT_RPC_URL, EXPECTED_ADDRESSES, EXPLORER_BASE_URL } from "./settle-constants.js";
@@ -83,6 +84,7 @@ async function main(): Promise<void> {
     const hint = cause instanceof SettleError ? cause.hint : undefined;
     log(`\n❌ FAILED at "${step}": ${message}`);
     if (hint) log(`   → ${hint}`);
+    log(`\n${box("❌ SETTLE FAILED", [`step   ${step}`, ...message.split("\n").map((l) => `error  ${l.trim()}`), ...(hint ? [`fix    ${hint}`] : [])])}`);
     if (args.json) console.log(JSON.stringify({ ok: false, step, error: message, hint: hint ?? null }, null, 2));
     process.exitCode = 1;
   }
