@@ -1,6 +1,6 @@
 # Demo progress
 
-Updated: 2026-11-20 02:25 CST
+Updated: 2026-11-20 02:34 CST
 
 ## Done
 
@@ -9,17 +9,19 @@ Updated: 2026-11-20 02:25 CST
 - Wrote this task's working rules to `AGENTS.md`.
 - Added five tactical queen-mate candidate FENs and a checker that uses `chess.js` plus the existing `playGame({ startFen })` implementation. No existing game/engine/bot files were changed.
 - Wrote the 3-minute runbook, including truthful on-chain/recorded-run distinctions and Arc transaction fallbacks.
+- Wrote the judge-facing README with deployment addresses, verified settle transaction links, security limits, and setup steps.
+- Filled the submission checklist with selected categories, linked deployments and settle transactions, and owner placeholders.
+- Tasks 1–4 are committed and pushed to `origin/feat/demo`.
 
 ## Next
 
-- Write the judge-facing README and submission checklist.
+- Commit and push the submission checklist, then report the final branch/worktree state and outstanding verification blockers.
 - Commit and push each task to `origin/feat/demo`.
 
 ## Blockers
 
 - This shell has no `node` or `npm` executable. The requested shared/referee installs and `npm run play-game` could not run; position validation and engine runs are also blocked until Node/npm are available.
 - The requested `npx tsx src/demo/check-positions.ts` could not run (`npx: command not found`). Candidate FENs are unverified here; `DEMO_DEFAULT` is provisional and must not be presented as confirmed.
-- No `origin/feat/demo` remote-tracking ref is present locally; a normal push will be attempted after commits, without force.
 
 ## Position checker results
 
