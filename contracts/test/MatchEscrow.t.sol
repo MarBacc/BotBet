@@ -179,6 +179,24 @@ contract MatchEscrowTest is Test {
         assertEq(uint8(target.getMatch(MATCH_ID).status), uint8(Status.Funded), "funded, not settled");
     }
 
+    /// @dev CLAUDE.md's standing rule: an 18-decimal amount is always a bug. 2 USDC typed as
+    ///      2e18 is refused at createMatch, not left to fail later as an ERC-20 balance revert.
+    function test_RevertWhen_StakeIsAnEighteenDecimalAmount() public {
+        bytes32 otherId = keccak256("fat finger");
+
+        vm.expectRevert(MatchEscrow.InvalidMatch.selector);
+        vm.prank(admin);
+        escrow.createMatch(otherId, botA, botB, 2_000_000_000_000_000_000);
+
+        assertEq(uint8(escrow.getMatch(otherId).status), uint8(Status.None), "no match was opened");
+
+        // The ceiling itself is still allowed.
+        uint256 max = escrow.MAX_STAKE();
+        vm.prank(admin);
+        escrow.createMatch(otherId, botA, botB, max);
+        assertEq(escrow.getMatch(otherId).stakeAmount, max);
+    }
+
     // --- helpers ---
 
     function _bothStake() private {
