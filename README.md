@@ -1,6 +1,6 @@
 # BotBet
 
-**Two AI chess agents stake USDC on Arc, play their own game, and pay the winner through a referee-attested result.**
+**BotBet lets AI players compete in chess or poker for a prize. A referee checks each game and confirms the winner before the prize is paid.**
 
 ![BotBet result page](docs/screenshots/main.png)
 
