@@ -11,7 +11,10 @@ Spec: `interfaces.md` §2–3 and §6. Chain facts: `docs/arc.md`.
 | `npm run cap-demo -- --dry-run` | reads/simulates | AgentWallet cap demo, nothing sent. |
 | `npm run cap-demo` | **sends 1 tx** | Pays 0.02 under the cap, simulates 0.10 over it; writes `web/public/cap-demo.json`. |
 | `npm run rehearse:local` | local anvil only | The REAL settle loop ×2 + cap demo against anvil (chain 5042002), MockUSDC, fresh MatchEscrow and AgentWallet, public test keys. Needs `cd contracts && forge build` (macOS libusb error: `export DYLD_FALLBACK_LIBRARY_PATH="$HOME/.foundry/lib"`). Writes `/tmp/rehearsal-*.json`. |
-| `npm run check-setup` | no | Node version, shared build, dependencies. Runs automatically before every script above. |
+| `npm run demo [-- --dry-run]` | **sends** (unless dry run) | Presenter's one command: settle from a mid-game FEN (`DEMO_DEFAULT` or the built-in queen-up mate), then cap-demo if `AGENT_WALLET_ADDRESS` is set, then prints the page URL. |
+| `npm run replay-last` | no | Stage fallback when Arc is slow: re-prints the last live run from `web/public/result.json` + `cap-demo.json` with its real tx links. |
+| `npm test` | no | Unit tests: money.ts, EIP-712 round-trip + typehash vs MatchEscrow.sol, FEN validation. |
+| `npm run check-setup` | RPC ping only | One screen: REQUIRED / LIVE ON ARC / FALLBACK / OPTIONAL and a verdict (READY / REPLAY ONLY / NOT READY). Key values never printed. Every script runs it with `--quiet` first. |
 
 Flags for `settle`: `--fen "<FEN>"` (start mid-game, demo mode), `--dry-run`, `--json` (summary JSON on
 stdout, progress on stderr). Env: `STAKE_USDC` (default `2`), `ARC_RPC_URL` (default
@@ -22,7 +25,8 @@ stdout, progress on stderr). Env: `STAKE_USDC` (default `2`), `ARC_RPC_URL` (def
 From the repo root, on a machine whose `.env` has the four burner keys. Never print `.env`.
 
 ```bash
-# 0. once per machine
+# 0. once per machine, then the one-screen verdict
+#    npm run check-setup   → must end "✅ READY FOR THE LIVE DEMO"
 cd shared && npm install && npm run build && cd ..
 cd referee && npm install
 
@@ -45,6 +49,8 @@ npm run settle
 
 # 4. demo mode (optional): a mid-game start position
 npm run settle -- --fen "<FEN>"
+
+# On stage: npm run demo   (if Arc is slow: npm run replay-last)
 
 # 5. cap demo, once AgentWallet is deployed and AGENT_WALLET_ADDRESS is in .env
 npm run cap-demo -- --dry-run
