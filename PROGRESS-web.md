@@ -35,3 +35,6 @@
 - 01:44 DONE: W7 resilience — validate()+defaults, error boundary falls back to sample with friendly warning, default explorer base, money guards, dev ?data= preview; npm run test:smoke (9 checks) green.
 - NEXT: poll loop (solo, settle result.json/cap-demo.json, PR comments).
 - BLOCKERS: ELEVENLABS key/voice missing.
+- 01:45 DONE: PR#2 lead request — cap panel already shipped (W4); added allowed.txHash:null handling; stub-tested (not committed). Did not cherry-pick 2e88fba (would duplicate the panel).
+- NEXT: poll loop.
+- BLOCKERS: ELEVENLABS key/voice missing; waiting for real result.json / cap-demo.json from settle.

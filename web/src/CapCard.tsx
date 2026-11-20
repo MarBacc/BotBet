@@ -4,7 +4,7 @@ import { formatUsdc, toBaseUnits } from 'botbet-shared'
 export interface CapDemo {
   wallet: string
   capUsdc: string
-  allowed: { amount: string; txHash: string }
+  allowed: { amount: string; txHash: string | null }
   refused: { amount: string; reason: string }
 }
 
@@ -66,7 +66,9 @@ export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample:
       <div className="kv"><span>Cap</span><b>{capUsdc(c.capUsdc)}</b></div>
       <div className="pay ok">
         <span>Allowed: {capUsdc(c.allowed.amount)} ✓</span>
-        {base ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a> : <span className="mono">tx {short(c.allowed.txHash)}</span>}
+        {c.allowed.txHash && base
+          ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a>
+          : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}
       </div>
       <div className="pay no">
         <span>Refused on-chain: {capUsdc(c.refused.amount)}</span>
