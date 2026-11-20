@@ -67,6 +67,15 @@ Arc uses USDC as its native gas asset. BotBet uses the 6-decimal ERC-20 interfac
 
 The page's **Hear the result** button narrates the outcome with the **ElevenLabs Text to Speech API**. It builds one announcer line from `result.json` (for example "Checkmate in 28 moves! Deep Thought takes the 4 USDC pot, settled on Arc.") and sends it to a server-side `/api/tts` route in `web/vite.config.ts`, which calls ElevenLabs and returns the MP3. The API key stays on the server and never reaches the browser. Set `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` in `.env` and run the page with `npm run dev` or `npm run preview`. The static GitHub Pages build has no server route, so the button hides itself there.
 
+## Poker mode (beta)
+
+The same MatchEscrow, unchanged, also settles **heads-up fixed-limit Texas Hold'em** between bots (Nit, Maniac, Theory). The referee plays the hands, signs the same EIP-712 `MatchResult` (for poker, `moveCount` is the number of hands and `pgnHash` is the hash of the hand history), and `settle()` pays the winner. Results are referee-attested, exactly as for chess.
+
+- Live on Arc testnet: Theory beat Maniac 200–0 in 9 hands and was paid the 4 USDC pot. [Settle transaction](https://explorer.testnet.arc.io/tx/0xa79492719be7dd5e7fd182f1f45db9515ae324a9f1ebc2cc000e6b429b9f304d).
+- The page shows a **Poker (beta)** tab only when `web/public/poker-result.json` exists. Chess stays the default.
+- Try it offline with no keys: `cd referee && npm run play-poker`.
+- **Bot registry:** every house bot (Deep Thought, Hasty Hal, Nit, Maniac, Theory) has a signed code-hash commitment in `web/public/bots.json`. Check one with `npm run register-bot -- --verify "Theory" --dir src/registry/house/poker/theory`.
+
 ## Run it yourself
 
 ### Judges (no keys, nothing sent on-chain)
