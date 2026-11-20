@@ -7,15 +7,21 @@
 
 import { randomBytes } from "node:crypto";
 import { toHex, type Address } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { BOTS, type BotConfig } from "./bots.js";
 import { loadEnv, readArcDeployments, refereeAccount, requirePrivateKey } from "./env.js";
 import { resolveEnginePath } from "./engine.js";
 import { MAX_FULL_MOVES, MOVE_TIME_MS, playGame, sides } from "./game.js";
 import { hashPgn, matchDomain, recoverMatchResultSigner, signMatchResult, type MatchResult } from "./result.js";
 
-/** Public address only — the key itself never leaves env.ts. */
+/** True when the env var is unset — play-game then runs offline with a throwaway key. */
+function unset(name: string): boolean {
+  return !process.env[name]?.trim();
+}
+
+/** Public address only — the key itself never leaves env.ts. No key → throwaway address (offline). */
 function botAddress(bot: BotConfig): Address {
+  if (unset(bot.envKey)) return privateKeyToAccount(generatePrivateKey()).address;
   return privateKeyToAccount(requirePrivateKey(bot.envKey)).address;
 }
 
@@ -24,8 +30,16 @@ async function main(): Promise<void> {
 
   const deployments = readArcDeployments();
   const escrow = deployments.contracts.MatchEscrow.address;
-  const referee = refereeAccount(deployments); // throws unless the key matches the deployed referee
-  const refereeKey = requirePrivateKey("REFEREE_PRIVATE_KEY");
+  // No REFEREE_PRIVATE_KEY → offline mode: sign with a throwaway key so the game still plays and the
+  // EIP-712 signature still round-trips. Such a signature would NOT settle on MatchEscrow.
+  const offline = unset("REFEREE_PRIVATE_KEY");
+  const refereeKey = offline ? generatePrivateKey() : requirePrivateKey("REFEREE_PRIVATE_KEY");
+  const referee = offline
+    ? privateKeyToAccount(refereeKey)
+    : refereeAccount(deployments); // throws unless the key matches the deployed referee
+  if (offline) {
+    console.log("offline: ephemeral referee key — signature will NOT settle on MatchEscrow");
+  }
 
   const { white, black } = sides();
   const addresses = new Map<string, Address>(BOTS.map((bot) => [bot.id, botAddress(bot)]));
@@ -99,12 +113,14 @@ async function main(): Promise<void> {
 
   console.log(`Signature recovers to ${recovered}`);
   console.log(`  signing key        ${signerMatches ? "OK" : "MISMATCH"}`);
-  console.log(`  deployed referee   ${deployedRefereeMatches ? "OK" : `MISMATCH — escrow expects ${onChainReferee}`}`);
+  console.log(
+    `  deployed referee   ${offline ? "SKIPPED (offline key)" : deployedRefereeMatches ? "OK" : `MISMATCH — escrow expects ${onChainReferee}`}`,
+  );
 
   if (!signerMatches) {
     throw new Error("recovered signer does not match the signing key — the typed data is wrong.");
   }
-  if (!deployedRefereeMatches) {
+  if (!offline && !deployedRefereeMatches) {
     throw new Error(
       `REFEREE_PRIVATE_KEY signs as ${recovered} but the deployed escrow trusts ${onChainReferee}; settle would revert with InvalidSignature.`,
     );
