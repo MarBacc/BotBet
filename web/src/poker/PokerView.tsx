@@ -4,35 +4,45 @@ import type { PokerResult } from './data'
 import { buildFrames } from './timeline'
 import { Table } from './Table'
 import { BotsPanel } from './BotsPanel'
+import { TechDetails } from './TechDetails'
+import { SPEED, type Speed } from './words'
 import './poker.css'
 
 const PokerPresent = lazy(() => import('./PokerPresent'))
 const usdc = (v: string | null) => (v ? formatUsdc(v) : null)
-const short = (s: string, a = 8, b = 6) => (s && s.length > a + b + 1 ? `${s.slice(0, a)}…${s.slice(-b)}` : s || '—')
+
+// "Pick the winner" score: memory only, survives tab switches, gone on reload
+const score = { right: 0, played: 0 }
 
 export default function PokerView({ d, sample, referee }: { d: PokerResult; sample: boolean; referee: string }) {
   const frames = useMemo(() => buildFrames(d), [d])
   const total = frames.length - 1
   const [i, setI] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [speed, setSpeed] = useState<Speed>('normal')
   const [present, setPresent] = useState(() => typeof location !== 'undefined' && new URLSearchParams(location.search).get('present') === '1')
-  const base = d.explorerBaseUrl
-  const tx = (h?: string) => (h ? `${base}/tx/${h}` : undefined)
+  const [pick, setPick] = useState<string | null>(null)
+  const [scored, setScored] = useState(false)
   const winner = d.bots.find(b => b.id === d.winnerId) ?? d.bots[0]
-  const loser = d.bots.find(b => b.id !== winner.id)
-  const ref = d.referee || referee
+  const proof = d.settleTxHash ? `${d.explorerBaseUrl}/tx/${d.settleTxHash}` : null
+  const stake = usdc(d.stakeUsdc), pot = usdc(d.potUsdc)
+  const atEnd = i >= total
 
   useEffect(() => {
     if (!playing) return
-    if (i >= total) { setPlaying(false); return }
-    const t = setTimeout(() => setI(n => n + 1), 700)
+    if (atEnd) { setPlaying(false); return }
+    const t = setTimeout(() => setI(n => n + 1), frames[i].delay * SPEED[speed])
     return () => clearTimeout(t)
-  }, [playing, i, total])
+  }, [playing, i, atEnd, frames, speed])
+
+  useEffect(() => {
+    if (atEnd && pick && !scored) { score.played++; if (pick === winner.id) score.right++; setScored(true) }
+  }, [atEnd, pick, scored, winner.id])
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (present) return
-      if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return
+      if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return
       if (e.key === 'ArrowLeft') { setPlaying(false); setI(n => Math.max(0, n - 1)) }
       if (e.key === 'ArrowRight') { setPlaying(false); setI(n => Math.min(total, n + 1)) }
       if (e.key === ' ' && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); setI(n => (n >= total ? 0 : n)); setPlaying(p => !p) }
@@ -43,73 +53,96 @@ export default function PokerView({ d, sample, referee }: { d: PokerResult; samp
   }, [total, present])
 
   const f = frames[i]
+  const status = sample ? 'Example game' : d.offline ? 'Practice game: no real money was paid out' : 'Real game, paid out on the blockchain'
   return (
-    <div className="page">
+    <div className="page poker">
       {present && (
         <Suspense fallback={null}>
-          <PokerPresent d={d} frames={frames} sample={sample} settleUrl={tx(d.settleTxHash)} onExit={() => setPresent(false)} />
+          <PokerPresent d={d} frames={frames} sample={sample} settleUrl={proof ?? undefined} onExit={() => setPresent(false)} />
         </Suspense>
       )}
-      {sample && <div className="sample-ribbon">SAMPLE DATA</div>}
       <header>
-        <h1>BotBet — Poker <small className="beta">beta</small></h1>
-        {sample ? <span className="tag">SAMPLE DATA</span>
-          : d.offline ? <span className="tag">OFFLINE RUN · not settled on-chain</span>
-          : <span className="tag live"><span aria-hidden="true">● </span>LIVE ON ARC</span>}
-        <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
+        <h1>BotBet: Poker <small className="beta">beta</small></h1>
+        <span className={`tag${sample || d.offline ? '' : ' live'}`}>{status}</span>
       </header>
 
+      <section className="how" aria-label="How this works">
+        <h2>How this works</h2>
+        <ol>
+          <li><span aria-hidden="true">💰</span> Two AI bots each put money into a locked prize pool.</li>
+          <li><span aria-hidden="true">🃏</span> They play poker against each other on their own.</li>
+          <li><span aria-hidden="true">✅</span> A referee confirms the winner and the prize is paid automatically.</li>
+        </ol>
+      </section>
+
       <div className="banner">
-        <span><span aria-hidden="true">🏆 </span>{winner.name} wins{loser ? ` vs ${loser.name}` : ''}</span>
-        <span>{d.offline ? 'Not settled (offline run)' : `Pot ${usdc(d.potUsdc) ?? ''} paid to ${short(winner.address, 6, 4)}`.replace('Pot  ', 'Pot ')}</span>
+        <span>{atEnd ? <><span aria-hidden="true">🏆 </span>{winner.name} won</> : <>Who will win? Watch the game below.</>}</span>
+        <span>{d.offline ? 'Practice game: nothing was paid' : `Prize: ${pot ?? 'the prize pool'}`}</span>
       </div>
 
-      <div className="strip">
-        <div className="step"><small>1</small><b>Stake</b>
-          {d.bots.map(b => b.stakeTxHash
-            ? <a key={b.id} className="l" href={tx(b.stakeTxHash)} target="_blank" rel="noreferrer">{b.name}: {short(b.stakeTxHash)}</a>
-            : <span key={b.id} className="l">{b.name}{d.stakeUsdc ? `: ${formatUsdc(d.stakeUsdc)}` : ''}</span>)}
-          <span className="arr">→</span></div>
-        <div className="step"><small>2</small><b>Play</b><span className="l">{d.hands.length} hands · {total} actions</span><span className="arr">→</span></div>
-        <div className="step"><small>3</small><b>Referee signs</b><span className="l">EIP-712 · {short(d.signature, 10, 6)}</span><span className="arr">→</span></div>
-        <div className="step"><small>4</small><b>Contract pays</b>
-          {d.settleTxHash ? <a className="l" href={tx(d.settleTxHash)} target="_blank" rel="noreferrer">settle {short(d.settleTxHash)}</a> : <span className="l">pending</span>}</div>
-      </div>
+      <p className="plain">
+        {stake ? `Both bots put ${stake.replace(' USDC', '').replace(/\.00$/, '')} digital dollars (USDC) into a locked prize pool. ` : 'Both bots put the same amount of digital dollars (USDC) into a locked prize pool. '}
+        They played {d.hands.length} hands of poker. A referee checked the result, and the whole pool went to the winner automatically.
+        {proof && !d.offline && <> <a className="proof" href={proof} target="_blank" rel="noreferrer">See the proof on the blockchain ↗</a></>}
+      </p>
+
+      {i === 0 && !playing && (
+        <section className="pick" aria-label="Pick the winner">
+          <h2>Pick the winner <small>(just for fun, no money)</small></h2>
+          <p className="sub">No real money is involved.</p>
+          <div className="pick-btns">
+            {d.bots.map(b => (
+              <button key={b.id} className={pick === b.id ? 'on' : ''} aria-pressed={pick === b.id} onClick={() => setPick(b.id)}>{b.name}</button>
+            ))}
+          </div>
+          {score.played > 0 && <p className="sub">Your score: {score.right} of {score.played}</p>}
+        </section>
+      )}
+      {atEnd && pick && (
+        <p className={`pick-result ${pick === winner.id ? 'yes' : 'no'}`} role="status">
+          {pick === winner.id ? 'You picked right! 🎉' : 'Not this time.'} <small>Score: {score.right} of {score.played}</small>
+        </p>
+      )}
 
       <div className="pgrid">
         <div>
           <Table d={d} f={f} />
           <div className="ctl">
-            <button aria-label="First action" onClick={() => { setPlaying(false); setI(0) }} disabled={i === 0}>⏮</button>
-            <button aria-label="Previous action" onClick={() => setI(n => Math.max(0, n - 1))} disabled={i === 0}>◀</button>
-            <button onClick={() => { if (i >= total) setI(0); setPlaying(p => !p) }}>{playing ? <><span aria-hidden="true">⏸ </span>Pause</> : <><span aria-hidden="true">▶ </span>Play</>}</button>
-            <button aria-label="Next action" onClick={() => setI(n => Math.min(total, n + 1))} disabled={i === total}>▶</button>
-            <button aria-label="Last action" onClick={() => { setPlaying(false); setI(total) }} disabled={i === total}>⏭</button>
-            <span className="ply">hand {d.hands[f.hand].n}/{d.hands.length} · step {i}/{total}</span>
-            <button onClick={() => { setPlaying(false); setPresent(true) }}><span aria-hidden="true">⛶ </span>Present</button>
+            <button aria-label="Back to the start" onClick={() => { setPlaying(false); setI(0); setScored(false) }} disabled={i === 0}>⏮</button>
+            <button aria-label="Previous step" onClick={() => setI(n => Math.max(0, n - 1))} disabled={i === 0}>◀</button>
+            <button onClick={() => { if (atEnd) { setI(0); setScored(false) } setPlaying(p => !p) }}>{playing ? <><span aria-hidden="true">⏸ </span>Pause</> : <><span aria-hidden="true">▶ </span>{i === 0 ? 'Start the game' : 'Play'}</>}</button>
+            <button aria-label="Next step" onClick={() => setI(n => Math.min(total, n + 1))} disabled={atEnd}>▶</button>
+            <button onClick={() => { setPlaying(false); setI(total) }} disabled={atEnd}>Skip to the end</button>
+            <label className="speed">Speed{' '}
+              <select value={speed} onChange={e => setSpeed(e.target.value as Speed)}>
+                <option value="slow">Slow</option><option value="normal">Normal</option><option value="fast">Fast</option>
+              </select>
+            </label>
+            <button onClick={() => { setPlaying(false); setPresent(true) }}><span aria-hidden="true">⛶ </span>Full screen</button>
           </div>
-          <div className="ctl"><input type="range" aria-label="Replay position" min={0} max={total} value={i} onChange={e => { setPlaying(false); setI(Number(e.target.value)) }} /></div>
+          <div className="ctl">
+            <input type="range" aria-label="Replay position" min={0} max={total} value={i} onChange={e => { setPlaying(false); setI(Number(e.target.value)) }} />
+            <span className="ply">Hand {d.hands[f.hand].n} of {d.hands.length}</span>
+          </div>
         </div>
 
         <div className="side">
-          <div className="badge">
-            <h3><span aria-hidden="true">✔ </span>referee-attested · hand history hash {short(d.handHistoryHash, 10, 6)}</h3>
-            {ref && <div className="kv"><span>referee</span><a className="mono" href={`${base}/address/${ref}`} target="_blank" rel="noreferrer">{ref}</a></div>}
-            <div className="kv"><span>signature</span><span className="mono">{short(d.signature, 12, 8)}</span></div>
-          </div>
           <div className="panel">
             <h2>Hands</h2>
             <ol className="hands">
               {d.hands.map((h, hi) => {
                 const start = frames.findIndex(x => x.hand === hi)
-                const w = d.bots.find(b => b.id === h.winnerId)?.name ?? '—'
-                return <li key={h.n}><button className={f.hand === hi ? 'cur' : ''} onClick={() => { setPlaying(false); setI(start) }}>Hand {h.n} · {w} · pot {h.actions.at(-1)?.pot ?? 0}</button></li>
+                const w = d.bots.find(b => b.id === h.winnerId)?.name ?? 'Tie'
+                const played = hi < f.hand || (hi === f.hand && f.handOver) || atEnd   // no spoilers
+                return <li key={h.n}><button className={f.hand === hi ? 'cur' : ''} onClick={() => { setPlaying(false); setI(start) }}>Hand {h.n}{played ? `: ${w === 'Tie' ? 'tie' : `${w} won`}` : ''}</button></li>
               })}
             </ol>
           </div>
           <BotsPanel />
         </div>
       </div>
+
+      <TechDetails d={d} referee={referee} />
     </div>
   )
 }
