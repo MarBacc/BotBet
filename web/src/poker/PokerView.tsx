@@ -76,12 +76,12 @@ export default function PokerView({ d, sample, referee }: { d: PokerResult; samp
       </section>
 
       <div className="banner">
-        <span><span aria-hidden="true">🏆 </span>{winner.name} won{atEnd ? '' : ' (watch how below)'}</span>
+        <span>{atEnd ? <><span aria-hidden="true">🏆 </span>{winner.name} won</> : <>Who will win? Watch the game below.</>}</span>
         <span>{d.offline ? 'Practice game: nothing was paid' : `Prize: ${pot ?? 'the prize pool'}`}</span>
       </div>
 
       <p className="plain">
-        {stake ? `Both bots put ${stake.replace(' USDC', '')} digital dollars (USDC) into a locked prize pool. ` : 'Both bots put the same amount of digital dollars (USDC) into a locked prize pool. '}
+        {stake ? `Both bots put ${stake.replace(' USDC', '').replace(/\.00$/, '')} digital dollars (USDC) into a locked prize pool. ` : 'Both bots put the same amount of digital dollars (USDC) into a locked prize pool. '}
         They played {d.hands.length} hands of poker. A referee checked the result, and the whole pool went to the winner automatically.
         {proof && !d.offline && <> <a className="proof" href={proof} target="_blank" rel="noreferrer">See the proof on the blockchain ↗</a></>}
       </p>
@@ -133,7 +133,8 @@ export default function PokerView({ d, sample, referee }: { d: PokerResult; samp
               {d.hands.map((h, hi) => {
                 const start = frames.findIndex(x => x.hand === hi)
                 const w = d.bots.find(b => b.id === h.winnerId)?.name ?? 'Tie'
-                return <li key={h.n}><button className={f.hand === hi ? 'cur' : ''} onClick={() => { setPlaying(false); setI(start) }}>Hand {h.n}: {w === 'Tie' ? 'tie' : `${w} won`}</button></li>
+                const played = hi < f.hand || (hi === f.hand && f.handOver) || atEnd   // no spoilers
+                return <li key={h.n}><button className={f.hand === hi ? 'cur' : ''} onClick={() => { setPlaying(false); setI(start) }}>Hand {h.n}{played ? `: ${w === 'Tie' ? 'tie' : `${w} won`}` : ''}</button></li>
               })}
             </ol>
           </div>
