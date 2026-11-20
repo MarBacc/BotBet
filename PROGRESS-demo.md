@@ -1,6 +1,6 @@
 # Demo progress
 
-Updated: 2026-11-20 02:22 CST
+Updated: 2026-11-20 02:25 CST
 
 ## Done
 
@@ -8,10 +8,11 @@ Updated: 2026-11-20 02:22 CST
 - Read `origin/feat/live-runs:LIVE-RUNS.md`; captured its two verified settle runs and AgentWallet deployment details for judge materials.
 - Wrote this task's working rules to `AGENTS.md`.
 - Added five tactical queen-mate candidate FENs and a checker that uses `chess.js` plus the existing `playGame({ startFen })` implementation. No existing game/engine/bot files were changed.
+- Wrote the 3-minute runbook, including truthful on-chain/recorded-run distinctions and Arc transaction fallbacks.
 
 ## Next
 
-- Write the demo runbook, judge-facing README, and submission checklist.
+- Write the judge-facing README and submission checklist.
 - Commit and push each task to `origin/feat/demo`.
 
 ## Blockers
@@ -33,3 +34,8 @@ Command: `cd referee && npx tsx src/demo/check-positions.ts` — not run because
 | queen-net-e7 | — | — | not run (npx unavailable) | — |
 
 Three-run determinism is unconfirmed. `queen-net-g7` is only the provisional default because it is a forced mate-in-one candidate by inspection; it has not been validated by chess.js or played by Stockfish in this environment.
+
+## Runbook status
+
+- Present mode, launched with `P`, is described from the existing web branch. The AgentWallet demo contract's allowed 0.02 USDC payment is mined; the 0.10 USDC over-cap attempt is simulated and returns `CapExceeded` without being broadcast.
+- Two real standard-game settle hashes are linked from `LIVE-RUNS.md`. The short-FEN settle and a fresh cap-demo record have not been performed here.
