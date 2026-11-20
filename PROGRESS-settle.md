@@ -22,7 +22,12 @@ a JS chain (hardhat node) + solc-js build — needs the owner's go-ahead.
   writes web/public/cap-demo.json (schema in interfaces.md §6). ABI hand-written from feat/agent-wallet source.
 - Tested: typecheck + the AGENT_WALLET_ADDRESS-missing path. No anvil (libusb), wallet not deployed.
 
-Commit author email is the placeholder `TANISH_EMAIL` (name OK); not changed per instructions.
+## T7 — deploy AgentWallet + live cap-demo: QUEUED (after T2)
+Blocked twice: needs keys (T2 first) and a working `forge` (fails: missing libusb, no Homebrew).
+Note for the dry run: DeployAgentWallet.s.sol calls `vm.broadcast()` with no key argument, so the command
+needs a signer flag; the temp worktree has no .env of its own.
+
+Commit author: Tanish Patro <tanishpatro1@gmail.com> (email fixed by owner; abc4a04 and earlier carry the placeholder).
 
 ## 2026-11-20 — steps 0–2 (code), live run blocked on keys
 
