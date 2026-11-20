@@ -31,8 +31,9 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { formatUsdc, toBaseUnits } from "botbet-shared";
 import { BOTS, type BotConfig } from "./bots.js";
-import { NotMinedError, SettleError, explain } from "./errors.js";
-import { playGame, sides } from "./game.js";
+import { box, seconds } from "./box.js";
+import { NotMinedError, SettleError, StepFailure, explain } from "./errors.js";
+import { playGame, sides, validateStartFen } from "./game.js";
 import { hashPgn, matchDomain, recoverMatchResultSigner, signMatchResult, type MatchResult } from "./result.js";
 
 /** Arc drops (silently) any tx whose maxFeePerGas is below this. Gas-price units (wei/gas), not USDC. */
@@ -88,13 +89,7 @@ export interface SettleSummary {
   resultPath?: string;
 }
 
-/** Thrown from runSettle with the step it died in, for the CLI's ❌ line and --json. */
-export class StepFailure extends Error {
-  constructor(readonly step: string, readonly cause: SettleError) {
-    super(cause.message);
-    this.name = "StepFailure";
-  }
-}
+export { StepFailure };
 
 interface MatchView {
   botA: Address;
@@ -109,6 +104,7 @@ const usdc6 = (amount: bigint) => formatUsdc(amount, { decimals: 6 });
 
 export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
   const log = cfg.log ?? ((line: string) => console.log(line));
+  const t0 = Date.now();
   const txUrl = (hash: Hash) => `${cfg.explorerBaseUrl}/tx/${hash}`;
   const addrUrl = (address: Address) => `${cfg.explorerBaseUrl}/address/${address}`;
 
@@ -202,6 +198,16 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
     ["bots distinct", !isAddressEqual(bots[0]!.account.address, bots[1]!.account.address), `${bots[0]!.account.address} / ${bots[1]!.account.address}`],
   ];
   for (const [name, passed, detail] of checks) log(`  ${passed ? "✅" : "❌"} ${name.padEnd(25)} ${detail}`);
+  if (cfg.startFen) {
+    let fenProblem = "";
+    try {
+      validateStartFen(cfg.startFen);
+    } catch (error) {
+      fenProblem = error instanceof Error ? error.message : String(error);
+    }
+    checks.push(["start FEN is playable", !fenProblem, fenProblem || cfg.startFen]);
+    log(`  ${fenProblem ? "❌" : "✅"} ${"start FEN is playable".padEnd(25)} ${fenProblem || cfg.startFen}`);
+  }
   const failedChecks = checks.filter(([, passed]) => !passed).map(([name]) => name);
 
   // Fees: Arc silently drops a tx below the 20 gwei minimum base fee, so pin it explicitly.
@@ -281,7 +287,14 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
   };
 
   if (cfg.dryRun) {
-    log("\n✅ Dry run: every check passed. Nothing was sent.");
+    log(
+      `\n${box("🧪 DRY RUN PASSED: nothing was sent", [
+        `chain     ${rpcChainId}   escrow ${cfg.escrow}`,
+        `stake     ${usdc6(cfg.stake)} per bot, pot ${usdc6(cfg.stake * 2n)}`,
+        ...bots.map(({ bot, account }) => `${bot.id.padEnd(9)} ${account.address}  ${usdc6(before.get(account.address)!)}`),
+        `time      ${seconds(Date.now() - t0)}`,
+      ])}`,
+    );
     return { ...base, dryRun: true, balances: balanceSummary() };
   }
 
@@ -362,7 +375,8 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
     }),
   );
   const winnerAddress = accountOf(outcome.winner).address;
-  ok(`checkmate: ${outcome.winner.name} wins in ${outcome.moveCount} plies (${((Date.now() - startedAt) / 1000).toFixed(0)}s)`);
+  const gameMs = Date.now() - startedAt;
+  ok(`checkmate: ${outcome.winner.name} wins in ${outcome.moveCount} plies (${seconds(gameMs)})`);
 
   // ── 8. sign ─────────────────────────────────────────────────────────────────────────────────
   step("Referee signs the MatchResult (EIP-712)");
@@ -440,7 +454,20 @@ export async function runSettle(cfg: SettleConfig): Promise<SettleSummary> {
   mkdirSync(dirname(cfg.outPath), { recursive: true });
   writeFileSync(cfg.outPath, `${JSON.stringify(json, null, 2)}\n`);
   ok(`wrote ${cfg.outPath}`);
-  log(`\n✅ SETTLED  ${txUrl(settled.hash)}`);
+  const delta = (address: Address) => {
+    const d = after.get(address)! - before.get(address)!;
+    return `${d >= 0n ? "+" : ""}${usdc6(d)}`;
+  };
+  log(
+    `\n${box("✅ SETTLED ON-CHAIN", [
+      `winner    ${outcome.winner.name} (depth ${outcome.winner.depth}) in ${outcome.moveCount} plies`,
+      `payout    ${usdc6(settledEvent!.args.payout)} → ${winnerAddress}`,
+      ...bots.map(({ bot, account }) => `${bot.name.padEnd(13)} ${usdc6(after.get(account.address)!).padStart(16)}  (${delta(account.address)})`),
+      `settle    ${txUrl(settled.hash)}`,
+      `match     ${matchId}`,
+      `time      ${seconds(Date.now() - t0)} total (game ${seconds(gameMs)})`,
+    ])}`,
+  );
 
   return {
     ...base,

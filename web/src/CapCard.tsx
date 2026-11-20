@@ -1,0 +1,81 @@
+import { useEffect, useState } from 'react'
+import { formatUsdc, toBaseUnits } from 'botbet-shared'
+
+export interface CapDemo {
+  wallet: string
+  capUsdc: string
+  allowed: { amount: string; txHash: string | null }
+  refused: { amount: string; reason: string }
+}
+
+const fmt = (v: string) => formatUsdc(v, { symbol: false })
+
+/** cap-demo.json amounts are human strings ("0.02", interfaces.md §6); tolerate base units too. */
+export function capUsdc(v: string): string {
+  try {
+    const t = String(v ?? '').trim()
+    return formatUsdc(t.includes('.') ? toBaseUnits(t) : t)
+  } catch {
+    return `${v} USDC`
+  }
+}
+
+/** Turn a raw revert like "CapExceeded(100000, 50000)" into "CapExceeded: 0.10 > cap 0.05". */
+export function decodeReason(c: CapDemo): string {
+  const m = /CapExceeded\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)/.exec(c.refused.reason ?? '')
+  if (m) return `CapExceeded: ${fmt(m[1])} > cap ${fmt(m[2])}`
+  if (c.refused.reason) return c.refused.reason
+  return `CapExceeded: ${c.refused.amount} > cap ${c.capUsdc}`
+}
+
+export async function loadCapDemo(): Promise<CapDemo | null> {
+  try {
+    // dev-only: ?cap=/some/path.json previews another cap-demo file (poll-loop checks)
+    const q = import.meta.env.DEV ? new URLSearchParams(location.search).get('cap') : null
+    const r = await fetch(q || '/cap-demo.json', { cache: 'no-store' })
+    if (!r.ok || !(r.headers.get('content-type') ?? '').includes('json')) return null
+    const c = (await r.json()) as CapDemo
+    return c && typeof c === 'object' && c.allowed && c.refused && typeof c.wallet === 'string' ? c : null
+  } catch {
+    return null
+  }
+}
+
+export function useCapDemo(): [CapDemo | null, boolean, () => void] {
+  const [live, setLive] = useState<CapDemo | null>(null)
+  const [preview, setPreview] = useState<CapDemo | null>(null)
+  useEffect(() => {
+    loadCapDemo().then(setLive)
+    if (import.meta.env.DEV && new URLSearchParams(location.search).get('sampleCap') === '1') {
+      import('./dev/cap-demo.sample.json').then(m => setPreview(m.default as CapDemo))
+    }
+  }, [])
+  const toggle = () => {
+    if (!import.meta.env.DEV) return
+    if (preview) { setPreview(null); return }
+    import('./dev/cap-demo.sample.json').then(m => setPreview(m.default as CapDemo))
+  }
+  return [live ?? preview, !live && !!preview, toggle]
+}
+
+export function CapCard({ c, base, sample }: { c: CapDemo; base: string; sample: boolean }) {
+  const short = (h: string) => (typeof h === 'string' && h.length > 18 ? `${h.slice(0, 10)}…${h.slice(-6)}` : String(h ?? '—'))
+  return (
+    <div className="panel cap">
+      <h2>Agent wallet safety {sample && <span className="tag sm">sample</span>}</h2>
+      <p className="why">The spending cap lives in the contract, so even a buggy agent can't overspend.</p>
+      <div className="kv"><span>Wallet</span>{base ? <a className="mono" href={`${base}/address/${c.wallet}`} target="_blank" rel="noreferrer">{c.wallet}</a> : <span className="mono">{c.wallet}</span>}</div>
+      <div className="kv"><span>Cap</span><b>{capUsdc(c.capUsdc)}</b></div>
+      <div className="pay ok">
+        <span>Allowed: {capUsdc(c.allowed.amount)} <span aria-hidden="true">✓</span></span>
+        {c.allowed.txHash && base
+          ? <a className="mono" href={`${base}/tx/${c.allowed.txHash}`} target="_blank" rel="noreferrer">tx {short(c.allowed.txHash)}</a>
+          : <span className="mono">{c.allowed.txHash ? `tx ${short(c.allowed.txHash)}` : 'tx pending'}</span>}
+      </div>
+      <div className="pay no">
+        <span>Refused by the contract (simulated): {capUsdc(c.refused.amount)}</span>
+        <span className="mono" title={c.refused.reason}>— {decodeReason(c)}</span>
+      </div>
+    </div>
+  )
+}
