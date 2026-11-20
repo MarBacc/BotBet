@@ -89,3 +89,11 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   "CRLF checkout verifies against an LF registration" (fails without the fix). npm test 33/33, tsc ✅.
 - Windows CRLF checkout: all 5 house bots VERIFIED. PR (base feat/poker):
   https://github.com/MarBacc/BotBet/compare/feat/poker...feat/settle-tp-poker?expand=1
+
+## 04:32 P3 fix merged into feat/poker as #32 ✅ (integration: P1–P5 ✅ at 45e830f).
+- FIXER took QA poker nit P1 (banner "Pot paid to …" had no amount): feat/settle-tp-poker @ 0eab851.
+  pokerResultJson gets optional stakeUsdc/potUsdc (base-unit strings), settle-poker passes the stake.
+  Recorded live poker-result.json gets stakeUsdc 2000000 / potUsdc 4000000, verified read-only on Arc:
+  escrow getMatch(matchId) → stakeAmount 2000000, status 3 (Settled), botA/botB match. handHistoryHash untouched.
+  npm test 33/33, tsc, play-poker keyless, web build + smoke, Chromium: banner "Pot 4.00 USDC paid to 0xBAe2…0E24", 0 errors.
+  PR (base feat/poker): https://github.com/MarBacc/BotBet/compare/feat/poker...feat/settle-tp-poker?expand=1
