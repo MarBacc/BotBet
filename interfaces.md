@@ -94,16 +94,52 @@ touches no chain.
 `REFEREE_PRIVATE_KEY` → `settle` → print both balances before and after → write
 `web/public/result.json`:
 
-```json
-{ "matchId": "0x8f1c…", "stakeUsdc": "2000000", "potUsdc": "4000000",
-  "bots": [{ "id": "deep", "name": "Deep Thought", "address": "0x…", "depth": 12 },
-           { "id": "hasty", "name": "Hasty Hal", "address": "0x…", "depth": 4 }],
-  "winner": "0x…", "moveCount": 57, "pgn": "1. e4 e5 …",
-  "settleTxHash": "0x…", "explorerUrl": "https://explorer.testnet.arc.io/tx/0x…", "finishedAt": 1763600000 }
+### `web/public/result.json` — schema v1 (frozen; the web agent builds against this)
+
+A worked example with valid values is `web/public/result.sample.json` (its PGN is a legal 55-ply
+game and its `pgnHash` is the real keccak256 of that PGN; addresses, hashes and signature are
+placeholders). The referee overwrites `result.json` on every `npm run settle`.
+
+```jsonc
+{
+  "version": 1,                                   // bump on any breaking change
+  "chainId": 5042002,
+  "escrow": "0x…",                                // MatchEscrow address = EIP-712 verifyingContract
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "explorerBaseUrl": "https://explorer.testnet.arc.io",   // no trailing slash
+  "matchId": "0x…",                               // bytes32, 0x + 64 hex
+  "stakeUsdc": "2000000",                         // per bot, 6-decimal base units, string
+  "potUsdc": "4000000",                           // 2 * stakeUsdc, string
+  "bots": [                                       // exactly 2; bots[0] plays White
+    { "id": "deep",  "name": "Deep Thought", "address": "0x…", "depth": 12, "color": "white",
+      "approveTxHash": "0x…", "stakeTxHash": "0x…" },
+    { "id": "hasty", "name": "Hasty Hal",    "address": "0x…", "depth": 4,  "color": "black",
+      "approveTxHash": "0x…", "stakeTxHash": "0x…" }
+  ],
+  "winner": "0x…",                                // equals one bots[i].address, never zero
+  "winnerId": "deep",                             // that bot's id
+  "plies": 55,                                    // half-moves played; equals result.moveCount
+  "pgn": "[Event \"BotBet\"] … 28. Qd8# 1-0",
+  "result": {                                     // exactly the EIP-712 MatchResult that was signed
+    "matchId": "0x…", "winner": "0x…",
+    "moveCount": 55,                              // uint16, plies
+    "pgnHash": "0x…",                             // keccak256(utf8 bytes of `pgn`)
+    "finishedAt": 1763625600                      // uint64 unix seconds
+  },
+  "signature": "0x…",                             // 65-byte referee signature, 0x + 130 hex
+  "createMatchTxHash": "0x…",
+  "settleTxHash": "0x…",
+  "balances": {                                   // ERC-20 (6-decimal) view, base-unit strings
+    "before": { "deep": "9984213", "hasty": "9981007" },   // before approve
+    "after":  { "deep": "11981513", "hasty": "7978307" }   // after settle (stake ± pot − gas)
+  },
+  "finishedAt": 1763625600                        // = result.finishedAt
+}
 ```
 
-The page reads exactly this: replayed board from `pgn`, both stakes, the winner, a link to
-`explorerUrl`.
+Rules for the page: links are `${explorerBaseUrl}/tx/${hash}` and
+`${explorerBaseUrl}/address/${address}`. Every amount is a base-unit string — display it with
+`formatUsdc` from `botbet-shared`, never `Number()` math. Replay the board from `pgn`.
 
 ## 4. shared/deployments.json
 
