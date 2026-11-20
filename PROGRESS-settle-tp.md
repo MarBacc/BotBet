@@ -27,3 +27,9 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
   "Refused by the contract (simulated):".
 - Gates: referee npm test 17/17, play-game 55 plies keyless "Nothing was sent", web build ✅.
 - QA ❌ owned by settle/web: 0. Remaining #1–#3 are README (demo-agent; FIXER may not edit README.md).
+
+## 03:10
+- Merged origin/solo 907b1e7 (PR #8 demo README merged → QA blocker #1 resolved upstream).
+- PR #17 (live, cap-demo.json adds `refusedTxHash`) checked: replay-last + web build ✅ with it.
+- `replay-last` now prints the on-chain refusal tx link when `cap-demo.json` has `refusedTxHash`
+  (optional field; unchanged output without it). typecheck ✅, npm test 17/17, play-game keyless ✅.
