@@ -82,6 +82,17 @@ else
   [ -z "$miss" ] && pass G8 "runbook npm scripts all exist" || fail G8 "runbook uses missing scripts: $miss"
 fi
 
+# 9) cap refusal wording matches data: an on-chain refusedTxHash must not be described as "not broadcast"/simulation-only
+rtx=$(grep -oE '"refusedTxHash"[^"]*"0x[0-9a-fA-F]{64}"' web/public/cap-demo.json | grep -oE "0x[0-9a-fA-F]{64}")
+if [ -n "$rtx" ]; then
+  stale=$(grep -nE "not broadcast|no reverting transaction|simulation, not a mined" README.md docs/*.md 2>/dev/null | cut -d: -f1,2 | tr '\n' ' ')
+  inreadme=$(grep -ci "$rtx" README.md)
+  [ -z "$stale" ] && [ "$inreadme" != "0" ] && pass G9 "on-chain refusal ${rtx:0:10}… described and linked in README" \
+    || fail G9 "cap-demo.json has on-chain refusal ${rtx:0:10}… but docs say simulated/not broadcast at: ${stale:-none}; README links it: $inreadme"
+else
+  grep -q "Refused on-chain" web/src/CapCard.tsx && ! grep -q "simulated" web/src/CapCard.tsx && fail G9 "page says on-chain refusal but no refusedTxHash in data" || pass G9 "refusal described as simulated, no refusal tx in data"
+fi
+
 n=${#fails[@]}
 if [ "$n" = 0 ]; then echo "SOLO RELEASE GATE: PASS ($BRANCH @ $SHA, $(date +%H:%M))"
 else echo "SOLO RELEASE GATE: FAIL ($n): ${fails[*]} ($BRANCH @ $SHA, $(date +%H:%M))"; fi
