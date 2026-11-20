@@ -1,10 +1,40 @@
-# INTEGRATION.md
+# INTEGRATION.md — team board
 
-Integration lead for BotBet. Branch `feat/integration` continuously merges the four agent branches
-on top of `solo`, runs the gates below, and is the only place integration glue lives. Owners get the
-real fixes; nothing integration-only is merged into `solo`.
+Every agent: read **ASKS** every loop. Do your items, push, and the integration lead removes them when they land.
+Merge order into `solo`: settle ✅ → agent-wallet ✅ → live-runs (needs human "go live") → web → demo.
+Timeline (CST): 04:30 freeze warning · **05:00 feature freeze, fixes only** · 06:00 submission checklist · deadline 12:00.
+
+## ASKS
+
+### settle (feat/settle, merged into solo as #1)
+_No open asks. Stay on call for fixes only in referee/** and shared/**._
+
+### web (feat/web, PR #2)
+1. `git merge origin/solo` (settle and agent-wallet landed; keep solo's AGENTS.md/HANDOFF.md). Then `npm run build && npm run test:smoke`.
+2. Your `web/src/CapCard.tsx` is equivalent to integration's 2e88fba panel, so **do not** take 2e88fba.
+3. Check the page against the REAL result.json: `git show origin/feat/live-runs:web/public/result.json > /tmp/r.json` and load it locally (don't commit it). Notes: it has no `referee` field (falls back to deployments.json), escrow is 0x9d4E…916c, 55 plies, Deep Thought wins.
+4. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
+
+### demo (feat/demo, not started)
+1. Create `feat/demo` from `origin/solo` and push it. Owns referee/src/demo/**, docs/demo-runbook.md, docs/submission.md, README.md, AGENTS.md, PROGRESS-demo.md.
+2. docs/demo-runbook.md: the exact presenter sequence using the real script names in referee/package.json (`npm run check-setup`, `npm run play-game`, `npm run settle`, `npm run settle -- --fen "<FEN>"`, `npm run cap-demo`), and web `npm run dev` or `npm run preview` (`/api/tts` only exists there).
+3. README.md: pitch ("referee-attested", never "trustless"), how to run, contract address 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, settle tx links copied from LIVE-RUNS.md (never invented).
+4. If not started by 02:30 the integration lead drafts INTEGRATION-runbook-draft.md and INTEGRATION-readme-draft.md for you to adopt.
+
+### live-runner (feat/live-runs, PR #4)
+1. Add the literal line `CHECKPOINT PASSED` to LIVE-RUNS.md next to the two settle txs (0x41ba…02b4, 0xf177…f6f4). Both are verified on Arc RPC: status 1, to MatchEscrow.
+2. Deploy AgentWallet (`contracts/script/DeployAgentWallet.s.sol`), commit `contracts/broadcast/DeployAgentWallet.s.sol/5042002/run-latest.json`, record the address in LIVE-RUNS.md.
+3. `npm run cap-demo` with AGENT_WALLET_ADDRESS set, commit `web/public/cap-demo.json`, record the allowed tx in LIVE-RUNS.md.
+4. `git merge origin/solo` before pushing. Optional: one more `npm run settle` afterwards so result.json carries the new `referee` field.
+5. Touch only web/public/result.json, web/public/cap-demo.json, LIVE-RUNS.md, contracts/broadcast/DeployAgentWallet.s.sol/5042002/*.json.
+
+### human
+1. Start Codex B (demo-agent). feat/demo is not on origin yet.
+2. LIVE-RUNNER is running ✅ (two live settles at 01:50). Type **"go live"** once it has added CHECKPOINT PASSED, so feat/live-runs can merge into solo.
+3. For the voice button: ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID in the .env of the machine that runs `npm run dev`/`preview` for the demo.
 
 ## Role
+
 
 - Merge order into `solo`: `feat/settle` → `feat/web` → `feat/agent-wallet` → `feat/demo`.
 - A branch merges into `solo` (via `gh pr merge`) when: it is next in order, its ownership check
@@ -34,19 +64,13 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 
 ## Latest run
 
-2026-11-20 01:50 CST — integration = solo@4bc6490 + settle@9de3533 + web@5cc0acc + agent-wallet@be74a24 + glue 3a095ea. feat/demo not on origin yet. Draft PRs: #1 settle, #2 web, #3 wallet.
+2026-11-20 01:57 CST — solo = settle #1 + agent-wallet #3 merged. integration = solo + live-runs@f90cda8 + web@5cc0acc.
 
 - G1 ✅ shared builds
-- G2 ✅ only with glue 3a095ea (keyless play-game: 55 plies, signature round-trips, deployed-referee check SKIPPED). ❌ on feat/settle alone until settle cherry-picks 3a095ea (PR #1)
-- G3 ✅ forge build + 14/14 tests (MatchEscrow 8, AgentWallet 6)
-- G4 ✅ web build + `npm run test:smoke` all green with the sample; CapCard handles cap-demo.json including txHash null. No real result.json / cap-demo.json yet
-- G5 ⏭ no local rehearsal script, no demo branch
-- G6 ✅ README commands exist; no "trustless" claim. ⚠ result.sample.json escrow 0xdb0a…CbE is not the deployed 0x9d4E…916c (labelled SAMPLE DATA on the page)
+- G2 ✅ tsc clean; keyless play-game plays and signs, deployed-referee check SKIPPED, nothing sent
+- G3 ✅ forge build + 14/14 tests
+- G4 ✅ web build + smoke test green with the sample AND with live-runs' real result.json (escrow 0x9d4E…916c, settle 0xf177…f6f4). cap-demo.json not produced yet
+- G5 ⏭ no local anvil rehearsal script; live settles replace it (2 verified on Arc RPC)
+- G6 ⏭ waiting on demo branch (README/runbook). No "trustless" claim in repo
 
-Notes:
-- ~01:30 solo and every agent branch were rewritten (same trees, new hashes). feat/integration was re-joined onto the new history with a two-parent merge, no force-push.
-- Glue 2e88fba (cap panel) was dropped in favour of web's CapCard. interfaces.md conflict resolved to settle's schema v1 (web does not change it vs solo).
-- TTS: /api/tts is Vite dev/preview middleware only, so the demo must run `npm run dev` or `npm run preview`, not static hosting. Needs ELEVENLABS_API_KEY + ELEVENLABS_VOICE_ID.
-- Open request web → settle: add `referee` to result.json (patch on PR #1).
-- ⚠ Authors: feat/agent-wallet = "ChadYung", feat/web new commits = "Tanish"; expected "Alex Rodriguez" for both.
-- Merge into solo: none yet. settle needs CHECKPOINT PASSED + 2 live tx hashes + "go settle".
+Flags: feat/web new commits authored "Tanish" (expected Alex Rodriguez). Rewritten history ~01:30 (see PR comments).
