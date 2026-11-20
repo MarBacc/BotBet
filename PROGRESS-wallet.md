@@ -17,3 +17,9 @@
 - Done — Added five wallet tests using the escrow suite's 6-decimal mock. The full suite passed with 13 passed, 0 failed, and 0 skipped.
 - Next — Add the deployment script and verify it with `forge build`.
 - Blockers — Push requires approval.
+
+## Step 3 — 2026-11-20 01:20 CST
+
+- Done — Added the Arc testnet deployment script with a 50,000-base-unit cap and documented the future demo JSON. `forge build` passed.
+- Next — Push the deployment-script commit after approval and report the later deployment command.
+- Blockers — Push requires approval.
