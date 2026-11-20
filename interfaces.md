@@ -71,7 +71,11 @@ struct MatchResult { bytes32 matchId; address winner; uint16 moveCount; bytes32 
 ```
 
 `winner` is never zero; `pgnHash` is `keccak256(bytes(pgn))` and the PGN travels beside the
-signature, unsigned. `settle` verifies in order:
+signature, unsigned. **`moveCount` is plies (half-moves), not full moves** — the same unit as
+`atPly` in section 5, so the page replays and the signed count never drift apart. The escrow
+never reads the value, it only hashes it, so the single requirement is that the referee and
+anyone verifying agree on the unit; 160 plies is the most the move cap allows, well inside
+`uint16`. `settle` verifies in order:
 
 1. `status == Funded`, else `WrongStatus`. It flips to `Settled` **before** the transfer — this
    is the replay guard, so one signature can never pay twice.
@@ -95,7 +99,8 @@ it does not yet hold could be settled out of another match's money.
 Node scripts, not a server: no HTTP, no WebSocket.
 
 **`npm run play-game`** — one game offline: `chess.js` for rules, Stockfish at the two depths in
-`referee/src/bots.ts`, 3 s per move, 80-move cap. Prints the PGN and the signed `MatchResult`;
+`referee/src/bots.ts`, 3 s per move, 80-move cap (80 *full* moves, so at most 160 plies; the cap
+is the one count kept in full moves). Prints the PGN and the signed `MatchResult`;
 touches no chain.
 
 **`npm run settle`** — the whole loop, printing each step with its tx hash: read
@@ -108,6 +113,7 @@ touches no chain.
   "bots": [{ "id": "deep", "name": "Deep Thought", "address": "0x…", "depth": 12 },
            { "id": "hasty", "name": "Hasty Hal", "address": "0x…", "depth": 4 }],
   "winner": "0x…", "moveCount": 57, "pgn": "1. e4 e5 …",
+  // moveCount is plies: 57 half-moves, i.e. 29 full moves
   "settleTxHash": "0x…", "explorerUrl": "https://explorer.testnet.arc.io/tx/0x…", "finishedAt": 1763600000 }
 ```
 
