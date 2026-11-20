@@ -4,6 +4,8 @@ pragma solidity 0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {MatchEscrow, Match, MatchResult, Status} from "../src/MatchEscrow.sol";
 import {MockUSDC} from "./mocks/MockUSDC.sol";
+import {ReenteringUSDC} from "./mocks/ReenteringUSDC.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract MatchEscrowTest is Test {
     bytes32 private constant MATCH_RESULT_TYPEHASH =
@@ -137,6 +139,44 @@ contract MatchEscrowTest is Test {
 
         assertEq(usdc.balanceOf(stranger), 0, "stranger is paid nothing");
         assertEq(usdc.balanceOf(address(escrow)), STAKE * 2, "pot untouched");
+    }
+
+    /// @dev The escrow pools every match's funds, so a match must never claim a pot it does
+    ///      not yet hold: a token that re-enters while its stake is being pulled must not be
+    ///      able to settle the very match it is funding.
+    function test_RevertWhen_TokenReentersDuringStake() public {
+        ReenteringUSDC evil = new ReenteringUSDC();
+        vm.prank(admin);
+        MatchEscrow target = new MatchEscrow(referee, address(evil));
+
+        evil.mint(botA, STAKE);
+        evil.mint(botB, STAKE);
+        vm.prank(botA);
+        evil.approve(address(target), STAKE);
+        vm.prank(botB);
+        evil.approve(address(target), STAKE);
+
+        vm.prank(admin);
+        target.createMatch(MATCH_ID, botA, botB, STAKE);
+
+        MatchResult memory result = _result(botA);
+        evil.arm(target, MATCH_ID, result, _sign(refereePk, address(target), result));
+
+        vm.prank(botA);
+        target.stake(MATCH_ID);
+        vm.prank(botB);
+        target.stake(MATCH_ID);
+
+        assertTrue(evil.attackAttempted(), "the token did re-enter");
+        assertTrue(evil.attackReverted(), "the re-entrant settle was rejected");
+        assertEq(
+            bytes4(evil.attackRevertData()),
+            ReentrancyGuard.ReentrancyGuardReentrantCall.selector,
+            "rejected by the reentrancy guard"
+        );
+        assertEq(evil.balanceOf(botA), 0, "no early payout");
+        assertEq(evil.balanceOf(address(target)), STAKE * 2, "the pot is intact");
+        assertEq(uint8(target.getMatch(MATCH_ID).status), uint8(Status.Funded), "funded, not settled");
     }
 
     // --- helpers ---
