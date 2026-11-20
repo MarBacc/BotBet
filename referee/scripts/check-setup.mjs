@@ -66,6 +66,37 @@ add("live", "Arc RPC reachable, chain 5042002", chainOk, chainDetail, "check net
 const wallet = process.env.AGENT_WALLET_ADDRESS?.trim();
 add("optional", "AGENT_WALLET_ADDRESS (cap demo)", Boolean(wallet && /^0x[0-9a-fA-F]{40}$/.test(wallet)), wallet ? "set" : "MISSING: demo skips the cap part", "AGENT_WALLET_ADDRESS=0x… in .env");
 
+// Balances on the 6-decimal ERC-20 view, for the deployment's public addresses (no keys needed).
+// Needs: bots stake (STAKE_USDC, default 2) + 0.05 gas; admin and referee 0.05 gas. Base-unit integers only.
+if (chainOk) {
+  const USDC = "0x3600000000000000000000000000000000000000";
+  const GAS = 50_000n;
+  const stakeText = (process.env.STAKE_USDC?.trim() || "2");
+  const m = /^(\d+)(?:\.(\d{1,6}))?$/.exec(stakeText);
+  const stake = m ? BigInt(m[1]) * 1_000_000n + BigInt((m[2] ?? "").padEnd(6, "0") || "0") : 2_000_000n;
+  const who = [
+    ["admin", "0xEAb99118c98abbfA99aD55dd261c6fcEf8381f7F", GAS],
+    ["referee", "0xE632a919CEE69FC9482a6A719D47878EEDA28345", GAS],
+    ["deep (BOT_1)", "0xBAe2658a561A7A37e7CF4fDF336772dD23460E24", stake + GAS],
+    ["hasty (BOT_2)", "0x016E0a0c6a153edFDd05947667Be12Be001Eb661", stake + GAS],
+  ];
+  const fmt = (b) => `${b / 1_000_000n}.${(b % 1_000_000n).toString().padStart(6, "0")} USDC`;
+  for (const [name, address, need] of who) {
+    try {
+      const res = await fetch(RPC(), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: USDC, data: `0x70a08231${address.slice(2).toLowerCase().padStart(64, "0")}` }, "latest"] }),
+        signal: AbortSignal.timeout(5000),
+      });
+      const bal = BigInt((await res.json()).result);
+      add("live", `balance ${name}`, bal >= need, `${fmt(bal)} (need ${fmt(need)})`, `fund ${address} at https://faucet.circle.com (Arc Testnet)`);
+    } catch {
+      add("live", `balance ${name}`, false, "could not read", "check the RPC");
+    }
+  }
+}
+
 // ── FALLBACK: what the page and `npm run replay-last` show without the chain ────────────────────
 const resultPath = resolve(root, "web", "public", "result.json");
 let resultOk = false;
@@ -81,6 +112,7 @@ if (existsSync(resultPath)) {
 }
 add("fallback", "web/public/result.json (replay-last)", resultOk, resultDetail, "merge LIVE-RUNNER's result.json (feat/live-runs)");
 add("fallback", "web/public/cap-demo.json", existsSync(resolve(root, "web", "public", "cap-demo.json")), "", "merge LIVE-RUNNER's cap-demo.json");
+add("optional", "web build (web/dist)", existsSync(resolve(root, "web", "dist", "index.html")), "", "cd web && npm run build (or use npm run dev)");
 add("optional", "web/node_modules (page)", existsSync(resolve(root, "web", "node_modules")), "", "cd web && npm install");
 add("optional", "contracts/out (rehearse:local)", existsSync(resolve(root, "contracts", "out", "MatchEscrow.sol")), "", "cd contracts && forge build");
 
