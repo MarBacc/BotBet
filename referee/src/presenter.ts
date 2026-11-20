@@ -16,9 +16,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { box, seconds } from "./box.js";
 import { loadEnv } from "./env.js";
 import { validateStartFen } from "./game.js";
+import { BUILT_IN_DEMO_FEN } from "./presenter-fen.js";
 
-/** White to move, a queen up; Stockfish depth 12 mates in 5 plies (~1 s of play). Checked legal. */
-export const BUILT_IN_DEMO_FEN = "rnb2rk1/ppp2ppp/8/8/2B5/2N2Q2/PPP2PPP/R4RK1 w - - 0 11";
 const DEFAULT_WEB_URL = "http://localhost:5173";
 const SRC = dirname(fileURLToPath(import.meta.url));
 
