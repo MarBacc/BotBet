@@ -8,5 +8,6 @@
   "refused": {
     "amount": "0.10",
     "reason": "CapExceeded(100000, 50000)"
-  }
+  },
+  "refusedTxHash": "0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3"
 }
