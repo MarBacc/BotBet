@@ -43,3 +43,13 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
 - P3 register-bot --verify ❌: no `register-bot` script in referee/package.json.
 - P4 poker tab ❌: no poker code in web/src (play-poker already writes web/public/poker-result.json).
 - Screenshots poker.png / poker-present.png: not taken (no tab; and they belong on feat/qa).
+
+## 04:00 POKER GATE: FAIL (P3 only) — origin/feat/poker @ 65ba721 (+ poker-web #28)
+- P1 chess ✅: npm test 29/29, play-game keyless, web build, web test:smoke all green.
+- P2 play-poker keyless ✅ (unchanged).
+- P3 register-bot --verify ❌: still no `register-bot` script (feat/poker-registry not merged yet).
+- P4 poker tab ✅ (Chromium 1920×1080, vite preview of a fresh clone): without poker-result.json → no tab,
+  0 errors; with a keyless play-poker result → "Poker (beta)" tab, "OFFLINE RUN · NOT SETTLED ON-CHAIN",
+  present mode (P key) renders, 0 console/page errors, 0 failed requests.
+  Screenshots poker.png + poker-present.png taken locally (scratchpad), not committed: they belong on feat/qa.
+- Board nit (keyless play-poker writes web/public/poker-result.json): owner poker-engine, touched 03:45 → left to them.
