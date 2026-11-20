@@ -62,3 +62,6 @@
 - 02:08 DONE: go-live — gates G1–G4 green on solo+live-runs and solo+web; PR #4 and #2 merged into solo (2431bf3); posted "solo moved" on PR #5; feat/web fast-forwarded to solo.
 - NEXT: poll loop (fixes only after 05:00 freeze).
 - BLOCKERS: none.
+- 02:09 DONE: faster replay — Present 300ms/ply (~17s for 55 plies, was ~37s), main Play 450ms/ply (was 900).
+- NEXT: poll loop.
+- BLOCKERS: none.
