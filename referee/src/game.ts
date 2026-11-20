@@ -42,6 +42,8 @@ export interface PlayGameOptions {
   /** Called once per move so a 3 s/move game shows progress instead of hanging silently. */
   onMove?: (info: { ply: number; san: string; uci: string; bot: BotConfig; elapsedMs: number }) => void;
   enginePath?: string;
+  /** Optional start position (demo mode starts mid-game). Default: the normal start. */
+  startFen?: string;
 }
 
 /** BOTS[0] has white. Fixed, so the deep bot does not also win the coin toss. */
@@ -51,13 +53,26 @@ export function sides(): { white: BotConfig; black: BotConfig } {
 
 export async function playGame(options: PlayGameOptions = {}): Promise<GameOutcome> {
   const { white, black } = sides();
+  const startFen = options.startFen?.trim() || undefined;
   const chess = new Chess();
+  if (startFen) {
+    try {
+      chess.load(startFen);
+    } catch (error) {
+      throw new Error(`invalid --fen ${JSON.stringify(startFen)}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    if (chess.isGameOver()) throw new Error("the --fen position is already over; nothing to play.");
+  }
 
   chess.setHeader("Event", "BotBet");
   chess.setHeader("Site", "offline");
   chess.setHeader("Date", new Date().toISOString().slice(0, 10).replace(/-/g, "."));
   chess.setHeader("White", `${white.name} (Stockfish depth ${white.depth})`);
   chess.setHeader("Black", `${black.name} (Stockfish depth ${black.depth})`);
+  if (startFen) {
+    chess.setHeader("SetUp", "1");
+    chess.setHeader("FEN", startFen);
+  }
 
   const engines = new Map<string, Engine>();
   const uciMoves: string[] = [];
@@ -70,7 +85,7 @@ export async function playGame(options: PlayGameOptions = {}): Promise<GameOutco
     }
 
     while (!chess.isGameOver()) {
-      if (chess.moveNumber() > MAX_FULL_MOVES) {
+      if (uciMoves.length >= MAX_FULL_MOVES * 2) {
         throw new Error(
           `move cap reached: ${MAX_FULL_MOVES} full moves with no result. ` +
             `A decisive game is required — see interfaces.md section 3.`,
@@ -81,7 +96,7 @@ export async function playGame(options: PlayGameOptions = {}): Promise<GameOutco
       const engine = engines.get(bot.id)!;
 
       const startedAt = Date.now();
-      const uci = await engine.bestMove(uciMoves, bot.depth, MOVE_TIME_MS);
+      const uci = await engine.bestMove(uciMoves, bot.depth, MOVE_TIME_MS, startFen);
       const elapsedMs = Date.now() - startedAt;
 
       const move = chess.move({

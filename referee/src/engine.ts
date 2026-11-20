@@ -77,12 +77,13 @@ export class Engine {
   }
 
   /**
-   * Search the position reached by `moves` from the start and return the chosen move in UCI
+   * Search the position reached by `moves` from the start (or from `startFen`) and return the chosen move in UCI
    * notation. Stops at `depth` or `movetimeMs`, whichever comes first — Stockfish honours both
    * limits, so the shallow bot answers fast while the deep one stays inside the 3 s budget.
    */
-  async bestMove(moves: readonly string[], depth: number, movetimeMs: number): Promise<string> {
-    this.send(moves.length === 0 ? "position startpos" : `position startpos moves ${moves.join(" ")}`);
+  async bestMove(moves: readonly string[], depth: number, movetimeMs: number, startFen?: string): Promise<string> {
+    const base = startFen ? `position fen ${startFen}` : "position startpos";
+    this.send(moves.length === 0 ? base : `${base} moves ${moves.join(" ")}`);
     this.send(`go depth ${depth} movetime ${movetimeMs}`);
 
     const line = await this.waitFor((l) => l.startsWith("bestmove"), movetimeMs + BESTMOVE_GRACE_MS);
