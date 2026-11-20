@@ -1,6 +1,6 @@
 # BotBet QA report
 
-Tested: `origin/solo` @ `49e5c2e`, `origin/feat/demo` @ `28c8d6d` · Windows 11, Git Bash, Node v20.20.2, npm 10.8.2 · 2026-11-20 02:38 CST.
+Tested: `origin/solo` @ `49e5c2e`, `origin/feat/demo` @ `c6e885d` (README unchanged since `28c8d6d`; `docs/submission.md` hashes match, still has `[video link]` at line 12, see #2) · Windows 11, Git Bash, Node v20.20.2, npm 10.8.2 · 2026-11-20 02:38 CST.
 Fresh clone in an empty temp folder, no keys (`.env` copied from `.env.example`), no transactions sent.
 
 **Open: 6 ❌ (1 blocker)**
