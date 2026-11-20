@@ -72,8 +72,14 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') setPly(p => Math.max(0, p - 1))
-      if (e.key === 'ArrowRight') setPly(p => Math.min(total, p + 1))
+      if (e.target instanceof HTMLElement && /^(INPUT|TEXTAREA|BUTTON)$/.test(e.target.tagName) && e.key === ' ') return
+      if (e.key === 'ArrowLeft') { setPlaying(false); setPly(p => Math.max(0, p - 1)) }
+      if (e.key === 'ArrowRight') { setPlaying(false); setPly(p => Math.min(total, p + 1)) }
+      if (e.key === ' ') {
+        e.preventDefault()
+        setPly(p => (p >= total ? 0 : p))
+        setPlaying(p => !p)
+      }
     }
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
@@ -91,9 +97,12 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
 
   return (
     <div className="page">
+      {sample && <div className="sample-ribbon">SAMPLE DATA</div>}
       <header>
         <h1>BotBet — Arena</h1>
-        {sample && <span className="tag" title="result.json not found; showing result.sample.json">Sample data · not a live result</span>}
+        {sample
+          ? <span className="tag" title="result.json not found; showing result.sample.json">SAMPLE DATA</span>
+          : <span className="tag live">● LIVE ON ARC · settled {new Date(d.finishedAt * 1000).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>}
         {import.meta.env.DEV && <button className="dev" onClick={toggleCap}>dev: cap card</button>}
         <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
@@ -133,6 +142,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
             <button onClick={() => setPly(p => Math.min(total, p + 1))} disabled={ply === total}>▶</button>
             <button onClick={() => { setPlaying(false); setPly(total) }} disabled={ply === total}>⏭</button>
             <span className="ply">ply {ply}/{total}</span>
+            <span className="keys">Space play/pause · ←/→ step</span>
           </div>
           <div className="ctl"><input type="range" min={0} max={total} value={ply} onChange={e => { setPlaying(false); setPly(Number(e.target.value)) }} /></div>
         </div>

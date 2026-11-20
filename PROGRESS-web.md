@@ -20,3 +20,6 @@
 - 01:41 DONE: W1 resync onto rewritten history (merged origin/solo; interfaces.md took theirs; feat/settle not merged, read-only via git show); replayed prior [web] commits; build green.
 - NEXT: W2 QA re-check, W3 projector mode.
 - BLOCKERS: none (push access granted).
+- 01:42 DONE: W3 projector mode — SAMPLE DATA ribbon, LIVE ON ARC + settle time, Space/←/→ shortcuts, 1280x720 sizing (no overflow).
+- NEXT: W4 cap card wording + ?sampleCap=1.
+- BLOCKERS: none.
