@@ -1,5 +1,10 @@
 # BotBet QA report
 
+**FINAL GATE: PASS @ `81571b4`** (actual origin/solo after PR #39 ux-plain + PR #37 ux-poker, fresh Windows clone, 05:18 CST)
+Release gate G1–G10 ✅ · UX: chess ✅, poker ✅, 0 private cards in 101/101 poker steps + full screen ✅, 0 hex outside the collapsed developer section ✅, 0 console errors ✅, mobile 0/0 px ✅ · web build + smoke ✅.
+Screenshots refreshed from `81571b4`: main.png 419 KB, wallet-card.png 31 KB, present.png 153 KB, winner.png 107 KB, mobile.png 202 KB, plain-chess.png 421 KB, plain-poker.png 334 KB.
+Nit N1 (owner: commentator / ux-plain; does not affect the gate): in chess full screen, the commentary caption bar overlaps the "Watch again" / "Close" buttons on the winner screen (see winner.png). Fix: give the caption `bottom` above the buttons (e.g. `bottom: 120px`) or hide the caption once the winner screen shows.
+
 **UX GATE: PASS** (05:15 CST): temporary merge of solo `fe8184e` + feat/ux-poker `95b4ed7` (PR #37) + feat/ux-plain `8efa039` (PR #39) → `db6ee48` (never pushed), fresh Windows clone. Same SHAs as the 05:02 provisional run. **Both PRs are clear to merge.** Once they are in solo, the final gate re-runs on the actual solo ("FINAL GATE" line, pending).
 | UX check | Result |
 |---|---|
