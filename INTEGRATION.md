@@ -37,9 +37,9 @@ AGENTS.md, HANDOFF.md and PROGRESS-*.md are shared; conflicts resolve to solo's 
 2026-11-20 01:45 CST — integration = solo@4bc6490 + settle@9de3533 + web@00cd5a2 + agent-wallet@be74a24 (no conflicts). feat/demo not on origin yet. Draft PRs: #1 settle, #2 web, #3 wallet.
 
 - G1 ✅ shared builds
-- G2 ❌ referee tsc clean, but `npm run play-game` needs REFEREE_PRIVATE_KEY matching the deployed referee. Keyless offline mode requested (PR #1)
+- G2 ✅ (with integration glue 3a095ea) keyless play-game: 55 plies, ephemeral-key signature round-trips, deployed-referee check SKIPPED. ❌ on feat/settle alone until settle cherry-picks 3a095ea
 - G3 ✅ forge build + 14/14 tests (MatchEscrow 8, AgentWallet 6)
-- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type. cap-demo.json is not rendered by the page yet (requested, PR #2)
+- G4 ✅ web builds with result.sample.json; settle's result.json writer matches web's `Result` type. with glue 2e88fba the page shows an optional AgentWallet panel; built with a stub cap-demo.json (not committed). Not browser-screenshot verified
 - G5 ⏭ no local rehearsal script, no demo branch
 - G6 ✅ README commands exist; no "trustless" claim. ⚠ result.sample.json escrow 0xdb0a…CbE is not the deployed 0x9d4E…916c (sample only)
 
