@@ -30,3 +30,34 @@
 @media(max-width:600px){.ptable{border-radius:40px;padding:16px}.pcard{width:40px;height:58px}}
 .seat.s0{order:1}.felt{order:2}.seat.s1{order:3}
 .rbots .mono{word-break:normal;white-space:nowrap}.house{white-space:nowrap;display:inline-block}
+/* ux-poker: plain-English layout */
+.poker .how{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 22px;margin-bottom:18px}
+.poker .how h2{margin:0 0 8px;font-size:1rem;text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
+.poker .how ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:s}
+.poker .how li{counter-increment:s;font-size:1.1rem;display:flex;gap:10px;align-items:flex-start}
+.poker .how li::before{content:counter(s) ".";font-weight:800;color:var(--gold)}
+.poker .how li span{font-size:1.5rem;line-height:1}
+@media(max-width:900px){.poker .how ol{grid-template-columns:1fr}}
+.poker .plain{font-size:1.15rem;margin:0 0 18px;line-height:1.5}
+.poker .proof{display:inline-block;margin-left:6px;font-weight:800;background:#1f2a3b;border:1px solid var(--blue);border-radius:10px;padding:4px 12px}
+.poker .pick{background:#1c1633;border:2px solid #7c5cff;border-radius:16px;padding:14px 22px;margin-bottom:18px}
+.poker .pick h2{margin:0;font-size:1.3rem}.poker .pick h2 small{color:var(--mut);font-weight:400;font-size:.8em}
+.poker .sub{color:var(--mut);margin:4px 0 0;font-size:.95rem}
+.poker .pick-btns{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
+.poker .pick-btns button.on{background:#7c5cff;border-color:#a78bfa}
+.poker .pick-result{font-size:1.6rem;font-weight:800;margin:0 0 18px}.poker .pick-result.yes{color:var(--acc)}.poker .pick-result.no{color:var(--mut)}
+.poker .pick-result small{font-size:.6em;color:var(--mut);font-weight:400;margin-left:10px}
+.poker .speed{color:var(--mut);display:inline-flex;gap:6px;align-items:center}
+.poker .speed select{background:#1f2a3b;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:1rem}
+.seat-who{display:flex;flex-direction:column;align-items:flex-start;text-align:left}
+.seat-chips{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:120px}
+.chipbar{width:120px;height:10px;border-radius:999px;background:#0b0e14;border:1px solid var(--line);overflow:hidden}
+.chipbar span{display:block;height:100%;background:var(--gold);transition:width .4s}
+.pcard.empty{background:transparent;border:2px dashed #ffffff40}
+.rbots{list-style:none;margin:0;padding:0}.rbots li{padding:8px 0;border-top:1px solid var(--line)}.rbots li:first-child{border-top:0}
+.verified{font-size:.75rem;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--acc);color:#04210f;margin-left:6px;cursor:help}
+.poker .tech{margin-top:32px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
+.poker .tech summary{cursor:pointer;color:var(--mut);font-weight:700}
+.poker .tech .mono{font-size:.8rem}
+.ptable.big .seat-strat{font-size:min(2.4vh,1.5vw)}
+.pr-qr .pr-scan{max-width:30vw}
