@@ -20,7 +20,7 @@ ElevenLabs bounty and only gets built once the loop works.
 
 The only contract. Both bots stake the same amount from their EOAs (each `approve`s the escrow
 first); the winner takes the pot against a referee-signed result. OpenZeppelin `SafeERC20`,
-`EIP712`, `ECDSA`; under ~150 lines.
+`EIP712`, `ECDSA`, `ReentrancyGuard`; under ~150 lines.
 
 ```solidity
 enum Status { None, Open, Funded, Settled }
@@ -28,7 +28,9 @@ enum Status { None, Open, Funded, Settled }
 // stakeAmount is per bot, in 6-decimal base units
 struct Match { address botA; address botB; uint256 stakeAmount; bool stakedA; bool stakedB; Status status; }
 
-contract MatchEscrow is EIP712 {
+contract MatchEscrow is EIP712, ReentrancyGuard {
+    // 1,000,000 USDC. A stake above it is an 18-decimal amount, i.e. the decimals trap.
+    uint256 public constant MAX_STAKE = 1_000_000_000_000;
     address public immutable referee;   // signs results
     address public immutable admin;     // deployer; creates matches
     IERC20  public immutable usdc;
@@ -36,8 +38,8 @@ contract MatchEscrow is EIP712 {
 
     constructor(address referee_, address usdc_);                 // EIP712("BotBet", "1")
     function createMatch(bytes32 matchId, address botA, address botB, uint256 stakeAmount) external;
-    function stake(bytes32 matchId) external;                     // botA or botB; pulls stakeAmount
-    function settle(bytes32 matchId, MatchResult calldata result, bytes calldata signature) external;
+    function stake(bytes32 matchId) external;                     // nonReentrant; botA or botB
+    function settle(bytes32 matchId, MatchResult calldata result, bytes calldata signature) external; // nonReentrant
     function getMatch(bytes32 matchId) external view returns (Match memory);
     event MatchCreated(bytes32 indexed matchId, address indexed botA, address indexed botB, uint256 stakeAmount);
     event Staked(bytes32 indexed matchId, address indexed bot, uint256 amount);
@@ -48,6 +50,7 @@ contract MatchEscrow is EIP712 {
     error InvalidWinner();      // winner is not botA or botB
     error ResultMismatch();     // result.matchId != matchId
     error InvalidSignature();   // recovered signer != referee
+    error InvalidMatch();       // zero or equal bots, or a stake of zero or above MAX_STAKE
 }
 ```
 
@@ -68,7 +71,11 @@ struct MatchResult { bytes32 matchId; address winner; uint16 moveCount; bytes32 
 ```
 
 `winner` is never zero; `pgnHash` is `keccak256(bytes(pgn))` and the PGN travels beside the
-signature, unsigned. `settle` verifies in order:
+signature, unsigned. **`moveCount` is plies (half-moves), not full moves** — the same unit as
+`atPly` in section 5, so the page replays and the signed count never drift apart. The escrow
+never reads the value, it only hashes it, so the single requirement is that the referee and
+anyone verifying agree on the unit; 160 plies is the most the move cap allows, well inside
+`uint16`. `settle` verifies in order:
 
 1. `status == Funded`, else `WrongStatus`. It flips to `Settled` **before** the transfer — this
    is the replay guard, so one signature can never pay twice.
@@ -77,16 +84,23 @@ signature, unsigned. `settle` verifies in order:
 3. `ECDSA.recover(_hashTypedDataV4(structHash), signature) == referee`, else `InvalidSignature`.
    A signature is thus bound to the chain, to this contract, and to one match, settleable once.
 
-**Foundry tests — these six, nothing else:** both stake and the winner is paid; a bad signature,
+**Foundry tests — these eight, nothing else:** both stake and the winner is paid; a bad signature,
 a replayed result, and a signature made for a *different contract address* each revert; `settle`
-before both bots staked reverts; a stranger without a valid signature cannot settle.
+before both bots staked reverts; a stranger without a valid signature cannot settle; a token
+that re-enters `stake` cannot settle the match it is still funding; and a stake above `MAX_STAKE`
+is refused.
+
+`stake` pulls the USDC *before* flipping the match to `Funded`, and both `stake` and `settle` are
+`nonReentrant`: the escrow pools every match's funds in one balance, so a match that claims a pot
+it does not yet hold could be settled out of another match's money.
 
 ## 3. The referee flow
 
 Node scripts, not a server: no HTTP, no WebSocket.
 
 **`npm run play-game`** — one game offline: `chess.js` for rules, Stockfish at the two depths in
-`referee/src/bots.ts`, 3 s per move, 80-move cap. Prints the PGN and the signed `MatchResult`;
+`referee/src/bots.ts`, 3 s per move, 80-move cap (80 *full* moves, so at most 160 plies; the cap
+is the one count kept in full moves). Prints the PGN and the signed `MatchResult`;
 touches no chain.
 
 **`npm run settle`** — the whole loop, printing each step with its tx hash: read
@@ -94,52 +108,17 @@ touches no chain.
 `REFEREE_PRIVATE_KEY` → `settle` → print both balances before and after → write
 `web/public/result.json`:
 
-### `web/public/result.json` — schema v1 (frozen; the web agent builds against this)
-
-A worked example with valid values is `web/public/result.sample.json` (its PGN is a legal 55-ply
-game and its `pgnHash` is the real keccak256 of that PGN; addresses, hashes and signature are
-placeholders). The referee overwrites `result.json` on every `npm run settle`.
-
-```jsonc
-{
-  "version": 1,                                   // bump on any breaking change
-  "chainId": 5042002,
-  "escrow": "0x…",                                // MatchEscrow address = EIP-712 verifyingContract
-  "usdc": "0x3600000000000000000000000000000000000000",
-  "explorerBaseUrl": "https://explorer.testnet.arc.io",   // no trailing slash
-  "matchId": "0x…",                               // bytes32, 0x + 64 hex
-  "stakeUsdc": "2000000",                         // per bot, 6-decimal base units, string
-  "potUsdc": "4000000",                           // 2 * stakeUsdc, string
-  "bots": [                                       // exactly 2; bots[0] plays White
-    { "id": "deep",  "name": "Deep Thought", "address": "0x…", "depth": 12, "color": "white",
-      "approveTxHash": "0x…", "stakeTxHash": "0x…" },
-    { "id": "hasty", "name": "Hasty Hal",    "address": "0x…", "depth": 4,  "color": "black",
-      "approveTxHash": "0x…", "stakeTxHash": "0x…" }
-  ],
-  "winner": "0x…",                                // equals one bots[i].address, never zero
-  "winnerId": "deep",                             // that bot's id
-  "plies": 55,                                    // half-moves played; equals result.moveCount
-  "pgn": "[Event \"BotBet\"] … 28. Qd8# 1-0",
-  "result": {                                     // exactly the EIP-712 MatchResult that was signed
-    "matchId": "0x…", "winner": "0x…",
-    "moveCount": 55,                              // uint16, plies
-    "pgnHash": "0x…",                             // keccak256(utf8 bytes of `pgn`)
-    "finishedAt": 1763625600                      // uint64 unix seconds
-  },
-  "signature": "0x…",                             // 65-byte referee signature, 0x + 130 hex
-  "createMatchTxHash": "0x…",
-  "settleTxHash": "0x…",
-  "balances": {                                   // ERC-20 (6-decimal) view, base-unit strings
-    "before": { "deep": "9984213", "hasty": "9981007" },   // before approve
-    "after":  { "deep": "11981513", "hasty": "7978307" }   // after settle (stake ± pot − gas)
-  },
-  "finishedAt": 1763625600                        // = result.finishedAt
-}
+```json
+{ "matchId": "0x8f1c…", "stakeUsdc": "2000000", "potUsdc": "4000000",
+  "bots": [{ "id": "deep", "name": "Deep Thought", "address": "0x…", "depth": 12 },
+           { "id": "hasty", "name": "Hasty Hal", "address": "0x…", "depth": 4 }],
+  "winner": "0x…", "moveCount": 57, "pgn": "1. e4 e5 …",
+  // moveCount is plies: 57 half-moves, i.e. 29 full moves
+  "settleTxHash": "0x…", "explorerUrl": "https://explorer.testnet.arc.io/tx/0x…", "finishedAt": 1763600000 }
 ```
 
-Rules for the page: links are `${explorerBaseUrl}/tx/${hash}` and
-`${explorerBaseUrl}/address/${address}`. Every amount is a base-unit string — display it with
-`formatUsdc` from `botbet-shared`, never `Number()` math. Replay the board from `pgn`.
+The page reads exactly this: replayed board from `pgn`, both stakes, the winner, a link to
+`explorerUrl`.
 
 ## 4. shared/deployments.json
 
