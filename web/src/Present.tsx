@@ -15,6 +15,8 @@ export interface PresentProps {
   potUsdc: string
   settleUrl?: string
   sample: boolean
+  startNo: number
+  startBlack: boolean
   onExit: () => void
 }
 
@@ -54,7 +56,8 @@ export default function Present(p: PresentProps) {
     return () => window.removeEventListener('keydown', k, true)
   }, [p, total])
 
-  const move = ply > 0 ? `${Math.ceil(ply / 2)}${ply % 2 ? '.' : '…'} ${p.sans[ply - 1]}` : 'Starting position'
+  const k = ply - 1 + (p.startBlack ? 1 : 0)
+  const move = ply > 0 ? `${p.startNo + Math.floor(k / 2)}${k % 2 ? '…' : '.'} ${p.sans[ply - 1]}` : 'Starting position'
   return (
     <div className="present" role="dialog" aria-modal="true" aria-label="Presentation mode">
       {p.sample && <div className="sample-ribbon">SAMPLE DATA</div>}

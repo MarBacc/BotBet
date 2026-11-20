@@ -32,6 +32,12 @@ try {
   check('zero-move game renders', short.includes('ply 0/0'))
   let pgn = ''; for (let i = 1; i <= 150; i++) pgn += `${2 * i - 1}. Nf3 Nf6 ${2 * i}. Ng1 Ng8 `
   check('300-ply game renders', render(validate({ ...sample, pgn: pgn.trim(), plies: 600 }), false).includes('ply 0/600'))
+
+  const fenB = '[SetUp "1"]\n[FEN "8/8/8/4k3/8/8/8/3QK3 b - - 0 30"]\n\n30... Kf4 31. Qd5 Ke3 1-0'
+  const hb = render(validate({ ...sample, pgn: fenB, plies: 4 }), false)
+  check('black-to-move FEN numbers from 30', hb.includes('>30.<') && hb.includes('>31.<') && hb.includes('Move 30, black Kf4') && !hb.includes('>1.<'))
+  const fenW = '[SetUp "1"]\n[FEN "8/8/8/4k3/8/8/8/3QK3 w - - 0 1"]\n\n1. Qd3 Ke6 2. Kd2 Ke5 3. Ke3 Kf6 4. Qd5 Ke7 5. Ke4 Kf8 6. Kf5 Ke7 7. Kg6 Ke8 8. Kf6 Kf8 9. Qf7# 1-0'
+  check('17-ply demo FEN renders', render(validate({ ...sample, pgn: fenW, plies: 17 }), false).includes('ply 0/17'))
 } catch (e) {
   check('smoke run', false, e?.stack ?? String(e))
 } finally {
