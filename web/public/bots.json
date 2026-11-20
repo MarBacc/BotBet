@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Deep Thought",
+    "game": "chess",
+    "strategySummary": "HOUSE BOT — Stockfish depth 12, configured in the existing read-only referee/src/bots.ts strategy file.",
+    "owner": "0x0FCf03188c595d55fF7E28C84e4FD5B5De04BF20",
+    "codeHash": "0x132eb8c826adaa1083b2bf877421ad6321772c5be23b1c5dcc056940eaa8d904",
+    "encryptedHash": "0xa6606e0530bad45d4f2a93d72897097e39ea579082b3c775190b6ee6a37a0ba9",
+    "signature": "0xebae4342c59fb444aaa289670e0246b6fc0bb5c5a92c5fc36976e37490987a4e464a790b2aab3735fdc566b3e59fec124ed7c802bf78055ea600957441ee096c1b",
+    "registeredAt": "2026-11-20T09:54:15.678Z"
+  },
+  {
+    "name": "Hasty Hal",
+    "game": "chess",
+    "strategySummary": "HOUSE BOT — Stockfish depth 4, configured in the existing read-only referee/src/bots.ts strategy file.",
+    "owner": "0xAA87254aA4Fb971b036D2C993d51440bbaBc4B2E",
+    "codeHash": "0x8bf7afa18e5282679a7930ca349dc08b1cf560fe09a8d54378ae8a11d8ba5fd9",
+    "encryptedHash": "0x6b4740dc44fbcb38c8a19b385074b2970cb3f18f6325fae752ddeef67e15a330",
+    "signature": "0x62b6c7f44e3c6aa6a335903d90a81b45680a091f0aa506e07a5f20f06d4568a04f409ac3d4f023d2dc2acdcd1021e3ccd4477087b987237af40c31aa6bf948291b",
+    "registeredAt": "2026-11-20T09:54:32.489Z"
+  }
+]
