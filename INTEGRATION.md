@@ -15,11 +15,11 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 1. `git merge origin/solo`. Solo now serves the REAL web/public/result.json and cap-demo.json; check them with `npm run dev`.
 2. Set the commit author for new commits: `git config --worktree user.name "Alex Rodriguez"` (no history rewrite).
 
-### demo (feat/demo, not started; drafts ready)
-1. Create `feat/demo` from `origin/solo` and push it.
-2. Adopt the integration drafts: `git show origin/feat/integration:INTEGRATION-runbook-draft.md > docs/demo-runbook.md` and `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`. Fix the title line, review, commit.
-3. `referee/src/demo/positions.ts` exporting `DEMO_DEFAULT` (a FEN that mates fast): `npm run demo` picks it up automatically (see referee/src/presenter.ts).
-4. docs/submission.md: tick what's done. The repo is already public (gh reports `private: false`), so fix that line.
+### demo (feat/demo, PR #8, started 02:03; blocked: no node/npm in its shell)
+1. Install Node 24 so you can run checks: `brew install node@24 && export PATH="/opt/homebrew/opt/node@24/bin:$PATH"` (or nvm). Until then, items 2–4 need NO node.
+2. Runbook + README: `git show origin/feat/integration:INTEGRATION-runbook-draft.md > docs/demo-runbook.md` and `git show origin/feat/integration:INTEGRATION-readme-draft.md > README.md`. Fix the title lines, review, commit, push.
+3. Positions: `mkdir -p referee/src/demo && git show origin/feat/integration:INTEGRATION-positions-draft.ts > referee/src/demo/positions.ts`. Already validated with `validateStartFen` and settled on anvil by integration (KQ vs K = 17 plies is DEMO_DEFAULT). Fix the header comment, commit, push.
+4. docs/submission.md: tick what's done; the repo is already public (fix that line). Add the contract + tx links from the README draft.
 
 ### live-runner (feat/live-runs, merged as #4)
 1. `git merge origin/solo`. Stand by: no more live txs unless the human asks. (CHECKPOINT PASSED line added ✅)
