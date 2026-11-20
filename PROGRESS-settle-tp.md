@@ -33,3 +33,13 @@ Branch `feat/settle-tp` from origin/solo. Owns referee/** (not referee/src/demo/
 - PR #17 (live, cap-demo.json adds `refusedTxHash`) checked: replay-last + web build ✅ with it.
 - `replay-last` now prints the on-chain refusal tx link when `cap-demo.json` has `refusedTxHash`
   (optional field; unchanged output without it). typecheck ✅, npm test 17/17, play-game keyless ✅.
+
+## 03:55 POKER GATE: FAIL (P3, P4 not built yet) — fresh clone of origin/feat/poker @ 30698ce
+- P1 chess unchanged ✅: diff vs solo is poker-only (+package.json). shared build, referee install, tsc,
+  typecheck, npm test 29/29, play-game keyless, check-setup, replay-last, referee build, web build all ✅.
+  (G3 contracts not run: no Foundry on this machine.)
+- P2 play-poker keyless ✅: Git Bash + PowerShell, 12–30 hands, signs, "Nothing was sent to the chain".
+  Random seed per run by design; `--seed 0x…` twice → same winner + handHistoryHash 0xc01c…c862.
+- P3 register-bot --verify ❌: no `register-bot` script in referee/package.json.
+- P4 poker tab ❌: no poker code in web/src (play-poker already writes web/public/poker-result.json).
+- Screenshots poker.png / poker-present.png: not taken (no tab; and they belong on feat/qa).
