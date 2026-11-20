@@ -38,3 +38,9 @@
 - 01:45 DONE: PR#2 lead request — cap panel already shipped (W4); added allowed.txHash:null handling; stub-tested (not committed). Did not cherry-pick 2e88fba (would duplicate the panel).
 - NEXT: poll loop.
 - BLOCKERS: ELEVENLABS key/voice missing; waiting for real result.json / cap-demo.json from settle.
+- 01:56 DONE: merged origin/solo (settle #1 + agent-wallet #3; interfaces.md took solo); shared rebuilt; test:smoke green.
+- NEXT: poll loop.
+- BLOCKERS: waiting for real result.json / cap-demo.json; ELEVENLABS key missing; author name question (Tanish vs Alex) open with owner.
+- 01:58 web renders real result.json ✅ (live-runs f90cda8: escrow 0x9d4E…916c, settle 0xf177…f6f4, 55 plies, referee via deployments.json fallback). No fixes needed.
+- NEXT: demo polish a) Present mode.
+- BLOCKERS: cap-demo.json not on live-runs yet; author-name ask (#4) pending owner decision.
