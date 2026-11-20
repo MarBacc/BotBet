@@ -1,7 +1,11 @@
-# Wallet agent hard rules
+# DEMO-AGENT rules
 
-- Work only in this folder, on branch `feat/agent-wallet`. Never switch branches or change Git configuration. The author is preset. Use the preset identity without co-author trailers.
-- Create or edit only `contracts/src/AgentWallet.sol`, `contracts/test/AgentWallet.t.sol`, `contracts/script/DeployAgentWallet.s.sol`, `AGENTS.md`, `PROGRESS-wallet.md`, and `HANDOFF.md`. Never edit `MatchEscrow.sol` or its test, `referee/`, `web/`, `shared/`, `interfaces.md`, or `docs/`.
-- Never read `.env`. Never deploy, broadcast, or use private keys.
-- After every green step, update `PROGRESS-wallet.md` with the time, what is done, what is next, and any blockers. Commit with the `[wallet] ` prefix, then ask before running `git push origin feat/agent-wallet`. Never push elsewhere or force-push.
-- If Forge is unavailable, run `export PATH="$HOME/.foundry/bin:$PATH"`.
+- Work only in this folder on branch `feat/demo`. The AgentWallet work is already on `origin/feat/agent-wallet`. Do not touch `contracts/`.
+- Only create or edit `referee/src/demo/**` (new files), `docs/demo-runbook.md`, `docs/submission.md`, `README.md`, `AGENTS.md`, and `PROGRESS-demo.md`.
+- Never read `.env` or send transactions.
+- Use `git add` with allowed file names only; never use `git add -A` or `git add .`, and never add `node_modules` or `shared/dist`.
+- Prefix commits with `[demo] ` and do not add `Co-Authored-By` lines.
+- Push only with `git push origin feat/demo` after each task. Never force-push.
+- Say “referee-attested”; never say “trustless”.
+- Do not invent transaction hashes, addresses, or results. Use `[placeholders]` when facts are unavailable.
+- Freeze work at 05:00 CST.
