@@ -10,6 +10,7 @@ Spec: `interfaces.md` §2–3 and §6. Chain facts: `docs/arc.md`.
 | `npm run settle` | **sends 6 txs** | createMatch → approve/stake ×2 → play → sign → settle; writes `web/public/result.json`. |
 | `npm run cap-demo -- --dry-run` | reads/simulates | AgentWallet cap demo, nothing sent. |
 | `npm run cap-demo` | **sends 1 tx** | Pays 0.02 under the cap, simulates 0.10 over it; writes `web/public/cap-demo.json`. |
+| `npm run rehearse:local` | local anvil only | The REAL settle loop ×2 + cap demo against anvil (chain 5042002), MockUSDC, fresh MatchEscrow and AgentWallet, public test keys. Needs `cd contracts && forge build` (macOS libusb error: `export DYLD_FALLBACK_LIBRARY_PATH="$HOME/.foundry/lib"`). Writes `/tmp/rehearsal-*.json`. |
 | `npm run check-setup` | no | Node version, shared build, dependencies. Runs automatically before every script above. |
 
 Flags for `settle`: `--fen "<FEN>"` (start mid-game, demo mode), `--dry-run`, `--json` (summary JSON on

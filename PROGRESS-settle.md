@@ -1,5 +1,14 @@
 # PROGRESS — settle lane (feat/settle)
 
+## CHECKPOINT PASSED — two live settles on Arc testnet (run by LIVE-RUNNER, 01:50 CST)
+Source: origin/feat/live-runs LIVE-RUNS.md. `npm run settle` from feat/settle, real keys on ChadYung's laptop,
+MatchEscrow 0x9d4EEE03C431c524822c6A1486bE6142d2a4916c, 2 USDC per bot, verified Settled events (4 USDC each).
+- Run 1 settle: https://explorer.testnet.arc.io/tx/0x41babdf1789a50d180d1e1c4b761de510f329cfbd0b2f1691b0bebb0af6c02b4
+  (match 0x95db89e4…a1594b, Deep Thought wins in 55 plies)
+- Run 2 settle: https://explorer.testnet.arc.io/tx/0xf17764910dcf04c29830834d57d38c8ca8101c16036d694876faf4626f4af6f4
+  (match 0xcd1bd3b3…932bfd, Deep Thought wins in 55 plies)
+Not run from this laptop (no keys here by design).
+
 ## 01:55 — RESTART: resynced to rewritten origin/feat/settle (9de3533); S1 done
 - No keys on this laptop by design; LIVE-RUNNER (feat/live-runs) runs live with real keys and owns
   web/public/result.json + cap-demo.json.
@@ -17,6 +26,24 @@
 - Not mine anymore: web/public/result.json, cap-demo.json (LIVE-RUNNER). result.sample.json escrow is
   0xdb0a… (integration ⚠), left alone: not in my file list now.
 - `gh` is not installed here: PR #1 comments unreadable.
+
+## 02:25 — S3 local rehearsal: DONE (G5 now runnable)
+- anvil/forge work on this Mac with `DYLD_FALLBACK_LIBRARY_PATH=$HOME/.foundry/lib` (Foundry ships libusb).
+- `npm run rehearse:local [-- --runs n --fen "<FEN>"]` (referee/scripts/local-rehearsal.ts): starts anvil on
+  :8545 chain 5042002 (or reuses one), deploys MockUSDC + fresh MatchEscrow from contracts/out, mints, runs the
+  REAL `runSettle()` (same code as `npm run settle`), writes /tmp/rehearsal-result.json, stops anvil.
+- Result: 2/2 settles in 2.6 s with Settled events verified (local settle txs 0x00d72a30…c9746, 0xb5cf7afe…398c6).
+  result.json keys = sample's + `referee`; keccak(pgn) = pgnHash. `--fen` run settles too (1 ply mate).
+- Needs `cd contracts && forge build` first (read-only use).
+
+## 02:45 — S4 + S5: DONE
+- S4: `--fen` verified end to end in the rehearsal path; total + game time now printed. feat/demo not on
+  origin yet (no positions.ts / REQUESTS.md to act on).
+- S5: summary boxes (settle: winner, payout, balances, settle link, total time; dry run; failure box) and
+  numbered ✅/❌ steps in cap-demo. cap-demo split into cap-demo-core.ts (`runCapDemo`) + CLI; `--dry-run`
+  simulates the 0.02 payment and prints what it would send.
+- Rehearsal now also deploys the REAL AgentWallet bytecode, checks AGENT_WALLET_ABI == forge artifact,
+  funds 0.20 mock USDC, runs cap-demo dry + live: allowed 0.02 paid, 0.10 → CapExceeded(100000, 50000).
 
 ## T1 — keys check
 **Blocked: waiting for keys in .env** — key check reports all 4 (DEPLOYER, REFEREE, BOT_1, BOT_2) MISSING.
