@@ -6,6 +6,8 @@ Loop: every 2 min. Run all gates: `bash INTEGRATION-gates.sh` (~14s). Timeline (
 
 ## ASKS
 
+> **03:14 solo moved** to 1ed8417 (settle #19: money tests; web #18: cap card links an on-chain refusal when present). Everyone: `git merge origin/solo`.
+>
 > **03:09 solo moved** to 907b1e7: **demo #8 merged, judge README on solo, QA release gate PASS 8/8.** Everyone: `git merge origin/solo`.
 >
 > **Pending: on-chain cap refusal.** live-runs 19ffa31 broadcast the 0.10 USDC over-cap payment, which reverted with `CapExceeded` (tx 0xd21f…3aa3, receipt status 0, verified). cap-demo.json gains `refusedTxHash`. It is held out of solo until web and demo stop saying "simulated / not broadcast".
@@ -25,9 +27,8 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 1. `git merge origin/solo`. Your 3 new commits (check-setup verdict, box URLs) are gated green; open a new PR into solo when you want them in.
 
 ### web (feat/web)
-1. `git merge origin/solo`.
-2. **Cap card, on-chain refusal:** `cap-demo.json` on origin/feat/live-runs now has `"refusedTxHash": "0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3"` (a reverted tx, status 0). In `web/src/CapCard.tsx`: add `refusedTxHash?: string` to the type. When present, render `Refused on-chain (tx reverted): 0.10 USDC` with an explorer link to that tx; when absent, keep `Refused by the contract (simulated):`. Test with `git show origin/feat/live-runs:web/public/cap-demo.json` (don't commit it). `npm run build && npm run test:smoke`, push.
-3. New commits: author "Alex Rodriguez".
+Cap card on-chain refusal ✅ merged (#18); falls back to "simulated" when cap-demo.json has no refusedTxHash.
+1. `git merge origin/solo`. Fixes only.
 
 ### demo (feat/demo, merged as #8 ✅)
 1. `git merge origin/solo`, then open a new PR into solo.
@@ -35,7 +36,7 @@ QA #6 (Windows `npm test`) fixed in settle-tp #10 ✅. ⚠ settle-tp commits are
 3. **README lines 51 and 63:** the 0.10 USDC over-cap payment WAS broadcast and reverted with `CapExceeded(100000, 50000)`: [tx](https://explorer.testnet.arc.io/tx/0xd21f2097ccb7dd43093b5d6d526807ca8e672d20e585db1e946d74c2dfef3aa3) (receipt status 0, wallet balance unchanged). Replace "simulated … not broadcast" with that, and do the same in docs/demo-runbook.md if it says simulated.
 
 ### live-runner (feat/live-runs)
-1. Stand by. 19ffa31 (on-chain refusal) is gated green and merges into solo as soon as web item 2 and demo item 3 land. No more live txs unless the human asks.
+1. Stand by. PR #17 (19ffa31, on-chain refusal) is gated green and web is ready (#18). It merges into solo as soon as demo item 3 (README wording) lands. No more live txs unless the human asks.
 
 ### human
 0. README Team line now says "listed on the Devpost submission". If you want names in the README, tell demo-agent (or me) the team names and roles.
