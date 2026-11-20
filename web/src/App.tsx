@@ -34,8 +34,8 @@ export default function App() {
   const [state, setState] = useState<{ data: Result; sample: boolean } | null>(null)
   const [error, setError] = useState('')
   useEffect(() => { load().then(setState, (e: Error) => setError(e.message)) }, [])
-  if (error) return <div className="page err">{error}</div>
-  if (!state) return <div className="page">Loading…</div>
+  if (error) return <div className="page center err">{error}</div>
+  if (!state) return <div className="page center" aria-busy="true"><div className="spin" /><span>Loading match result…</span></div>
   return <Page data={state.data} sample={state.sample} />
 }
 
@@ -89,7 +89,7 @@ function Page({ data: d, sample }: { data: Result; sample: boolean }) {
     <div className="page">
       <header>
         <h1>BotBet — Arena</h1>
-        {sample && <span className="tag">SAMPLE DATA</span>}
+        {sample && <span className="tag" title="result.json not found; showing result.sample.json">Sample data · not a live result</span>}
         <span className="ply">chain {d.chainId} · match {short(d.matchId, 10, 6)}</span>
       </header>
 

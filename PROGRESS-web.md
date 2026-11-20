@@ -8,3 +8,6 @@
 - 2026-11-20T07:15:23Z DONE: QA pass — PGN replay (55 plies, mate), USDC formatting, explorer links, sample fallback OK; added referee address to attestation badge.
 - NEXT: projector polish.
 - BLOCKERS: push denied (read-only access); commits held locally.
+- 2026-11-20T07:15:59Z DONE: projector polish — loading spinner, prominent sample-data label, page title, square board rows; verified 1920x1080 headless screenshot.
+- NEXT: agent wallet safety card.
+- BLOCKERS: push denied (read-only access).
